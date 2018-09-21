@@ -442,10 +442,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toctitle"></div>
 <ul class="sectlevel1">
 <li><a href="#_abstract">Abstract</a></li>
-<li><a href="#_distribution">Distribution</a></li>
-<li><a href="#_building">Building</a></li>
-<li><a href="#_portability">Portability</a></li>
-<li><a href="#_tutorial">Tutorial</a></li>
+<li><a href="#distribution">Distribution</a></li>
+<li><a href="#building">Building</a></li>
+<li><a href="#portability">Portability</a></li>
+<li><a href="#tutorial">Tutorial</a></li>
 <li><a href="#reference">Reference</a>
 <ul class="sectlevel2">
 <li><a href="#available"><code>available</code></a>
@@ -467,21 +467,21 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#put"><code>put</code></a></li>
 <li><a href="#throw_with_info"><code>throw_with_info</code></a></li>
 <li><a href="#preload"><code>preload</code></a></li>
-<li><a href="#_has_current_error"><code>has_current_error</code></a></li>
-<li><a href="#_common_error_info_types">Common error info types</a></li>
-<li><a href="#_diagnostic_information"><code>diagnostic_information</code></a></li>
-<li><a href="#_current_exception_diagnostic_information"><code>current_exception_diagnostic_information</code></a></li>
-<li><a href="#_capture"><code>capture</code></a>
+<li><a href="#has_current_error"><code>has_current_error</code></a></li>
+<li><a href="#common">Common error info types</a></li>
+<li><a href="#diagnostic_information"><code>diagnostic_information</code></a></li>
+<li><a href="#current_exception_diagnostic_information"><code>current_exception_diagnostic_information</code></a></li>
+<li><a href="#capture"><code>capture</code></a>
 <ul class="sectlevel3">
-<li><a href="#_constructors">Constructors</a></li>
-<li><a href="#_release"><code>release</code></a></li>
+<li><a href="#capture_ctors">Constructors</a></li>
+<li><a href="#capture::release"><code>release</code></a></li>
 </ul>
 </li>
-<li><a href="#_transport"><code>transport</code></a></li>
-<li><a href="#_get"><code>get</code></a></li>
+<li><a href="#transport"><code>transport</code></a></li>
+<li><a href="#get"><code>get</code></a></li>
 </ul>
 </li>
-<li><a href="#_programming_techniques">Programming techniques</a>
+<li><a href="#techniques">Programming techniques</a>
 <ul class="sectlevel2">
 <li><a href="#_capturing_errno_with_preload">Capturing <code>errno</code> with <code>preload</code></a></li>
 </ul>
@@ -497,12 +497,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>LEAF is a non-intrusive C++11 library for transporting arbitrary error information from contexts that detect and report failures, as well as from intermediate error-neutral contexts, to scopes where the error is ultimately handled.</p>
 </div>
 <div class="paragraph">
-<p>LEAF does not allocate dynamic memory, which makes it suitable for low-latency and other performance-critical environments. It is compatible with all error handling APIs, and can be used with or without exception handling.</p>
+<p>LEAF does not allocate dynamic memory<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>, which makes it suitable for low-latency and other performance-critical environments. It is compatible with all error handling APIs, and can be used with or without exception handling.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_distribution">Distribution</h2>
+<h2 id="distribution">Distribution</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>LEAF is distributed under the <a href="http://www.boost.org/LICENSE_1_0.txt">Boost Software License, Version 1.0</a>.</p>
@@ -525,7 +525,7 @@ LEAF is not part of Boost. Please post questions and feedback on the Boost Devel
 </div>
 </div>
 <div class="sect1">
-<h2 id="_building">Building</h2>
+<h2 id="building">Building</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>LEAF is a header-only library and it requires no building. The unit tests use Boost Build, but the library itself has no dependency on Boost or any other library.</p>
@@ -533,7 +533,7 @@ LEAF is not part of Boost. Please post questions and feedback on the Boost Devel
 </div>
 </div>
 <div class="sect1">
-<h2 id="_portability">Portability</h2>
+<h2 id="portability">Portability</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>LEAF requires a C++11 compiler. See unit test matrix at <a href="https://travis-ci.org/zajo/leaf">Travis-CI</a>.</p>
@@ -541,7 +541,7 @@ LEAF is not part of Boost. Please post questions and feedback on the Boost Devel
 </div>
 </div>
 <div class="sect1">
-<h2 id="_tutorial">Tutorial</h2>
+<h2 id="tutorial">Tutorial</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Let&#8217;s consider a function that reads data from a file into a buffer and returns an <code>error</code> enum to report errors:</p>
@@ -947,7 +947,7 @@ throw;</code></pre>
 </dd>
 <dt class="hdlist1">Throws: </dt>
 <dd>
-<p>If <code>unwrap</code> is unable to find a suitable match, it throws <code><a href="#mismatch_error">mismatch_error</a></code>.</p>
+<p>If <code>unwrap</code> is unable to find a suitable match, it throws<sup class="footnote" id="_footnote_onlythrow">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup> <code><a href="#mismatch_error">mismatch_error</a></code>.</p>
 </dd>
 </dl>
 </div>
@@ -1039,7 +1039,7 @@ throw;</code></pre>
 <p>The storage provided by the <code>expect</code> constructor for error info objects is removed, except for error info types specified in other active <code>expect</code> instances up the call stack.</p>
 </li>
 <li>
-<p>If <code>std::unhandled_exception()</code> returns <code>true</code>, calls <code><a href="#set_to_propagate">set_to_propagate</code></a>.</p>
+<p>If <code><a href="#has_current_error">has_current_error</a></code> is <code>true</code>, calls <code><a href="#set_to_propagate">set_to_propagate</code></a>.</p>
 </li>
 </ol>
 </div>
@@ -1072,11 +1072,11 @@ throw;</code></pre>
 <dl>
 <dt class="hdlist1">Effects: </dt>
 <dd>
-<p><code>unwrap</code> takes any number of objects returned by <code><a href="#match">match</a></code>, and proceeds to inspect them in order, until it finds a match where error info objects are currently available in the calling thread (see <code><a href="#put">put</a></code>) for all <code>ErrorInfo&#8230;&#8203;</code> types used to instantiate the <code><a href="#match">match</a></code> function template. If found, <code>unwrap</code> invokes <code>f</code>, passing the <code>.value</code> of each available error info object.</p>
+<p><code>unwrap</code> takes any number of objects returned by <code><a href="#match">match</a></code>, and proceeds to inspect them in order, until it finds a match where error info objects are currently available in the calling thread (see <code><a href="#put">put</a></code>) for all <code>ErrorInfo&#8230;&#8203;</code> types used to instantiate the <code><a href="#match">match</a></code> function template. If found, <code>unwrap</code> invokes the function <code>f</code> (passed to <code>match</code>), passing the <code>.value</code> of each available error info object.</p>
 </dd>
 <dt class="hdlist1">Throws: </dt>
 <dd>
-<p>If no match is found, <code>unwrap</code> throws <code><a href="#mismatch_error">[mismatch_error]</a></code>.</p>
+<p>If no match is found, <code>unwrap</code> throws<sup class="footnoteref">[<a class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup> <code><a href="#mismatch_error">mismatch_error</a></code>.</p>
 </dd>
 </dl>
 </div>
@@ -1136,7 +1136,7 @@ throw;</code></pre>
 <p>As if:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">put(std::forward&lt;T&gt;(info)...);
+<pre class="highlight"><code class="language-c++" data-lang="c++">put(std::forward&lt;ErrorInfo&gt;(info)...);
 throw e;</code></pre>
 </div>
 </div>
@@ -1170,7 +1170,7 @@ throw e;</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>If <code>std::unhandled_exception()</code> is true, or the user calls  <code>cancel</code> (a member function of the returned object), all preloaded error info objects are discarded.</p>
+<p>If <code><a href="#has_current_error">has_current_error</a></code> is <code>false</code>, or the user calls  <code>cancel</code> (a member function of the returned object), all preloaded error info objects are discarded.</p>
 </li>
 <li>
 <p>If any of the <code>info</code> objects passed to <code>preload</code> is a function, it is expected to return the actual error info object to be passed to <code>put</code>, and the function call to obtain it is deferred until the object returned by <code>preload</code> is destroyed (think <code>errno</code>, which obviously should not be captured at the time <code>preload</code> is called).</p>
@@ -1183,7 +1183,7 @@ throw e;</code></pre>
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_has_current_error"><code>has_current_error</code></h3>
+<h3 id="has_current_error"><code>has_current_error</code></h3>
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock">
@@ -1200,7 +1200,7 @@ throw e;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>LEAF uses <code>has_current_error</code> to determine if an error is currently being propagated up the call stack. By default, <code>has_current_error</code> returns <code>std::unhandled_exception()</code>. Use <code>set_has_current_error</code> to hook up a different function, if needed</p>
+<p>LEAF uses <code>has_current_error</code> to determine if an error is currently being propagated up the call stack. By default, <code>has_current_error</code> returns <code>std::unhandled_exception()</code>. Use <code>set_has_current_error</code> to hook up a different implementation, if needed</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1217,7 +1217,7 @@ throw e;</code></pre>
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_common_error_info_types">Common error info types</h3>
+<h3 id="common">Common error info types</h3>
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock">
@@ -1297,7 +1297,7 @@ If using <code><a href="#preload">preload</a></code>, please pass <code>&amp;get
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_diagnostic_information"><code>diagnostic_information</code></h3>
+<h3 id="diagnostic_information"><code>diagnostic_information</code></h3>
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock">
@@ -1344,7 +1344,7 @@ If using <code><a href="#preload">preload</a></code>, please pass <code>&amp;get
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_current_exception_diagnostic_information"><code>current_exception_diagnostic_information</code></h3>
+<h3 id="current_exception_diagnostic_information"><code>current_exception_diagnostic_information</code></h3>
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock">
@@ -1386,7 +1386,7 @@ If using <code><a href="#preload">preload</a></code>, please pass <code>&amp;get
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_capture"><code>capture</code></h3>
+<h3 id="capture"><code>capture</code></h3>
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock">
@@ -1429,7 +1429,7 @@ To transport error info objects between threads, it is usually preferable to use
 </div>
 <hr>
 <div class="sect3">
-<h4 id="_constructors">Constructors</h4>
+<h4 id="capture_ctors">Constructors</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
@@ -1460,7 +1460,7 @@ To transport error info objects between threads, it is usually preferable to use
 <hr>
 </div>
 <div class="sect3">
-<h4 id="_release"><code>release</code></h4>
+<h4 id="capture::release"><code>release</code></h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
@@ -1477,7 +1477,7 @@ To transport error info objects between threads, it is usually preferable to use
 </div>
 </div>
 <div class="sect2">
-<h3 id="_transport"><code>transport</code></h3>
+<h3 id="transport"><code>transport</code></h3>
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock">
@@ -1532,7 +1532,7 @@ Click <a href="https://github.com/zajo/leaf/blob/master/example/transport_betwee
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_get"><code>get</code></h3>
+<h3 id="get"><code>get</code></h3>
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock">
@@ -1584,7 +1584,7 @@ Click <a href="https://github.com/zajo/leaf/blob/master/example/transport_betwee
 </div>
 </div>
 <div class="sect1">
-<h2 id="_programming_techniques">Programming techniques</h2>
+<h2 id="techniques">Programming techniques</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_capturing_errno_with_preload">Capturing <code>errno</code> with <code>preload</code></h3>
@@ -1634,6 +1634,15 @@ The header <code>boost/leaf/common.hpp</code> defines a function called <code>ge
 </div>
 </div>
 </div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. Except when transporting error info between threads, see <a href="#capture"><code>capture</code></a>.
+</div>
+<div class="footnote" id="_footnotedef_2">
+<a href="#_footnoteref_2">2</a>. This is the only LEAF function that throws.
 </div>
 </div>
 <div id="footer">
