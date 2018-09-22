@@ -486,6 +486,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_capturing_errno_with_preload">Capturing <code>errno</code> with <code>preload</code></a></li>
 </ul>
 </li>
+<li><a href="#_design_rationale">Design rationale</a></li>
 </ul>
 </div>
 </div>
@@ -544,24 +545,24 @@ LEAF is not part of Boost. Please post questions and feedback on the Boost Devel
 <h2 id="tutorial">Tutorial</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Let&#8217;s consider a function that reads data from a file into a buffer and returns an <code>error</code> enum to report errors:</p>
+<p>As an example, here is a function that reads data from a file into a buffer, returns an <code>error</code> enum to report errors, and uses LEAF to provide additional error info:</p>
 </div>
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">error file_read( FILE &amp; f, void * buf, int size ) {
-	int n = fread(buf,1,size,&amp;f);
+  int n = fread(buf,1,size,&amp;f);
 
-	if( ferror(&amp;f) ) { <i class="conum" data-value="1"></i><b>(1)</b>
-		leaf::put( ei_errno { errno } );
-		return file_read_error;
-	}
+  if( ferror(&amp;f) ) { <i class="conum" data-value="1"></i><b>(1)</b>
+    leaf::put( ei_errno { errno } );
+    return file_read_error;
+  }
 
-	if( n!=size ) <i class="conum" data-value="2"></i><b>(2)</b>
-		return file_read_error;
+  if( n!=size ) <i class="conum" data-value="2"></i><b>(2)</b>
+    return file_read_error;
 
-	return ok;
+  return ok;
 }</code></pre>
 </div>
 </div>
@@ -616,27 +617,27 @@ Error info types must define a public data member called <code>value</code> and 
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">error print_file( char const * file_name ) {
-	std::shared_ptr&lt;FILE&gt; f;
-	if( error err = file_open(file_name,f) ) <i class="conum" data-value="1"></i><b>(1)</b>
-		return err;
+  std::shared_ptr&lt;FILE&gt; f;
+  if( error err = file_open(file_name,f) ) <i class="conum" data-value="1"></i><b>(1)</b>
+    return err;
 
-	auto put = leaf::preload( ei_file_name {file_name } ); <i class="conum" data-value="2"></i><b>(2)</b>
+  auto put = leaf::preload( ei_file_name {file_name } ); <i class="conum" data-value="2"></i><b>(2)</b>
 
-	int s;
-	if( error err = file_size(*f,s) )
-		return err;
+  int s;
+  if( error err = file_size(*f,s) )
+    return err;
 
-	std::string buffer( 1+s, '\0' );
-	if( error err = file_read(*f,&amp;buffer[0],buffer.size()-1) )
-		return err;
+  std::string buffer( 1+s, '\0' );
+  if( error err = file_read(*f,&amp;buffer[0],buffer.size()-1) )
+    return err;
 
-	std::cout &lt;&lt; buffer;
-	std::cout.flush();
-	if( std::cout.fail() )
-		return cout_error;
+  std::cout &lt;&lt; buffer;
+  std::cout.flush();
+  if( std::cout.fail() )
+    return cout_error;
 
-	put.cancel();
-	return ok;
+  put.cancel();
+  return ok;
 }</code></pre>
 </div>
 </div>
@@ -648,7 +649,7 @@ Error info types must define a public data member called <code>value</code> and 
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Next, we call the convenience function <code><a href="#preload">preload</a></code>, moving an <code>ei_file_name</code> error info object into the temporary object <code>put</code>. Unless canceled, when this object is destroyed, all error info objects passed to <code>preload</code> will be forwarded by rvalue reference to <code><a href="#put">put</a></code> automatically. This way we can rest assured that the file name will be available with any failure reported by the several <code>return</code> statements in <code>print_file</code>.</td>
+<td>Next, we call the convenience function <code><a href="#preload">preload</a></code>, moving an <code>ei_file_name</code> error info object into the temporary object <code>put</code>. Unless canceled, when this object is destroyed, all error info objects passed to <code>preload</code> will be forwarded by rvalue reference to <code><a href="#put">put</a></code> automatically. This way we can rest assured that the file name will be available with any failure reported by a <code>return</code> statement in <code>print_file</code>.</td>
 </tr>
 </table>
 </div>
@@ -673,7 +674,8 @@ Error info types must define a public data member called <code>value</code> and 
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The <code>ei_file_name</code> type, similarly to <code>ei_errno</code>, is a simple struct containing a string <code>value</code>, e.g. <code>struct ei_file_name { std::string value; };</code>
+The <code>ei_file_name</code> type, similarly to <code>ei_errno</code>, is a simple struct containing a string <code>value</code>, e.g.:<br>
+<code>struct ei_file_name { std::string value; };</code>
 </td>
 </tr>
 </table>
@@ -688,7 +690,7 @@ The <code>ei_file_name</code> type, similarly to <code>ei_errno</code>, is a sim
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-If failures are reported by throwing exceptions, it is not necessary to call <code><a href="#cancel">cancel</a></code>; LEAF will use <code>std::unhandled_exception</code> to determine if a failure is being reported.
+If failures are reported by throwing exceptions, it is not necessary to call <code><a href="#cancel">cancel</a></code>; to determine if a failure is being reported, LEAF calls <code><a href="#has_current_error">has_current_error</a></code>, which by default uses <code>std::unhandled_exception</code>.
 </td>
 </tr>
 </table>
@@ -701,47 +703,47 @@ If failures are reported by throwing exceptions, it is not necessary to call <co
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">int main( int argc, char const * argv[ ] ) {
-	char const * fn;
-	if( error err=parse_command_line(argc,argv,fn) ) { <i class="conum" data-value="1"></i><b>(1)</b>
-		std::cout &lt;&lt; "Bad command line argument" &lt;&lt; std::endl;
-		return 1;
-	}
+  char const * fn;
+  if( error err=parse_command_line(argc,argv,fn) ) { <i class="conum" data-value="1"></i><b>(1)</b>
+    std::cout &lt;&lt; "Bad command line argument" &lt;&lt; std::endl;
+    return 1;
+  }
 
-	leaf::expect&lt;ei_file_name,ei_errno&gt; info; <i class="conum" data-value="2"></i><b>(2)</b>
+  leaf::expect&lt;ei_file_name,ei_errno&gt; info; <i class="conum" data-value="2"></i><b>(2)</b>
 
-	switch( error err=print_file(fn) ) {
-		case ok:
-			return 0;
+  switch( error err=print_file(fn) ) {
+    case ok:
+      return 0;
 
-		case file_open_error: <i class="conum" data-value="3"></i><b>(3)</b>
-			unwrap( info.match&lt;ei_file_name,ei_errno&gt;( [ ] ( std::string const &amp; fn, int errn ) {
-				if( errn==ENOENT )
-					std::cerr &lt;&lt; "File not found: " &lt;&lt; fn &lt;&lt; std::endl;
-				else
-					std::cerr &lt;&lt; "Failed to open " &lt;&lt; fn &lt;&lt; ", errno=" &lt;&lt; errn &lt;&lt; std::endl;
-			} ) );
-			return 2;
+    case file_open_error: <i class="conum" data-value="3"></i><b>(3)</b>
+      unwrap( info.match&lt;ei_file_name,ei_errno&gt;( [ ] ( std::string const &amp; fn, int errn ) {
+        if( errn==ENOENT )
+          std::cerr &lt;&lt; "File not found: " &lt;&lt; fn &lt;&lt; std::endl;
+        else
+          std::cerr &lt;&lt; "Failed to open " &lt;&lt; fn &lt;&lt; ", errno=" &lt;&lt; errn &lt;&lt; std::endl;
+      } ) );
+      return 2;
 
-		case file_size_error:
-		case file_read_error: <i class="conum" data-value="4"></i><b>(4)</b>
-			unwrap(
-				info.match&lt;ei_file_name,ei_errno&gt;( [ ] ( std::string const &amp; fn, int errn ) {
-					std::cerr &lt;&lt; "Failed to access " &lt;&lt; fn &lt;&lt; ", errno=" &lt;&lt; errn &lt;&lt; std::endl;
-				} ),
-				info.match&lt;ei_errno&gt;( [ ] ( int errn ) {
-					std::cerr &lt;&lt; "I/O error, errno=" &lt;&lt; errn &lt;&lt; std::endl;
-				} ),
-				info.match&lt;&gt;( [ ] {
-					std::cerr &lt;&lt; "I/O error" &lt;&lt; std::endl;
-				} ) );
-			return 3;
+    case file_size_error:
+    case file_read_error: <i class="conum" data-value="4"></i><b>(4)</b>
+      unwrap(
+        info.match&lt;ei_file_name,ei_errno&gt;( [ ] ( std::string const &amp; fn, int errn ) {
+          std::cerr &lt;&lt; "Failed to access " &lt;&lt; fn &lt;&lt; ", errno=" &lt;&lt; errn &lt;&lt; std::endl;
+        } ),
+        info.match&lt;ei_errno&gt;( [ ] ( int errn ) {
+          std::cerr &lt;&lt; "I/O error, errno=" &lt;&lt; errn &lt;&lt; std::endl;
+        } ),
+        info.match&lt;&gt;( [ ] {
+          std::cerr &lt;&lt; "I/O error" &lt;&lt; std::endl;
+        } ) );
+      return 3;
 
-		default: <i class="conum" data-value="5"></i><b>(5)</b>
-			std::cerr &lt;&lt;
-				"Unknown error code " &lt;&lt; err &lt;&lt; ", cryptic information follows." &lt;&lt; std::endl &lt;&lt;
-				leaf::diagnostic_information();
-			return 4;
-	}
+    default: <i class="conum" data-value="5"></i><b>(5)</b>
+      std::cerr &lt;&lt;
+        "Unknown error code " &lt;&lt; err &lt;&lt; ", cryptic information follows." &lt;&lt; std::endl &lt;&lt;
+        leaf::diagnostic_information();
+      return 4;
+  }
 }</code></pre>
 </div>
 </div>
@@ -797,24 +799,24 @@ The complete program from this tutorial is available <a href="https://github.com
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	class available {
+  class available {
 
-		available( available const &amp; ) = delete;
-		available &amp; operatar=( available const &amp; ) = delete;
+    available( available const &amp; ) = delete;
+    available &amp; operatar=( available const &amp; ) = delete;
 
-public:
+  public:
 
-		available() noexcept;
-		~available() noexcept
+    available() noexcept;
+    ~available() noexcept
 
-		void set_to_propagate() noexcept;
+    void set_to_propagate() noexcept;
 
-		[[noreturn]] void rethrow_with_current_info();
+    [[noreturn]] void rethrow_with_current_info();
 
-		template &lt;class... ErrorInfo,class F&gt;
-		&lt;&lt;unspecified_type&gt;&gt; match( F &amp;&amp; f ) noexcept;
+    template &lt;class... ErrorInfo,class F&gt;
+    &lt;&lt;unspecified_type&gt;&gt; match( F &amp;&amp; f ) noexcept;
 
-	};
+  };
 
 } }</code></pre>
 </div>
@@ -843,7 +845,7 @@ Typically the functionality provided by class <code>available</code> is accessed
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	available::available() noexcept;
+  available::available() noexcept;
 
 } }</code></pre>
 </div>
@@ -864,7 +866,7 @@ Typically the functionality provided by class <code>available</code> is accessed
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	available::~available() noexcept;
+  available::~available() noexcept;
 
 } }</code></pre>
 </div>
@@ -885,7 +887,7 @@ Typically the functionality provided by class <code>available</code> is accessed
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	void available::set_to_propagate() noexcept;
+  void available::set_to_propagate() noexcept;
 
 } }</code></pre>
 </div>
@@ -906,7 +908,7 @@ Typically the functionality provided by class <code>available</code> is accessed
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	void available::rethrow_with_current_info();
+  void available::rethrow_with_current_info();
 
 } }</code></pre>
 </div>
@@ -933,8 +935,8 @@ throw;</code></pre>
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	template &lt;class... ErrorInfo,class F&gt;
-	&lt;&lt;unspecified_type&gt;&gt; available::match( F &amp;&amp; f ) noexcept;
+  template &lt;class... ErrorInfo,class F&gt;
+  &lt;&lt;unspecified_type&gt;&gt; available::match( F &amp;&amp; f ) noexcept;
 
 } }</code></pre>
 </div>
@@ -963,18 +965,18 @@ throw;</code></pre>
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	template &lt;class... ErrorInfo&gt;
-	class expect: public availablej {
+  template &lt;class... ErrorInfo&gt;
+  class expect: public availablej {
 
-		expect( expect const &amp; ) = delete;
-		expect &amp; operator=( expect const &amp; ) = delete;
+    expect( expect const &amp; ) = delete;
+    expect &amp; operator=( expect const &amp; ) = delete;
 
-	public:
+  public:
 
-		expect() noexcept;
-		~expect() noexcept;
+    expect() noexcept;
+    ~expect() noexcept;
 
-	};
+  };
 
 } }</code></pre>
 </div>
@@ -994,7 +996,7 @@ throw;</code></pre>
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	expect&lt;class ErrorInfo...&gt;::expect() noexcept;
+  expect&lt;class ErrorInfo...&gt;::expect() noexcept;
 
 } }</code></pre>
 </div>
@@ -1024,7 +1026,7 @@ throw;</code></pre>
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	expect&lt;class ErrorInfo...&gt;::~expect*( noexcept;
+  expect&lt;class ErrorInfo...&gt;::~expect*( noexcept;
 
 } }</code></pre>
 </div>
@@ -1058,10 +1060,10 @@ throw;</code></pre>
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	struct mismatch_error: std::exception { };
+  struct mismatch_error: std::exception { };
 
-	template &lt;class... Match&gt;
-	void unwrap( Match &amp;&amp; ... m );
+  template &lt;class... Match&gt;
+  void unwrap( Match &amp;&amp; ... m );
 
 } }</code></pre>
 </div>
@@ -1091,8 +1093,8 @@ throw;</code></pre>
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	template &lt;class... ErrorInfo&gt;
-	void put( ErrorInfo &amp;&amp; ... info ) noexcept;
+  template &lt;class... ErrorInfo&gt;
+  void put( ErrorInfo &amp;&amp; ... info ) noexcept;
 
 } }</code></pre>
 </div>
@@ -1103,7 +1105,7 @@ throw;</code></pre>
 <dl>
 <dt class="hdlist1">Effects: </dt>
 <dd>
-<p>Moves each specified <code>info</code> object of type that is expected in the calling thread, into the storage provided by <code><a href="#expect">expect</a></code>. All such <code>info</code> objects can be accessed by objects of class <code><a href="#available">available</a></code> or of an instance of the <code>expect</code> template.</p>
+<p>Moves each specified <code>info</code> object of type that is expected in the calling thread, into the storage provided by <code><a href="#expect">expect</a></code>. All such <code>info</code> objects can be accessed by objects of;`<a href="#available">available</a>` or of an instance of the <code>expect</code> template.</p>
 <div class="paragraph">
 <p>All other <code>info</code> objects are discarded.</p>
 </div>
@@ -1121,8 +1123,8 @@ throw;</code></pre>
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	template &lt;class... ErrorInfo,class Exception&gt;
-	[[noreturn]] void throw_with_info( Exception const &amp; e, ErrorInfo &amp;&amp; ... info );
+  template &lt;class... ErrorInfo,class Exception&gt;
+  [[noreturn]] void throw_with_info( Exception const &amp; e, ErrorInfo &amp;&amp; ... info );
 
 } }</code></pre>
 </div>
@@ -1154,8 +1156,8 @@ throw e;</code></pre>
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	template &lt;class... ErrorInfo&gt;
-	&lt;&lt;unspecified_type&gt;&gt; preload( ErrorInfo &amp;&amp; ... info );
+  template &lt;class... ErrorInfo&gt;
+  &lt;&lt;unspecified_type&gt;&gt; preload( ErrorInfo &amp;&amp; ... info );
 
 } }</code></pre>
 </div>
@@ -1191,8 +1193,8 @@ throw e;</code></pre>
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	bool has_current_error() noexcept;
-	void set_has_current_error( bool (*f)() ) noexcept;
+  bool has_current_error() noexcept;
+  void set_has_current_error( bool (*f)() ) noexcept;
 
 } }</code></pre>
 </div>
@@ -1225,17 +1227,17 @@ throw e;</code></pre>
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	struct ei_api_function { char const * value; };
-	struct ei_file_name { std::string value; };
+  struct ei_api_function { char const * value; };
+  struct ei_file_name { std::string value; };
 
-	struct ei_errno {
-		int value;
-		friend std::ostream &amp; operator&lt;&lt;( std::ostream &amp; os, ei_errno const &amp; err );
-	};
+  struct ei_errno {
+    int value;
+    friend std::ostream &amp; operator&lt;&lt;( std::ostream &amp; os, ei_errno const &amp; err );
+  };
 
-	ei_errno get_errno() noexcept {
-		return ei_errno { return errno };
-	}
+  ei_errno get_errno() noexcept {
+    return ei_errno { return errno };
+  }
 
 } }</code></pre>
 </div>
@@ -1305,17 +1307,17 @@ If using <code><a href="#preload">preload</a></code>, please pass <code>&amp;get
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	class diagnostic_information {
+  class diagnostic_information {
 
-		diagnostic_information( diagnostic_information const &amp; ) = delete;
-		diagnostic_information &amp; operator=( diagnostic_information const &amp; ) = delete;
+    diagnostic_information( diagnostic_information const &amp; ) = delete;
+    diagnostic_information &amp; operator=( diagnostic_information const &amp; ) = delete;
 
-	public:
+  public:
 
-		diagnostic_information() noexcept();
+    diagnostic_information() noexcept();
 
-		friend std::ostream &amp; operator&lt;&lt;( std::ostream &amp;, diagnostic_information const );
-	};
+    friend std::ostream &amp; operator&lt;&lt;( std::ostream &amp;, diagnostic_information const );
+  };
 
 } }</code></pre>
 </div>
@@ -1352,17 +1354,17 @@ If using <code><a href="#preload">preload</a></code>, please pass <code>&amp;get
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	class current_exception_diagnostic_information {
+  class current_exception_diagnostic_information {
 
-		current_exception_diagnostic_information( current_exception_diagnostic_information const &amp; ) = delete;
-		current_exception_diagnostic_information &amp; operator=( current_exception_diagnostic_information const &amp; ) = delete;
+    current_exception_diagnostic_information( current_exception_diagnostic_information const &amp; ) = delete;
+    current_exception_diagnostic_information &amp; operator=( current_exception_diagnostic_information const &amp; ) = delete;
 
-	public:
+  public:
 
-		current_exception_diagnostic_information() noexcept();
+    current_exception_diagnostic_information() noexcept();
 
-		friend std::ostream &amp; operator&lt;&lt;( std::ostream &amp;, current_exception_diagnostic_information const );
-	};
+    friend std::ostream &amp; operator&lt;&lt;( std::ostream &amp;, current_exception_diagnostic_information const );
+  };
 
 } }</code></pre>
 </div>
@@ -1378,8 +1380,8 @@ If using <code><a href="#preload">preload</a></code>, please pass <code>&amp;get
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">catch(...) {
-	std::cerr &lt;&lt; Unhandled exception! &lt;&lt; std::endl &lt;&lt;
-		leaf::current_exception_diagnostic_information();
+  std::cerr &lt;&lt; Unhandled exception! &lt;&lt; std::endl &lt;&lt;
+    leaf::current_exception_diagnostic_information();
 }</code></pre>
 </div>
 </div>
@@ -1394,18 +1396,18 @@ If using <code><a href="#preload">preload</a></code>, please pass <code>&amp;get
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	class capture {
+  class capture {
 
-		capture( capture const &amp; ) = delete;
-		capture &amp; operator=( capture const &amp; ) = delete;
+    capture( capture const &amp; ) = delete;
+    capture &amp; operator=( capture const &amp; ) = delete;
 
-	public:
+  public:
 
-		capture() noexcept;
-		capture( capture &amp;&amp; ) noexcept;
-		release() noexcept;
+    capture() noexcept;
+    capture( capture &amp;&amp; ) noexcept;
+    release() noexcept;
 
-	};
+  };
 
 } }</code></pre>
 </div>
@@ -1434,8 +1436,8 @@ To transport error info objects between threads, it is usually preferable to use
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	capture::capture() noexcept;
-	capture::capture( capture &amp;&amp; ) noexcept;
+  capture::capture() noexcept;
+  capture::capture( capture &amp;&amp; ) noexcept;
 
 } }</code></pre>
 </div>
@@ -1465,7 +1467,7 @@ To transport error info objects between threads, it is usually preferable to use
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	void capture::release() noexcept;
+  void capture::release() noexcept;
 
 } }</code></pre>
 </div>
@@ -1485,8 +1487,8 @@ To transport error info objects between threads, it is usually preferable to use
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	template &lt;class... ErrorInfo,class F&gt;
-	&lt;&lt;unspecified&gt;&gt; transport( F f )
+  template &lt;class... ErrorInfo,class F&gt;
+  &lt;&lt;unspecified&gt;&gt; transport( F f )
 
 } }</code></pre>
 </div>
@@ -1540,8 +1542,8 @@ Click <a href="https://github.com/zajo/leaf/blob/master/example/transport_betwee
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-	template &lt;class Future&gt;
-	decltype(std::declval&lt;Future&gt;().get()) get( Future &amp; f );
+  template &lt;class Future&gt;
+  decltype(std::declval&lt;Future&gt;().get()) get( Future &amp; f );
 
 } }</code></pre>
 </div>
@@ -1597,10 +1599,10 @@ Click <a href="https://github.com/zajo/leaf/blob/master/example/transport_betwee
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">error read_file( FILE &amp; f ) {
-	auto put = leaf::preload( ei_errno { errno } ); //incorrect
-	....
-	if( ferror(&amp;f) )
-		return my_error;
+  auto put = leaf::preload( ei_errno { errno } ); //incorrect
+  ....
+  if( ferror(&amp;f) )
+    return my_error;
 }</code></pre>
 </div>
 </div>
@@ -1610,10 +1612,10 @@ Click <a href="https://github.com/zajo/leaf/blob/master/example/transport_betwee
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">error read_file( FILE &amp; f ) {
-	auto put = leaf::preload( [ ] { return ei_errno { errno }; );
-	....
-	if( ferror(&amp;f) )
-		return my_error;
+  auto put = leaf::preload( [ ] { return ei_errno { errno }; );
+  ....
+  if( ferror(&amp;f) )
+    return my_error;
 }</code></pre>
 </div>
 </div>
@@ -1632,6 +1634,55 @@ The header <code>boost/leaf/common.hpp</code> defines a function called <code>ge
 </tr>
 </table>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_design_rationale">Design rationale</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The first observation driving the LEAF design is that unless a specific type of info (e.g. a file name) is used at the time an error is being handled, there is no need for it to be reported. On the other hand, if the error handling context can use or requires some info, it would not be burdened by having to explicitly declare that need. The result is <code><a href="#expect">expect</a></code>/<code><a href="#put">put</a></code>.</p>
+</div>
+<div class="paragraph">
+<p>The second observation is that ideally, like any other communication mechanism, it makes sense to formally define an interface for the error info that can be used by the error handling code. In terms of C++ exception handling, it would be nice to be able to say something like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c++" data-lang="c++">try {
+
+  process_file();
+
+} catch( file_read_error&lt;ei_file_name,ei_errno&gt; &amp; e ) {
+
+  std::cerr &lt;&lt;
+    "Could not read " &lt;&lt; e.get&lt;ei_file_name&gt;() &lt;&lt;
+    ", errno=" &lt;&lt; e.get&lt;ei_errno&gt;() &lt;&lt; std::endl;
+
+} catch( file_read_error&lt;ei_errno&gt; &amp; e ) {
+
+  std::cerr &lt;&lt;
+    "File read error, errno=" &lt;&lt; e.get&lt;ei_errno&gt;() &lt;&lt; std::endl;
+
+} catch( file_read_error&lt;&gt; &amp; e ) {
+
+  std::cerr &lt;&lt; "File read error!" &lt;&lt; std::endl;
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That is to say, it is desirable to be able to dispatch error handling based not only on the kind of failure being handled, but also based on the kind of error info available. Unfortunately this syntax is not possible and, even if it were, not all programs use exceptions to handle errors. The result is <code><a href="#match">match</a></code>/<code><a href="#unwrap">unwrap</a></code>.</p>
+</div>
+<div class="paragraph">
+<p>Last but not least, there is certain redundancy and repetition in error-neutral contexts that simply forward errors to their caller. What is the point in receiving some error info from a lower level function (e.g. a file name), when at this point we can&#8217;t do anything with it, except to forward it to our caller, until we reach a scope that can actually make use of the data? Even with move semantics, why bother move such data one level at a time, from one stack location to another immediately above, only to move it again when we <code>return</code> again?</p>
+</div>
+<div class="paragraph">
+<p>It would be more optimal for such information to be passed from a context where it is available, <em>directly to the exact stack location where it would be accessed by the error handling code</em>. The result is that <code><a href="#expect">expect</a></code>/<code><a href="#put">put</a></code>/<code><a href="#match">match</a></code> use <code>thread_local</code> storage.<br>
+<br>
+<br></p>
+</div>
+<div class="paragraph">
+<p><span class="small overline right">Copyright (c) Emil Dotchevski, 2018</span></p>
 </div>
 </div>
 </div>
