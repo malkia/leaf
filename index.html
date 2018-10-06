@@ -468,7 +468,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#throw_with_info"><code>throw_with_info</code></a></li>
 <li><a href="#preload"><code>preload</code></a></li>
 <li><a href="#has_current_error"><code>has_current_error</code></a></li>
-<li><a href="#common">Common Error Info Types</a></li>
+<li><a href="#common">Common Error Information Types</a></li>
 <li><a href="#diagnostic_information"><code>diagnostic_information</code></a></li>
 <li><a href="#current_exception_diagnostic_information"><code>current_exception_diagnostic_information</code></a></li>
 <li><a href="#capture"><code>capture</code></a>
@@ -484,7 +484,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#techniques">Programming Techniques</a>
 <ul class="sectlevel2">
 <li><a href="#_capturing_errno_with_preload">Capturing <code>errno</code> with <code>preload</code></a></li>
-<li><a href="#_transporting_error_info_between_threads">Transporting Error Info between Threads</a></li>
+<li><a href="#_transporting_error_information_between_threads">Transporting Error Information between Threads</a></li>
 </ul>
 </li>
 <li><a href="#_design_rationale">Design Rationale</a></li>
@@ -1221,7 +1221,7 @@ throw e;</code></pre>
 <hr>
 </div>
 <div class="sect2">
-<h3 id="common">Common Error Info Types</h3>
+<h3 id="common">Common Error Information Types</h3>
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock">
@@ -1638,7 +1638,7 @@ The header <code>boost/leaf/common.hpp</code> defines a function called <code>ge
 </div>
 </div>
 <div class="sect2">
-<h3 id="_transporting_error_info_between_threads">Transporting Error Info between Threads</h3>
+<h3 id="_transporting_error_information_between_threads">Transporting Error Information between Threads</h3>
 <div class="paragraph">
 <p>The memory provided by <code><a href="#expect">expect</a></code> for <code><a href="#put">put</a></code> to store error info objects uses thread-local storage. This is ideal when errors are handled before the reporting thread ends, but sometimes error handling must happen in another thread, at the time a worker thread is joined.</p>
 </div>
