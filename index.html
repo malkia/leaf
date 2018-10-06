@@ -691,7 +691,7 @@ The <code>ei_file_name</code> type, similarly to <code>ei_errno</code>, is a sim
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-If failures are reported by throwing exceptions, it is not necessary to call <code><a href="#cancel">cancel</a></code>; to determine if a failure is being reported, LEAF calls <code><a href="#has_current_error">has_current_error</a></code>, which by default uses <code>std::unhandled_exception</code>.
+If failures are reported by throwing exceptions, it is not necessary to call <code><a href="#cancel">cancel</a></code>; to determine if a failure is being reported, LEAF calls <code><a href="#has_current_error">has_current_error</a></code>, which by default uses <code>std::uncaught_exception</code>.
 </td>
 </tr>
 </table>
@@ -1204,7 +1204,7 @@ throw e;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>LEAF uses <code>has_current_error</code> to determine if an error is currently being propagated up the call stack. By default, <code>has_current_error</code> returns <code>std::unhandled_exception()</code>. Use <code>set_has_current_error</code> to hook up a different implementation, if needed.</p>
+<p>LEAF uses <code>has_current_error</code> to determine if an error is currently being propagated up the call stack. By default, <code>has_current_error</code> returns <code>std::uncaught_exception()</code>. Use <code>set_has_current_error</code> to hook up a different implementation, if needed.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1374,7 +1374,7 @@ If using <code><a href="#preload">preload</a></code>, pass <code>&amp;get_errno<
 </div>
 </div>
 <div class="paragraph">
-<p>The only operation supported by class <code>current_exception_diagnostic_information</code> is <code>operator&lt;&lt;</code> which, when used with a <code>std::ostream</code> outputs a developer-friendly information about the current unhandled exception, followed by the output of <code><a href="#diagnostic_information">diagnostic_information</a></code>.</p>
+<p>The only operation supported by class <code>current_exception_diagnostic_information</code> is <code>operator&lt;&lt;</code> which, when used with a <code>std::ostream</code> outputs a developer-friendly information about the current uncaught exception, followed by the output of <code><a href="#diagnostic_information">diagnostic_information</a></code>.</p>
 </div>
 <div class="paragraph">
 <p>Typical use for <code>current_exception_diagnostic_information</code> is:</p>
