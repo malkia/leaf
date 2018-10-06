@@ -561,7 +561,7 @@ LEAF is not part of Boost. Please post questions and feedback on the Boost Devel
   }
 
   if( n!=size ) <i class="conum" data-value="2"></i><b>(2)</b>
-    return file_read_error;
+    return file_eof_error;
 
   return ok;
 }</code></pre>
@@ -585,7 +585,7 @@ LEAF is not part of Boost. Please post questions and feedback on the Boost Devel
 <p>In the first case, there is a relevant <code>errno</code> code, so the function uses <code><a href="#put">put</a></code> to make it available later when the error is handled.</p>
 </div>
 <div class="paragraph">
-<p>The second condition, while treated as a failure by our <code>file_read</code> function, is not a failure as far as <code>fread</code> is concerned, and therefore <code>errno</code> is not available. So in this case we simply return <code>file_read_error</code>.</p>
+<p>The second condition, while treated as a failure by our <code>file_read</code> function, is not a failure as far as <code>fread</code> is concerned, and therefore <code>errno</code> is not available. So in this case we simply return <code>file_eof_error</code>.</p>
 </div>
 <div class="paragraph">
 <p>The <code>ei_errno</code> struct is a simple error info type, defined as follows:</p>
@@ -726,7 +726,8 @@ If failures are reported by throwing exceptions, it is not necessary to call <co
       return 2;
 
     case file_size_error:
-    case file_read_error: <i class="conum" data-value="4"></i><b>(4)</b>
+    case file_read_error:
+    case file_eof_error: <i class="conum" data-value="4"></i><b>(4)</b>
       unwrap(
         info.match&lt;ei_file_name,ei_errno&gt;( [ ] ( std::string const &amp; fn, int errn ) {
           std::cerr &lt;&lt; "Failed to access " &lt;&lt; fn &lt;&lt; ", errno=" &lt;&lt; errn &lt;&lt; std::endl;
@@ -764,7 +765,7 @@ If failures are reported by throwing exceptions, it is not necessary to call <co
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Here we provide identical handling for either <code>file_size_error</code> or <code>file_read_error</code>, by first trying to <code><a href="#match">match</a></code> both <code>ei_file_name</code> and <code>ei_errno</code>; but if that fails, we&#8217;re prepared to deal with an error condition where only <code>ei_errno</code> is available. If neither is available, the final <code><a href="#match">match</a></code> will print a generic error message, thus guaranteeing that this call to <code>unwrap</code> will never throw.</td>
+<td>Here we provide identical handling for either <code>file_size_error</code>, <code>file_read_error`and `file_eof_error</code>, by first trying to <code><a href="#match">match</a></code> both <code>ei_file_name</code> and <code>ei_errno</code>; but if that fails, we&#8217;re prepared to deal with an error condition where only <code>ei_errno</code> is available. If neither is available, the final <code><a href="#match">match</a></code> will print a generic error message, thus guaranteeing that this call to <code>unwrap</code> will never throw.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
