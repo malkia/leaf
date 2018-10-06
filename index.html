@@ -804,7 +804,7 @@ The complete program from this tutorial is available <a href="https://github.com
   class available {
 
     available( available const &amp; ) = delete;
-    available &amp; operatar=( available const &amp; ) = delete;
+    available &amp; operator=( available const &amp; ) = delete;
 
   public:
 
@@ -968,7 +968,7 @@ throw;</code></pre>
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   template &lt;class... ErrorInfo&gt;
-  class expect: public availablej {
+  class expect: public available {
 
     expect( expect const &amp; ) = delete;
     expect &amp; operator=( expect const &amp; ) = delete;
@@ -1028,7 +1028,7 @@ throw;</code></pre>
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-  expect&lt;class ErrorInfo...&gt;::~expect*( noexcept;
+  expect&lt;class ErrorInfo...&gt;::~expect( noexcept;
 
 } }</code></pre>
 </div>
