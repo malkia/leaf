@@ -457,7 +457,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#available::match"><code>match</code></a></li>
 </ul>
 </li>
-<li><a href="#expect"><code>expect&lt;&gt;</code></a>
+<li><a href="#expect"><code>expect</code></a>
 <ul class="sectlevel3">
 <li><a href="#expect_ctor">Constructor</a></li>
 <li><a href="#expect_dtor">Destructor</a></li>
@@ -484,6 +484,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#techniques">Programming techniques</a>
 <ul class="sectlevel2">
 <li><a href="#_capturing_errno_with_preload">Capturing <code>errno</code> with <code>preload</code></a></li>
+<li><a href="#_transporting_error_info_between_threads">Transporting error info between threads</a></li>
 </ul>
 </li>
 <li><a href="#_design_rationale">Design rationale</a></li>
@@ -545,7 +546,7 @@ LEAF is not part of Boost. Please post questions and feedback on the Boost Devel
 <h2 id="tutorial">Tutorial</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>As an example, here is a function that reads data from a file into a buffer, returns an <code>error</code> enum to report errors, and uses LEAF to provide additional error info:</p>
+<p>As an example, here is a function that reads data from a file into a buffer, returns an <code>error</code> enum to indicate success or to report errors, and uses LEAF to provide additional error info:</p>
 </div>
 <div class="exampleblock">
 <div class="content">
@@ -595,7 +596,7 @@ LEAF is not part of Boost. Please post questions and feedback on the Boost Devel
 </div>
 </div>
 <div class="paragraph">
-<p>The user can define any number of such types and, when an error is detected, pass them to <code><a href="#put">put</a></code> to make relevant information available to error handling contexts, if needed.</p>
+<p>The user can define any number of similar types and, when an error is detected, pass them to <code><a href="#put">put</a></code> to make relevant information available to error handling contexts, if needed.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -945,7 +946,7 @@ throw;</code></pre>
 <dl>
 <dt class="hdlist1">Returns: </dt>
 <dd>
-<p>An object of unspecified type designed to be passed directly to <code><a href="#unwrap">unwrap</a></code>, which takes any number of such objects, and proceeds to inspect them in order, until it finds a match where error info objects are currently available in the calling thread (see <code><a href="#put">put</a></code>) for all specified <code>ErrorInfo&#8230;&#8203;</code> types. If found, <code>unwrap</code> invokes <code>f</code>, passing the <code>.value</code> of each available error info object.</p>
+<p>An object of unspecified type designed to be passed directly to <code><a href="#unwrap">unwrap</a></code>, which takes any number of such objects, and proceeds to inspect them in order, until it finds a match where error info objects are currently available in the calling thread (see <code><a href="#put">put</a></code>) for all specified <code>ErrorInfo&#8230;&#8203;</code> types. If matched, <code>unwrap</code> invokes <code>f</code>, passing the <code>.value</code> of each available error info object.</p>
 </dd>
 <dt class="hdlist1">Throws: </dt>
 <dd>
@@ -957,7 +958,7 @@ throw;</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="expect"><code>expect&lt;&gt;</code></h3>
+<h3 id="expect"><code>expect</code></h3>
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock">
@@ -987,7 +988,7 @@ throw;</code></pre>
 <p>The <code>expect</code> class template is used to communicate to LEAF that error info objects of the specified <code>ErrorInfo&#8230;&#8203;</code> types are expected in the current scope, to help handle failures.</p>
 </div>
 <div class="paragraph">
-<p><code>expect</code> objects are not copyable or movable. They form a hierarchy, such that error info types requested higher up the call chain remain open in lower scopes, regardless of whether or not they&#8217;re specified in lower level <code>expect</code> instances.</p>
+<p><code>expect</code> objects are not copyable or movable. They form a hierarchy, such that error info types requested higher up the call chain remain "expected" in lower scopes, regardless of whether or not they&#8217;re specified in lower level <code>expect</code> instances.</p>
 </div>
 <hr>
 <div class="sect3">
@@ -1105,9 +1106,9 @@ throw;</code></pre>
 <dl>
 <dt class="hdlist1">Effects: </dt>
 <dd>
-<p>Moves each specified <code>info</code> object of type that is expected in the calling thread, into the storage provided by <code><a href="#expect">expect</a></code>. All such <code>info</code> objects can be accessed by objects of;`<a href="#available">available</a>` or of an instance of the <code>expect</code> template.</p>
+<p>Moves each specified <code>info</code> object of type that is expected in the calling thread, into the storage provided by <code><a href="#expect">expect</a></code>. Use  <code><a href="#available">available</a></code> or <code><a href="#expect">expect</a></code> to access them.</p>
 <div class="paragraph">
-<p>All other <code>info</code> objects are discarded.</p>
+<p>All other <code>info</code> objects passed to <code>put</code> are discarded.</p>
 </div>
 </dd>
 </dl>
@@ -1202,7 +1203,7 @@ throw e;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>LEAF uses <code>has_current_error</code> to determine if an error is currently being propagated up the call stack. By default, <code>has_current_error</code> returns <code>std::unhandled_exception()</code>. Use <code>set_has_current_error</code> to hook up a different implementation, if needed</p>
+<p>LEAF uses <code>has_current_error</code> to determine if an error is currently being propagated up the call stack. By default, <code>has_current_error</code> returns <code>std::unhandled_exception()</code>. Use <code>set_has_current_error</code> to hook up a different implementation, if needed.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1276,7 +1277,7 @@ The passed value is stored as a C string, so you should only pass string literal
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-If using <code><a href="#preload">preload</a></code>, please pass <code>&amp;get_errno</code> instead of an instance of <code>ei_errno</code>; this way <code>errno</code> will be captured after the error is detected, rather than at the time <code>preload</code> is called.
+If using <code><a href="#preload">preload</a></code>, pass <code>&amp;get_errno</code> instead of an instance of <code>ei_errno</code>; this way <code>errno</code> will be captured after the error is detected, rather than at the time <code>preload</code> is called.
 </td>
 </tr>
 </table>
@@ -1325,7 +1326,7 @@ If using <code><a href="#preload">preload</a></code>, please pass <code>&amp;get
 </div>
 </div>
 <div class="paragraph">
-<p>The only operation supported by class <code>diagnostic_information</code> is <code>operator&lt;&lt;</code> which, when used with a <code>std::ostream</code> outputs a developer-friendly string representation of all of the currently available error info objects.</p>
+<p>The only operation supported by class <code>diagnostic_information</code> is <code>operator&lt;&lt;</code> which, when used with a <code>std::ostream</code>, outputs a developer-friendly (but not user-friendly) string representation of all of the currently available error info objects.</p>
 </div>
 <div class="paragraph">
 <p>Each error info object is output based on the following rules:</p>
@@ -1336,10 +1337,10 @@ If using <code><a href="#preload">preload</a></code>, please pass <code>&amp;get
 <p>If its type defines a suitable <code>operator&lt;&lt;</code> overload, it is used by the <code>operator&lt;&lt;</code> overload for <code>diagnostic_information</code> directly; otherwise</p>
 </li>
 <li>
-<p>If the type of its <code>value</code> data member defines a suitable <code>operator&lt;&lt;</code> overload, it will be used instead.</p>
+<p>If the type of its <code>value</code> data member defines a suitable <code>operator&lt;&lt;</code> overload, it will be used instead;</p>
 </li>
 <li>
-<p>Otherwise the error info type can not be output by <code>diagnostic_information</code>. This is valid, using such error info types will not result in a compile error.</p>
+<p>Otherwise the error info type can not be output by <code>diagnostic_information</code>. This is not illegal, using such error info types will not result in a compile error.</p>
 </li>
 </ul>
 </div>
@@ -1403,7 +1404,7 @@ If using <code><a href="#preload">preload</a></code>, please pass <code>&amp;get
 
   public:
 
-    capture() noexcept;
+    explicit capture( bool do_capture=true ) noexcept;
     capture( capture &amp;&amp; ) noexcept;
     release() noexcept;
 
@@ -1424,7 +1425,7 @@ If using <code><a href="#preload">preload</a></code>, please pass <code>&amp;get
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-To transport error info objects between threads, it is usually preferable to use the higher level functions <code><a href="#transport">transport</a></code> and <code><a href="#get">get</a></code>, though they require exception handling.
+If a thread communicates failures by throwing exceptions, do not use <code>capture</code> directly. Instead, use <code>leaf::<a href="#get">get</a></code> to get the result of a <code>std::future</code>. In case that throws, all error info will be transported to the calling thread automatically.
 </td>
 </tr>
 </table>
@@ -1436,7 +1437,7 @@ To transport error info objects between threads, it is usually preferable to use
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-  capture::capture() noexcept;
+  explicit capture::capture( bool do_capture=true ) noexcept;
   capture::capture( capture &amp;&amp; ) noexcept;
 
 } }</code></pre>
@@ -1449,7 +1450,7 @@ To transport error info objects between threads, it is usually preferable to use
 <div class="ulist">
 <ul>
 <li>
-<p>The default constructor moves all of the currently available (in the calling thread) exception info objects into a dynamically-allocated buffer stored in the <code>capture</code> object.</p>
+<p>The first constructor moves all of the currently available (in the calling thread) exception info objects into a dynamically-allocated buffer stored in the <code>capture</code> object, but only if <code>do_capture</code> is <code>true</code>.</p>
 </li>
 <li>
 <p>The move constructor does not throw.</p>
@@ -1517,7 +1518,7 @@ To transport error info objects between threads, it is usually preferable to use
 <p>The returned function is designed to be used as a wrapper for <code>f</code> when it&#8217;s passed to <code>std::async</code> or <code>std::packaged_task</code> and launched in a worker thread.</p>
 </div>
 <div class="paragraph">
-<p>Later the user is expected to call <code><a href="#get">get</a></code> instead of <code>std::future::get</code> directly; this way, in case <code>f</code> throws, all of the error info objects are effectivey transported (together with the exception object) from the worker thread into the waiting thread.</p>
+<p>Later the user is expected to call <code><a href="#get">get</a></code> instead of <code>std::future::get</code> directly; this way, in case <code>f</code> throws, all of the error info objects are automatically transported (together with the exception object) from the worker thread into the waiting thread.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1526,7 +1527,7 @@ To transport error info objects between threads, it is usually preferable to use
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Click <a href="https://github.com/zajo/leaf/blob/master/example/transport_between_threads.cpp">here</a> to see a complete example on transporting error info objects between threads.
+ There are two examples on transporting error info objects between threads: <a href="https://github.com/zajo/leaf/blob/master/example/transport_eh.cpp">transport_eh.cpp</a>, which uses exception handling to communicate errors, and  <a href="https://github.com/zajo/leaf/blob/master/example/transport_ec.cpp">transport_ec.cpp</a>, which does not.
 </td>
 </tr>
 </table>
@@ -1577,7 +1578,7 @@ There is no need to use <code><a href="#expect">expect</a></code> when calling <
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Click <a href="https://github.com/zajo/leaf/blob/master/example/transport_between_threads.cpp">here</a> to see a complete example on transporting error info objects between threads.
+Click <a href="https://github.com/zajo/leaf/blob/master/example/transport_eh.cpp">here</a> to see a complete example on transporting error info objects between threads.
 </td>
 </tr>
 </table>
@@ -1591,7 +1592,7 @@ Click <a href="https://github.com/zajo/leaf/blob/master/example/transport_betwee
 <div class="sect2">
 <h3 id="_capturing_errno_with_preload">Capturing <code>errno</code> with <code>preload</code></h3>
 <div class="paragraph">
-<p>Typically, when calling <code><a href="#preload">preload</a></code> we pass in the actual error info object(s) that we want forwarded to <code><a href="#put">put</a></code>. This copies them into the returned temporary object. Later, if we report an error from the same function, the destructor of the temporary object will forward all of its contents to <code><a href="#put">put</a></code> by rvalue reference.</p>
+<p>Typically, when calling <code><a href="#preload">preload</a></code> we pass the actual error info object(s) that we want forwarded to <code><a href="#put">put</a></code>. This copies them into the returned temporary object. Later, if we report an error from the same function, the destructor of the temporary object will forward all of its contents to <code><a href="#put">put</a></code> by rvalue reference.</p>
 </div>
 <div class="paragraph">
 <p>But this behavior is incorrect for capturing <code>errno</code>. Consider:</p>
@@ -1635,13 +1636,31 @@ The header <code>boost/leaf/common.hpp</code> defines a function called <code>ge
 </table>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_transporting_error_info_between_threads">Transporting error info between threads</h3>
+<div class="paragraph">
+<p>The memory provided by <code><a href="#expect">expect</a></code> for <code><a href="#put">put</a></code> to store error info objects uses thread-local storage. This is ideal when errors are handled before the reporting thread ends, but sometimes error handling must happen in another thread, at the time a worker thread is joined.</p>
+</div>
+<div class="paragraph">
+<p>The first problem is that in the spirit of LEAF, the context that handles errors is the one specifying what info it needs, by calling <code><a href="#expect">expect</a></code>, which in this case should be controlled by the main thread. This is achieved by instantiating the function template <code><a href="#transport">transport</a></code> instead of <code>expect</code>: it takes a function object (the worker thread function), and returns a function object that calls it after calling <code>expect</code> internally.</p>
+</div>
+<div class="paragraph">
+<p>Secondly, to capture the current error info detached from the calling thread, create an object of class <code><a href="#capture">capture</a></code>. This moves all error info from thread-local to dynamically-allocated memory controlled by that object. The <code>noexcept</code> move constructor can now be used to move the error info to the main thread. Next, call <code><a href="#release">release</a></code> to once more move the captured error info to thread-local storage in the new thread.</p>
+</div>
+<div class="paragraph">
+<p>This approach requires that a worker thread returns a variant type which can either hold the result in case of success, or an error code + a <code>capture</code> instance in case of error. This is illustrated with the <a href="https://github.com/zajo/leaf/blob/master/example/print_file_ec.cpp">print_file_ec.cpp</a> example.</p>
+</div>
+<div class="paragraph">
+<p>A cleaner solution is possible if worker threads communicate errors by throwing exceptions. In this case you don&#8217;t have to deal with the <code>capture</code> class directly: simply wrap the thread function in a call to <code>transport</code>, and later pass the <code>std::future</code> object to <code>leaf::<a href="#get">get</a></code> to retrieve the result. This is illustrated with the <a href="https://github.com/zajo/leaf/blob/master/example/print_file_eh.cpp">print_file_eh.cpp</a> example.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_design_rationale">Design rationale</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The first observation driving the LEAF design is that unless a specific type of info (e.g. a file name) is used at the time an error is being handled, there is no need for it to be reported. On the other hand, if the error handling context can use or requires some info, it would not be burdened by having to explicitly declare that need. The result is <code><a href="#expect">expect</a></code>/<code><a href="#put">put</a></code>.</p>
+<p>The first observation driving the LEAF design is that unless a specific type of info (e.g. a file name) is used at the time an error is being handled, there is no need for it to be reported. On the other hand, if the error handling context can use or requires some info, it would not be burdened by having to explicitly declare that need. The end result of this reasoning is <code><a href="#expect">expect</a></code>/<code><a href="#put">put</a></code>.</p>
 </div>
 <div class="paragraph">
 <p>The second observation is that ideally, like any other communication mechanism, it makes sense to formally define an interface for the error info that can be used by the error handling code. In terms of C++ exception handling, it would be nice to be able to say something like:</p>
@@ -1671,13 +1690,13 @@ The header <code>boost/leaf/common.hpp</code> defines a function called <code>ge
 </div>
 </div>
 <div class="paragraph">
-<p>That is to say, it is desirable to be able to dispatch error handling based not only on the kind of failure being handled, but also based on the kind of error info available. Unfortunately this syntax is not possible and, even if it were, not all programs use exceptions to handle errors. The result is <code><a href="#match">match</a></code>/<code><a href="#unwrap">unwrap</a></code>.</p>
+<p>That is to say, it is desirable to be able to dispatch error handling based not only on the kind of failure being handled, but also based on the kind of error info available. Unfortunately this syntax is not possible and, even if it were, not all programs use exceptions to handle errors. The result of this train of thought is <code><a href="#match">match</a></code>/<code><a href="#unwrap">unwrap</a></code>.</p>
 </div>
 <div class="paragraph">
 <p>Last but not least, there is certain redundancy and repetition in error-neutral contexts that simply forward errors to their caller. What is the point in receiving some error info from a lower level function (e.g. a file name), when at this point we can&#8217;t do anything with it, except to forward it to our caller, until we reach a scope that can actually make use of the data? Even with move semantics, why bother move such data one level at a time, from one stack location to another immediately above, only to move it again when we <code>return</code> again?</p>
 </div>
 <div class="paragraph">
-<p>It would be more optimal for such information to be passed from a context where it is available, <em>directly to the exact stack location where it would be accessed by the error handling code</em>. The result is that <code><a href="#expect">expect</a></code>/<code><a href="#put">put</a></code>/<code><a href="#match">match</a></code> use <code>thread_local</code> storage.<br>
+<p>It is more correct for such information to be passed from a context where it is available, <em>directly to the exact stack location where it would be accessed by the error handling code</em>. The result is that <code><a href="#expect">expect</a></code>/<code><a href="#put">put</a></code>/<code><a href="#match">match</a></code> use <code>thread_local</code> storage.<br>
 <br>
 <br></p>
 </div>
