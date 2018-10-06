@@ -1238,7 +1238,7 @@ throw e;</code></pre>
   };
 
   ei_errno get_errno() noexcept {
-    return ei_errno { return errno };
+    return ei_errno { errno };
   }
 
 } }</code></pre>
@@ -1290,7 +1290,7 @@ If using <code><a href="#preload">preload</a></code>, pass <code>&amp;get_errno<
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<code>ei_errno</code> objects can be stremed to a <code>std::ostream</code>, which uses <code>strerror</code> to convert the <code>errno</code> code to a friendlier error message. This is designed for use with <code><a href="#diagnostic_information">diagnostic_information</a></code>.
+<code>ei_errno</code> objects can be streamed to a <code>std::ostream</code>, which uses <code>strerror</code> to convert the <code>errno</code> code to a friendlier error message. This is designed for use with <code><a href="#diagnostic_information">diagnostic_information</a></code>.
 </td>
 </tr>
 </table>
@@ -1545,7 +1545,7 @@ If a thread communicates failures by throwing exceptions, do not use <code>captu
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   template &lt;class Future&gt;
-  decltype(std::declval&lt;Future&gt;().get()) get( Future &amp; f );
+  decltype(std::declval&lt;Future&gt;().get()) get( Future &amp;&amp; f );
 
 } }</code></pre>
 </div>
@@ -1556,7 +1556,7 @@ If a thread communicates failures by throwing exceptions, do not use <code>captu
 <dl>
 <dt class="hdlist1">Effects: </dt>
 <dd>
-<p>This function simply returns <code>f.get()</code>, expecting that <code>f</code> is of type <code>std::future&lt;&gt;</code> or another similar type that defines a <code>get</code> member function, to obtain the result from a worker thread started using <code><a href="#transport">transport</a></code>. In case the worker thread throws, all error info objects from the worker thread are automatically made available in the calling thread.</p>
+<p>This function simply returns <code>std::forward&lt;Future&gt;(f).get()</code>, expecting that <code>f</code> is of type <code>std::future&lt;&gt;</code> or another similar type that defines a <code>get</code> member function, to obtain the result from a worker thread started using <code><a href="#transport">transport</a></code>. In case the worker thread throws, all error info objects from the worker thread are automatically made available in the calling thread.</p>
 </dd>
 </dl>
 </div>
