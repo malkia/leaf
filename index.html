@@ -765,7 +765,7 @@ If failures are reported by throwing exceptions, it is not necessary to call <co
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Here we provide identical handling for either <code>file_size_error</code>, <code>file_read_error`and `file_eof_error</code>, by first trying to <code><a href="#match">match</a></code> both <code>ei_file_name</code> and <code>ei_errno</code>; but if that fails, we&#8217;re prepared to deal with an error condition where only <code>ei_errno</code> is available. If neither is available, the final <code><a href="#match">match</a></code> will print a generic error message, thus guaranteeing that this call to <code>unwrap</code> will never throw.</td>
+<td>Here we provide identical handling for any of <code>file_size_error</code>, <code>file_read_error</code> or <code>file_eof_error</code>, by first trying to <code><a href="#match">match</a></code> both <code>ei_file_name</code> and <code>ei_errno</code>; but if that fails, we&#8217;re prepared to deal with an error condition where only <code>ei_errno</code> is available. If neither is available, the final <code><a href="#match">match</a></code> will print a generic error message, thus guaranteeing that this call to <code>unwrap</code> will never throw.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
