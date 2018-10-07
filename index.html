@@ -682,7 +682,7 @@ The <code>ei_file_name</code> type, similarly to <code>ei_errno</code>, is a sim
 </table>
 </div>
 <div class="paragraph">
-<p>If all functions called by <code>print_file</code> succeed, we call <code>put.<a href="#cancel">cancel</a>()</code>, to instruct its destructor to not forward the preloaded <code>ei_file_name</code> object to <code><a href="#put">put</a></code>, and return <code>ok</code>.</p>
+<p>If all functions called by <code>print_file</code> succeed, we call <code>put.<a href="#cancel">cancel</a>()</code> (to instruct its destructor to not forward the preloaded <code>ei_file_name</code> object to <code><a href="#put">put</a></code>), and return <code>ok</code>.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -743,7 +743,7 @@ If failures are reported by throwing exceptions, it is not necessary to call <co
     default: <i class="conum" data-value="5"></i><b>(5)</b>
       std::cerr &lt;&lt;
         "Unknown error code " &lt;&lt; err &lt;&lt; ", cryptic information follows." &lt;&lt; std::endl &lt;&lt;
-        leaf::diagnostic_information();
+        leaf::diagnostic_information;
       return 4;
   }
 }</code></pre>
@@ -1309,17 +1309,8 @@ If using <code><a href="#preload">preload</a></code>, pass <code>&amp;get_errno<
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-  class diagnostic_information {
-
-    diagnostic_information( diagnostic_information const &amp; ) = delete;
-    diagnostic_information &amp; operator=( diagnostic_information const &amp; ) = delete;
-
-  public:
-
-    diagnostic_information() noexcept();
-
-    friend std::ostream &amp; operator&lt;&lt;( std::ostream &amp;, diagnostic_information const );
-  };
+  &lt;&lt;unspecified_type&gt;&gt; diagnostic_information;
+  std::ostream &amp; operator&lt;&lt;( std::ostream &amp;, &lt;&lt;unspecified_type&gt;&gt; const &amp; );
 
 } }</code></pre>
 </div>
@@ -1327,7 +1318,7 @@ If using <code><a href="#preload">preload</a></code>, pass <code>&amp;get_errno<
 </div>
 </div>
 <div class="paragraph">
-<p>The only operation supported by class <code>diagnostic_information</code> is <code>operator&lt;&lt;</code> which, when used with a <code>std::ostream</code>, outputs a developer-friendly (but not user-friendly) string representation of all of the currently available error info objects.</p>
+<p><code>diagnostic_information</code> is a dummy object, or token, which can be passed to <code>operator&lt;&lt;</code> (like <code>std::endl</code>) to output a developer-friendly (but not user-friendly) representation of all of the currently available error info objects.</p>
 </div>
 <div class="paragraph">
 <p>Each error info object is output based on the following rules:</p>
@@ -1341,7 +1332,7 @@ If using <code><a href="#preload">preload</a></code>, pass <code>&amp;get_errno<
 <p>If the type of its <code>value</code> data member defines a suitable <code>operator&lt;&lt;</code> overload, it will be used instead;</p>
 </li>
 <li>
-<p>Otherwise the error info type can not be output by <code>diagnostic_information</code>. This is not illegal, using such error info types will not result in a compile error.</p>
+<p>Otherwise the error info type can not be output by the diagnostic information system. This is not illegal, using such error info types will not result in a compile error.</p>
 </li>
 </ul>
 </div>
@@ -1356,17 +1347,8 @@ If using <code><a href="#preload">preload</a></code>, pass <code>&amp;get_errno<
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-  class current_exception_diagnostic_information {
-
-    current_exception_diagnostic_information( current_exception_diagnostic_information const &amp; ) = delete;
-    current_exception_diagnostic_information &amp; operator=( current_exception_diagnostic_information const &amp; ) = delete;
-
-  public:
-
-    current_exception_diagnostic_information() noexcept();
-
-    friend std::ostream &amp; operator&lt;&lt;( std::ostream &amp;, current_exception_diagnostic_information const );
-  };
+  &lt;&lt;unspecified_type&gt;&gt; current_exception_diagnostic_information;
+  std::ostream &amp; operator&lt;&lt;( std::ostream &amp;, &lt;&lt;unspecified_type&gt;&gt; const &amp; );
 
 } }</code></pre>
 </div>
@@ -1374,7 +1356,7 @@ If using <code><a href="#preload">preload</a></code>, pass <code>&amp;get_errno<
 </div>
 </div>
 <div class="paragraph">
-<p>The only operation supported by class <code>current_exception_diagnostic_information</code> is <code>operator&lt;&lt;</code> which, when used with a <code>std::ostream</code> outputs a developer-friendly information about the current uncaught exception, followed by the output of <code><a href="#diagnostic_information">diagnostic_information</a></code>.</p>
+<p><code>current_exception_diagnostic_information</code> is a dummy object, or token, which can be passed to <code>operator&lt;&lt;</code> (like <code>std::endl</code>) to output into a <code>std::ostream</code> developer-friendly (but not user-friendly) information about the current uncaught exception, followed by outputing <code><a href="#diagnostic_information">diagnostic_information</a></code>.</p>
 </div>
 <div class="paragraph">
 <p>Typical use for <code>current_exception_diagnostic_information</code> is:</p>
@@ -1383,7 +1365,7 @@ If using <code><a href="#preload">preload</a></code>, pass <code>&amp;get_errno<
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">catch(...) {
   std::cerr &lt;&lt; Unhandled exception! &lt;&lt; std::endl &lt;&lt;
-    leaf::current_exception_diagnostic_information();
+    leaf::current_exception_diagnostic_information;
 }</code></pre>
 </div>
 </div>
