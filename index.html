@@ -468,7 +468,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#throw_with_info"><code>throw_with_info</code></a></li>
 <li><a href="#preload"><code>preload</code></a></li>
 <li><a href="#has_current_error"><code>has_current_error</code></a></li>
-<li><a href="#common">Common Error Information Types</a></li>
 <li><a href="#diagnostic_information"><code>diagnostic_information</code></a></li>
 <li><a href="#current_exception_diagnostic_information"><code>current_exception_diagnostic_information</code></a></li>
 <li><a href="#capture"><code>capture</code></a>
@@ -479,6 +478,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#transport"><code>transport</code></a></li>
 <li><a href="#get"><code>get</code></a></li>
+<li><a href="#common">Common Error Information Types</a></li>
 </ul>
 </li>
 <li><a href="#techniques">Programming Techniques</a>
@@ -1221,86 +1221,6 @@ throw e;</code></pre>
 <hr>
 </div>
 <div class="sect2">
-<h3 id="common">Common Error Information Types</h3>
-<div class="exampleblock">
-<div class="content">
-<div class="listingblock">
-<div class="title">#include &lt;boost/leaf/common.hpp&gt;</div>
-<div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
-
-  struct ei_api_function { char const * value; };
-  struct ei_file_name { std::string value; };
-
-  struct ei_errno {
-    int value;
-    friend std::ostream &amp; operator&lt;&lt;( std::ostream &amp; os, ei_errno const &amp; err );
-  };
-
-  ei_errno get_errno() noexcept {
-    return ei_errno { errno };
-  }
-
-} }</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>This header defines some common error info objects which can be used directly:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The <code>ei_api_function</code> type is designed to capture the name of the function for which a failure is reported. For example, if you&#8217;re reporting an error detected by <code>fread</code>, you could use <code>leaf::ei_api_function { "fread" }</code>.</p>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-The passed value is stored as a C string, so you should only pass string literals for <code>value</code>.
-</td>
-</tr>
-</table>
-</div>
-</li>
-<li>
-<p>When a file operation fails, you could use <code>ei_file_name</code> to capture the name of the file.</p>
-</li>
-<li>
-<p><code>ei_errno</code> is suitable to capture <code>errno</code>.</p>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-If using <code><a href="#preload">preload</a></code>, pass <code>&amp;get_errno</code> instead of an instance of <code>ei_errno</code>; this way <code>errno</code> will be captured after the error is detected, rather than at the time <code>preload</code> is called.
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<code>ei_errno</code> objects can be streamed to a <code>std::ostream</code>, which uses <code>strerror</code> to convert the <code>errno</code> code to a friendlier error message. This is designed for use with <code><a href="#diagnostic_information">diagnostic_information</a></code>.
-</td>
-</tr>
-</table>
-</div>
-</li>
-</ul>
-</div>
-<hr>
-</div>
-<div class="sect2">
 <h3 id="diagnostic_information"><code>diagnostic_information</code></h3>
 <div class="exampleblock">
 <div class="content">
@@ -1565,6 +1485,86 @@ Click <a href="https://github.com/zajo/leaf/blob/master/example/transport_eh.cpp
 </td>
 </tr>
 </table>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="common">Common Error Information Types</h3>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/common.hpp&gt;</div>
+<div class="content">
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
+
+  struct ei_api_function { char const * value; };
+  struct ei_file_name { std::string value; };
+
+  struct ei_errno {
+    int value;
+    friend std::ostream &amp; operator&lt;&lt;( std::ostream &amp; os, ei_errno const &amp; err );
+  };
+
+  ei_errno get_errno() noexcept {
+    return ei_errno { errno };
+  }
+
+} }</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>This header defines some common error info objects which can be used directly:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>ei_api_function</code> type is designed to capture the name of the function for which a failure is reported. For example, if you&#8217;re reporting an error detected by <code>fread</code>, you could use <code>leaf::ei_api_function { "fread" }</code>.</p>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+The passed value is stored as a C string, so you should only pass string literals for <code>value</code>.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>When a file operation fails, you could use <code>ei_file_name</code> to capture the name of the file.</p>
+</li>
+<li>
+<p><code>ei_errno</code> is suitable to capture <code>errno</code>.</p>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+If using <code><a href="#preload">preload</a></code>, pass <code>&amp;get_errno</code> instead of an instance of <code>ei_errno</code>; this way <code>errno</code> will be captured after the error is detected, rather than at the time <code>preload</code> is called.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<code>ei_errno</code> objects can be streamed to a <code>std::ostream</code>, which uses <code>strerror</code> to convert the <code>errno</code> code to a friendlier error message. This is designed for use with <code><a href="#diagnostic_information">diagnostic_information</a></code>.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
 </div>
 </div>
 </div>
