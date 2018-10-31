@@ -455,12 +455,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel3">
 <li><a href="#expect::expect">Constructor</a></li>
 <li><a href="#expect-dtor">Destructor</a></li>
-<li><a href="#peek-expect"><code>peek</code></a></li>
+<li><a href="#expect::propagate"><code>propagate</code></a></li>
+<li><a href="#capture-expect"><code>capture</code></a></li>
 <li><a href="#match"><code>match</code></a></li>
 <li><a href="#handle_error-expect"><code>handle_error</code></a></li>
+<li><a href="#peek-expect"><code>peek</code></a></li>
 <li><a href="#diagnostic_print-expect"><code>diagnostic_print</code></a></li>
-<li><a href="#capture-expect"><code>capture</code></a></li>
-<li><a href="#expect::propagate"><code>propagate</code></a></li>
 </ul>
 </li>
 <li><a href="#error">Class <code>error</code></a>
@@ -476,10 +476,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel3">
 <li><a href="#error_capture::error_captere">Constructor</a></li>
 <li><a href="#error_capture::operator_bool">Conversion to <code>bool</code></a></li>
-<li><a href="#peek-error_capture"><code>peek</code></a></li>
-<li><a href="#handle_error-error_capture"><code>handle_error</code></a></li>
-<li><a href="#diagnostic_print-error_capture"><code>diagnostic_print</code></a></li>
 <li><a href="#error_capture::unload"><code>unload</code></a></li>
+<li><a href="#handle_error-error_capture"><code>handle_error</code></a></li>
+<li><a href="#peek-error_capture"><code>peek</code></a></li>
+<li><a href="#diagnostic_print-error_capture"><code>diagnostic_print</code></a></li>
 </ul>
 </li>
 <li><a href="#result">Class template <code>result</code></a>
@@ -488,10 +488,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#result::operator_bool">Conversion to <code>bool</code></a></li>
 <li><a href="#result::value"><code>value</code>/<code>operator*</code></a></li>
 <li><a href="#result::error"><code>error</code></a></li>
-<li><a href="#peek-result"><code>peek</code></a></li>
-<li><a href="#handle_error-result"><code>handle_error</code></a></li>
-<li><a href="#diagnostic_print-result"><code>diagnostic_print</code></a></li>
 <li><a href="#capture-result"><code>capture</code></a></li>
+<li><a href="#handle_error-result"><code>handle_error</code></a></li>
+<li><a href="#peek-result"><code>peek</code></a></li>
+<li><a href="#diagnostic_print-result"><code>diagnostic_print</code></a></li>
 <li><a href="#bad_result"><code>bad_result</code></a></li>
 <li><a href="#LEAF_AUTO"><code>LEAF_AUTO</code></a></li>
 <li><a href="#LEAF_CHECK"><code>LEAF_CHECK</code></a></li>
@@ -502,12 +502,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#eh">Exception Handling Functions</a>
 <ul class="sectlevel3">
 <li><a href="#throw_exception"><code>throw_exception</code></a></li>
-<li><a href="#get_error"><code>get_error</code></a></li>
-<li><a href="#peek-exception"><code>peek</code></a></li>
-<li><a href="#handle_exception"><code>handle_exception</code></a></li>
-<li><a href="#diagnostic_print-exception"><code>diagnostic_print</code></a></li>
 <li><a href="#capture_exception"><code>capture_exception</code></a></li>
 <li><a href="#get"><code>get</code></a></li>
+<li><a href="#get_error"><code>get_error</code></a></li>
+<li><a href="#handle_exception"><code>handle_exception</code></a></li>
+<li><a href="#peek-exception"><code>peek</code></a></li>
+<li><a href="#diagnostic_print-exception"><code>diagnostic_print</code></a></li>
 </ul>
 </li>
 <li><a href="#common">Common e-types</a></li>
@@ -1289,20 +1289,22 @@ The output from <code>diagnostic_print</code> overloads is developer-friendly bu
     expect() noexcept;
     ~expect() noexcept;
 
-    template &lt;class... M&gt;
-    friend bool handle_error( expect &amp; exp, error const &amp; e, M &amp;&amp; ... m ) noexcept;
-
-    friend void diagnostic_print( std::ostream &amp; os, expect const &amp; exp );
-    friend void diagnostic_print( std::ostream &amp; os, expect const &amp; exp, error const &amp; e );
-
-    friend error_capture capture( expect &amp; exp, error const &amp; e );
-
     void propagate() noexcept;
 
+    friend error_capture capture( expect &amp; exp, error const &amp; e );
   };
+
+  template &lt;class... E,class... M&gt;
+  bool handle_error( expect&lt;E...&gt; &amp; exp, error const &amp; e, M &amp;&amp; ... m ) noexcept;
 
   template &lt;class P,class... E&gt;
   decltype(P::value) const * peek( expect&lt;E...&gt; const &amp; exp, error const &amp; e ) noexcept;
+
+  template &lt;class... E&gt;
+  void diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp );
+
+  template &lt;class... E&gt;
+  void diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, error const &amp; e );
 
   template &lt;class... E,class F&gt;
   &lt;&lt;unspecified-type&gt; match( F &amp;&amp; f ) noexcept;
@@ -1405,25 +1407,60 @@ A call to <code><a href="#expect::propagate">propagate</a></code> restores the d
 <hr>
 </div>
 <div class="sect3">
-<h4 id="peek-expect"><code>peek</code></h4>
+<h4 id="expect::propagate"><code>propagate</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/expect.hpp&gt;</div>
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-  template &lt;class P,class... E&gt;
-  decltype(P::value) const * peek( expect&lt;E...&gt; const &amp; exp, error const &amp; e ) noexcept;
+  template &lt;class... E&gt;
+  void expect&lt;E...&gt;::propagate() noexcept;
 
 } }</code></pre>
 </div>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Returns: </dt>
+<dt class="hdlist1">Effects: </dt>
 <dd>
-<p>If <code>exp</code> currently stores an object of type <code>P</code> associated with the <code><a href="#error">error</a></code> value <code>e</code>, returns a read-only pointer to that object. Otherwise returns <code>0</code>.</p>
+<p>This function can be used to restore the default behavior of <code><a href="#expect-dtor">~expect</a></code> after a successful call to <code><a href="#handle_error-expect">handle_error</a></code>.</p>
 </dd>
 </dl>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="capture-expect"><code>capture</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/expect.hpp&gt;</div>
+<div class="content">
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
+
+  template &lt;class... E&gt;
+  error_capture capture( expect&lt;E...&gt; &amp; exp, error const &amp; e );
+
+} }</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Effects: </dt>
+<dd>
+<p>Moves all <a href="#e-types">e-objects</a> currently stored in <code>exp</code> and associated with the <code>leaf::<a href="#error">error</a></code> value <code>e</code>, into the returned <code><a href="#error_capture">error_capture</a></code> object. The contents of the <code>error_capture</code> object is immutable and allocated on the heap.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<code>error_capture</code> objects are useful for transporting e-objects to a different thread.
+</td>
+</tr>
+</table>
 </div>
 <hr>
 </div>
@@ -1455,8 +1492,8 @@ A call to <code><a href="#expect::propagate">propagate</a></code> restores the d
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-  template &lt;class... M&gt;
-  friend bool handle_error( expect &amp; exp, error const &amp; e, M &amp;&amp; ... m ) noexcept;
+  template &lt;class... E,class... M&gt;
+  bool handle_error( expect&lt;E...&gt; &amp; exp, error const &amp; e, M &amp;&amp; ... m ) noexcept;
 
 } }</code></pre>
 </div>
@@ -1534,6 +1571,29 @@ A call to <code><a href="#expect::propagate">propagate</a></code> restores the d
 <hr>
 </div>
 <div class="sect3">
+<h4 id="peek-expect"><code>peek</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/expect.hpp&gt;</div>
+<div class="content">
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
+
+  template &lt;class P,class... E&gt;
+  decltype(P::value) const * peek( expect&lt;E...&gt; const &amp; exp, error const &amp; e ) noexcept;
+
+} }</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Returns: </dt>
+<dd>
+<p>If <code>exp</code> currently stores an object of type <code>P</code> associated with the <code><a href="#error">error</a></code> value <code>e</code>, returns a read-only pointer to that object. Otherwise returns <code>0</code>.</p>
+</dd>
+</dl>
+</div>
+<hr>
+</div>
+<div class="sect3">
 <h4 id="diagnostic_print-expect"><code>diagnostic_print</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/expect.hpp&gt;</div>
@@ -1568,64 +1628,6 @@ The printing of each individual e-object is done by the rules described <a href=
 </td>
 </tr>
 </table>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="capture-expect"><code>capture</code></h4>
-<div class="listingblock">
-<div class="title">#include &lt;boost/leaf/expect.hpp&gt;</div>
-<div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
-
-  template &lt;class... E&gt;
-  error_capture capture( expect&lt;E...&gt; &amp; exp, error const &amp; e );
-
-} }</code></pre>
-</div>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Effects: </dt>
-<dd>
-<p>Moves all <a href="#e-types">e-objects</a> currently stored in <code>exp</code> and associated with the <code>leaf::<a href="#error">error</a></code> value <code>e</code>, into the returned <code><a href="#error_capture">error_capture</a></code> object. The contents of the <code>error_capture</code> object is immutable and allocated on the heap.</p>
-</dd>
-</dl>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<code>error_capture</code> objects are useful for transporting e-objects to a different thread.
-</td>
-</tr>
-</table>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="expect::propagate"><code>propagate</code></h4>
-<div class="listingblock">
-<div class="title">#include &lt;boost/leaf/expect.hpp&gt;</div>
-<div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
-
-  template &lt;class... E&gt;
-  void expect&lt;E...&gt;::propagate() noexcept;
-
-} }</code></pre>
-</div>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Effects: </dt>
-<dd>
-<p>This function can be used to restore the default behavior of <code><a href="#expect-dtor">~expect</a></code> after a successful call to <code><a href="#handle_error-expect">handle_error</a></code>.</p>
-</dd>
-</dl>
 </div>
 <hr>
 </div>
@@ -1802,17 +1804,16 @@ The printing of each individual e-object is done by the rules described <a href=
 
     explicit operator bool() const noexcept;
 
-    template &lt;class... M&gt;
-    friend bool handle_error( error_capture const &amp; ec, M &amp;&amp; ... m ) noexcept;
-
-    friend void diagnostic_print( std::ostream &amp; os, error_capture const &amp; ec );
-
     error unload() noexcept;
-
   };
+
+  template &lt;class... M&gt;
+  bool handle_error( error_capture const &amp; ec, M &amp;&amp; ... m ) noexcept;
 
   template &lt;class P&gt;
   decltype(P::value) const * peek( error_capture const &amp; ec ) noexcept;
+
+  void diagnostic_print( std::ostream &amp; os, error_capture const &amp; ec );
 
 } }</code></pre>
 </div>
@@ -1917,23 +1918,26 @@ The printing of each individual e-object is done by the rules described <a href=
 <hr>
 </div>
 <div class="sect3">
-<h4 id="peek-error_capture"><code>peek</code></h4>
+<h4 id="error_capture::unload"><code>unload</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-  template &lt;class P&gt;
-  decltype(P::value) const * peek( error_capture const &amp; ec ) noexcept;
+  error error_capture::unload() noexcept;
 
 } }</code></pre>
 </div>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Returns: </dt>
+<dt class="hdlist1">Effects: </dt>
 <dd>
-<p>If <code>ec</code> currently stores an object of type <code>P</code>, returns a read-only pointer to that object. Otherwise returns <code>0</code>.</p>
+<p>The <a href="#e-types">e-types</a> stored in <code>*this</code> are moved into storage provided by <code><a href="#expect">expect</a></code> objects in the calling thread, as if each e-object is passed to the constructor of <code><a href="#error">error</a></code>.</p>
+</dd>
+<dt class="hdlist1">Postcondition: </dt>
+<dd>
+<p><code>!(*this)</code>.</p>
 </dd>
 </dl>
 </div>
@@ -2022,6 +2026,29 @@ The printing of each individual e-object is done by the rules described <a href=
 <hr>
 </div>
 <div class="sect3">
+<h4 id="peek-error_capture"><code>peek</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
+<div class="content">
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
+
+  template &lt;class P&gt;
+  decltype(P::value) const * peek( error_capture const &amp; ec ) noexcept;
+
+} }</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Returns: </dt>
+<dd>
+<p>If <code>ec</code> currently stores an object of type <code>P</code>, returns a read-only pointer to that object. Otherwise returns <code>0</code>.</p>
+</dd>
+</dl>
+</div>
+<hr>
+</div>
+<div class="sect3">
 <h4 id="diagnostic_print-error_capture"><code>diagnostic_print</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
@@ -2055,32 +2082,6 @@ The printing of each individual e-object is done by the rules described <a href=
 </div>
 <hr>
 </div>
-<div class="sect3">
-<h4 id="error_capture::unload"><code>unload</code></h4>
-<div class="listingblock">
-<div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
-<div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
-
-  error error_capture::unload() noexcept;
-
-} }</code></pre>
-</div>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Effects: </dt>
-<dd>
-<p>The <a href="#e-types">e-types</a> stored in <code>*this</code> are moved into storage provided by <code><a href="#expect">expect</a></code> objects in the calling thread, as if each e-object is passed to the constructor of <code><a href="#error">error</a></code>.</p>
-</dd>
-<dt class="hdlist1">Postcondition: </dt>
-<dd>
-<p><code>!(*this)</code>.</p>
-</dd>
-</dl>
-</div>
-<hr>
-</div>
 </div>
 <div class="sect2">
 <h3 id="result">Class template <code>result</code></h3>
@@ -2110,19 +2111,19 @@ The printing of each individual e-object is done by the rules described <a href=
     template &lt;class... E&gt;
     leaf::error error( E &amp;&amp; ... e ) noexcept;
 
-    template &lt;class... M,class... E&gt;
-    friend bool handle_error( expect&lt;E...&gt; &amp; exp, result &amp; r, M &amp;&amp; ... m ) noexcept;
-
-    template &lt;class... E&gt;
-    friend void diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, result const &amp; r );
-
     template &lt;class... E&gt;
     friend result capture( expect&lt;E...&gt; &amp; exp, result const &amp; r );
 
  };
 
+  template &lt;class... E,class T,class... M&gt;
+  bool handle_error( expect&lt;E...&gt; &amp; exp, result&lt;T&gt; &amp; r, M &amp;&amp; ... m ) noexcept;
+
   template &lt;class P,class... E,class T&gt;
   decltype(P::value) const * peek( expect&lt;E...&gt; const &amp;, result&lt;T&gt; const &amp; ) noexcept;
+
+  template &lt;class... E,class T&gt;
+  friend void diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, result&lt;T&gt; const &amp; r );
 
   struct bad_result: std::exception { };
 
@@ -2275,114 +2276,6 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 <hr>
 </div>
 <div class="sect3">
-<h4 id="peek-result"><code>peek</code></h4>
-<div class="listingblock">
-<div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
-<div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
-
-  template &lt;class P,class... E,class T&gt;
-  decltype(P::value) const * peek( expect&lt;E...&gt; const &amp; exp, result&lt;T&gt; const &amp; r ) noexcept;
-
-} }</code></pre>
-</div>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Preconditions: </dt>
-<dd>
-<p><code>!(*this)</code>.</p>
-</dd>
-<dt class="hdlist1">Returns: </dt>
-<dd>
-<div class="ulist">
-<ul>
-<li>
-<p>If <code>r</code> stores an <code><a href="#error_capture">error_capture</a></code> object <code>cap</code>, returns <code><a href="#peek-error_capture">peek</a>&lt;P&gt;(cap)</code>.</p>
-</li>
-<li>
-<p>If <code>r</code> stores a <code>leaf::<a href="#error">error</a></code> value <code>err</code>, returns <code><a href="#peek-expect">peek</a>&lt;P&gt;(exp,err)</code>.</p>
-</li>
-</ul>
-</div>
-</dd>
-</dl>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="handle_error-result"><code>handle_error</code></h4>
-<div class="listingblock">
-<div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
-<div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
-
-  template &lt;class... M,class... E&gt;
-  friend bool result::handle_error( expect&lt;E...&gt; &amp; exp, result &amp; r, M &amp;&amp; ... m ) noexcept;
-
-} }</code></pre>
-</div>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Preconditions: </dt>
-<dd>
-<p><code>!(*this)</code>.</p>
-</dd>
-<dt class="hdlist1">Returns: </dt>
-<dd>
-<div class="ulist">
-<ul>
-<li>
-<p>If <code>r</code> stores an <code><a href="#error_capture">error_capture</a></code> object <code>cap</code>, returns <code><a href="#handle_error-error_capture">handle_error</a>&lt;E&#8230;&#8203;&gt;(cap,m&#8230;&#8203;)</code>.</p>
-</li>
-<li>
-<p>If <code>r</code> stores a <code>leaf::<a href="#error">error</a></code> value <code>err</code>, returns <code><a href="#handle_error-expect">handle_error</a>&lt;E&#8230;&#8203;&gt;(exp,err,m&#8230;&#8203;)</code>.</p>
-</li>
-</ul>
-</div>
-</dd>
-</dl>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="diagnostic_print-result"><code>diagnostic_print</code></h4>
-<div class="listingblock">
-<div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
-<div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
-
-  template &lt;class... E&gt;
-  friend void result::diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, result const &amp; r );
-
-} }</code></pre>
-</div>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Preconditions: </dt>
-<dd>
-<p><code>!(*this)</code>.</p>
-</dd>
-<dt class="hdlist1">Returns: </dt>
-<dd>
-<div class="ulist">
-<ul>
-<li>
-<p>If <code>r</code> stores an <code><a href="#error_capture">error_capture</a></code> object <code>cap</code>, returns <code><a href="#diagnostic_print-error_capture">diagnostic_print</a>(os,cap)</code>.</p>
-</li>
-<li>
-<p>If <code>r</code> stores a <code>leaf::<a href="#error">error</a></code> value <code>err</code>, returns <code><a href="#diagnostic_print-expect">diagnostic_print</a>(os,exp,err)</code>.</p>
-</li>
-</ul>
-</div>
-</dd>
-</dl>
-</div>
-<hr>
-</div>
-<div class="sect3">
 <h4 id="capture-result"><code>capture</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
@@ -2426,6 +2319,114 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 </td>
 </tr>
 </table>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="handle_error-result"><code>handle_error</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
+<div class="content">
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
+
+  template &lt;class... E,class T,class... M&gt;
+  friend bool result::handle_error( expect&lt;E...&gt; &amp; exp, result&lt;T&gt; &amp; r, M &amp;&amp; ... m ) noexcept;
+
+} }</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Preconditions: </dt>
+<dd>
+<p><code>!r</code>.</p>
+</dd>
+<dt class="hdlist1">Returns: </dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>If <code>r</code> stores an <code><a href="#error_capture">error_capture</a></code> object <code>cap</code>, returns <code><a href="#handle_error-error_capture">handle_error</a>&lt;E&#8230;&#8203;&gt;(cap,m&#8230;&#8203;)</code>.</p>
+</li>
+<li>
+<p>If <code>r</code> stores a <code>leaf::<a href="#error">error</a></code> value <code>err</code>, returns <code><a href="#handle_error-expect">handle_error</a>&lt;E&#8230;&#8203;&gt;(exp,err,m&#8230;&#8203;)</code>.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="peek-result"><code>peek</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
+<div class="content">
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
+
+  template &lt;class P,class... E,class T&gt;
+  decltype(P::value) const * peek( expect&lt;E...&gt; const &amp; exp, result&lt;T&gt; const &amp; r ) noexcept;
+
+} }</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Preconditions: </dt>
+<dd>
+<p><code>!r</code>.</p>
+</dd>
+<dt class="hdlist1">Returns: </dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>If <code>r</code> stores an <code><a href="#error_capture">error_capture</a></code> object <code>cap</code>, returns <code><a href="#peek-error_capture">peek</a>&lt;P&gt;(cap)</code>.</p>
+</li>
+<li>
+<p>If <code>r</code> stores a <code>leaf::<a href="#error">error</a></code> value <code>err</code>, returns <code><a href="#peek-expect">peek</a>&lt;P&gt;(exp,err)</code>.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="diagnostic_print-result"><code>diagnostic_print</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
+<div class="content">
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
+
+  template &lt;class... E,class T&gt;
+  friend void result::diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, result&lt;T&gt; const &amp; r );
+
+} }</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Preconditions: </dt>
+<dd>
+<p><code>!r</code>.</p>
+</dd>
+<dt class="hdlist1">Returns: </dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>If <code>r</code> stores an <code><a href="#error_capture">error_capture</a></code> object <code>cap</code>, returns <code><a href="#diagnostic_print-error_capture">diagnostic_print</a>(os,cap)</code>.</p>
+</li>
+<li>
+<p>If <code>r</code> stores a <code>leaf::<a href="#error">error</a></code> value <code>err</code>, returns <code><a href="#diagnostic_print-expect">diagnostic_print</a>(os,exp,err)</code>.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
 </div>
 <hr>
 </div>
@@ -2654,130 +2655,6 @@ Use <code>LEAF_THROW</code> to automatically pass the current source location in
 <hr>
 </div>
 <div class="sect3">
-<h4 id="get_error"><code>get_error</code></h4>
-<div class="listingblock">
-<div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
-<div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
-
-  error get_error( std::exception const &amp; ex ) noexcept;
-
-} }</code></pre>
-</div>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Returns: </dt>
-<dd>
-<div class="ulist">
-<ul>
-<li>
-<p>If <code>auto e = dynamic_cast&lt;leaf::<a href="#error">error</a> const *&gt;(&amp;ex)</code> succeeds, returns <code>*e</code>.</p>
-</li>
-<li>
-<p>Othrewise, it returns an unspecified <code>leaf::error</code> value, which is "temporarily" associated with any and all currently unhandled exceptions.</p>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-A successful call to <code><a href="#handle_exception">handle_exception</a></code> breaks this association.
-</td>
-</tr>
-</table>
-</div>
-</li>
-</ul>
-</div>
-</dd>
-</dl>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="peek-exception"><code>peek</code></h4>
-<div class="listingblock">
-<div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
-<div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
-
-  template &lt;class P,class... E&gt;
-  decltype(P::value) const * peek( expect&lt;E...&gt; const &amp; exp, std::exception const &amp; ex ) noexcept;
-
-} }</code></pre>
-</div>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Effects: </dt>
-<dd>
-<p>As if <code>return leaf::<a href="#peek-expect">peek</a>&lt;P&gt;( exp, <a href="#get_error">get_error</a>(ex) );</code></p>
-</dd>
-</dl>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="handle_exception"><code>handle_exception</code></h4>
-<div class="listingblock">
-<div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
-<div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
-
-  template &lt;class... M,class... E&gt;
-  void handle_exception( expect&lt;E...&gt; &amp; exp, std::exception const &amp; ex, M &amp;&amp; ... m );
-
-} }</code></pre>
-</div>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Effects: </dt>
-<dd>
-<p>Equivalent to: <code>if( !<a href="#handle_error-expect">handle_error</a>( exp, <a href="#get_error">get_error</a>(ex), std::forward&lt;M&gt;(m)&#8230;&#8203;) ) throw;</code></p>
-</dd>
-</dl>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-In case the dynamic type of <code>ex</code> does not derive from <code>leaf::error</code> and the call to <code>handle_error</code> succeeds, the association between the <code>leaf::error</code> value returned by <code><a href="#get_error">get_error</a></code> and the currently unhandled exceptions is broken.
-</td>
-</tr>
-</table>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="diagnostic_print-exception"><code>diagnostic_print</code></h4>
-<div class="listingblock">
-<div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
-<div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
-
-  template &lt;class... E&gt;
-  void diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, std::exception const &amp; ex );
-
-} }</code></pre>
-</div>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Effects: </dt>
-<dd>
-<p>Equivalent to: <code><a href="#diagnostic_print-expect">diagnostic_print</a>( os, exp, <a href="#get_error">get_error</a>(ex) );</code></p>
-</dd>
-</dl>
-</div>
-<hr>
-</div>
-<div class="sect3">
 <h4 id="capture_exception"><code>capture_exception</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/exception_capture.hpp&gt;</div>
@@ -2869,6 +2746,130 @@ To store and to access the transported <a href="#e-types">e-objects</a>, the cal
 </td>
 </tr>
 </table>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="get_error"><code>get_error</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
+<div class="content">
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
+
+  error get_error( std::exception const &amp; ex ) noexcept;
+
+} }</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Returns: </dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>If <code>auto e = dynamic_cast&lt;leaf::<a href="#error">error</a> const *&gt;(&amp;ex)</code> succeeds, returns <code>*e</code>.</p>
+</li>
+<li>
+<p>Othrewise, it returns an unspecified <code>leaf::error</code> value, which is "temporarily" associated with any and all currently unhandled exceptions.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+A successful call to <code><a href="#handle_exception">handle_exception</a></code> breaks this association.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="handle_exception"><code>handle_exception</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
+<div class="content">
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
+
+  template &lt;class... M,class... E&gt;
+  void handle_exception( expect&lt;E...&gt; &amp; exp, std::exception const &amp; ex, M &amp;&amp; ... m );
+
+} }</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Effects: </dt>
+<dd>
+<p>Equivalent to: <code>if( !<a href="#handle_error-expect">handle_error</a>( exp, <a href="#get_error">get_error</a>(ex), std::forward&lt;M&gt;(m)&#8230;&#8203;) ) throw;</code></p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+In case the dynamic type of <code>ex</code> does not derive from <code>leaf::error</code> and the call to <code>handle_error</code> succeeds, the association between the <code>leaf::error</code> value returned by <code><a href="#get_error">get_error</a></code> and the currently unhandled exceptions is broken.
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="peek-exception"><code>peek</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
+<div class="content">
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
+
+  template &lt;class P,class... E&gt;
+  decltype(P::value) const * peek( expect&lt;E...&gt; const &amp; exp, std::exception const &amp; ex ) noexcept;
+
+} }</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Effects: </dt>
+<dd>
+<p>As if <code>return leaf::<a href="#peek-expect">peek</a>&lt;P&gt;( exp, <a href="#get_error">get_error</a>(ex) );</code></p>
+</dd>
+</dl>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="diagnostic_print-exception"><code>diagnostic_print</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
+<div class="content">
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
+
+  template &lt;class... E&gt;
+  void diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, std::exception const &amp; ex );
+
+} }</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Effects: </dt>
+<dd>
+<p>Equivalent to: <code><a href="#diagnostic_print-expect">diagnostic_print</a>( os, exp, <a href="#get_error">get_error</a>(ex) );</code></p>
+</dd>
+</dl>
 </div>
 <hr>
 </div>
