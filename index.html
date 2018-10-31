@@ -491,6 +491,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#diagnostic_print-result"><code>diagnostic_print</code></a></li>
 <li><a href="#capture-result"><code>capture</code></a></li>
 <li><a href="#bad_result"><code>bad_result</code></a></li>
+<li><a href="#LEAF_AUTO"><code>LEAF_AUTO</code></a></li>
+<li><a href="#LEAF_AUTO"><code>LEAF_CHECK</code></a></li>
 </ul>
 </li>
 <li><a href="#preload"><code>preload</code></a></li>
@@ -2072,7 +2074,10 @@ The printing of each individual e-object is done by the rules described <a href=
 
   struct bad_result: std::exception { };
 
-} }</code></pre>
+} }
+
+#define LEAF_AUTO(v,r) auto _r_##v = r; if( !_r_##v ) return _r_##v.error(); auto &amp; v = *_r_##v
+#define LEAF_CHECK(r) {auto _r_##v = r; if( !_r_##v ) return _r_##v.error();}</code></pre>
 </div>
 </div>
 <hr>
@@ -2386,6 +2391,26 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 </div>
 <div class="paragraph">
 <p>This exception is thrown by <code><a href="#result::value">value</a>()</code>/<code><a href="#result::value">operator*</a>()</code> if they`re invoked for a <code>result</code> object that is in error state.</p>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="LEAF_AUTO"><code>LEAF_AUTO</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
+<div class="content">
+<pre class="highlight"><code class="language-c++" data-lang="c++">#define LEAF_AUTO(v,r) auto _r_##v = r; if( !_r_##v ) return _r_##v.error(); auto &amp; v = *_r_##v</code></pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="LEAF_AUTO"><code>LEAF_CHECK</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
+<div class="content">
+<pre class="highlight"><code class="language-c++" data-lang="c++">#define LEAF_CHECK(r) {auto _r_##v = r; if( !_r_##v ) return _r_##v.error();}</code></pre>
+</div>
 </div>
 <hr>
 </div>
