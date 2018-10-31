@@ -460,7 +460,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#match"><code>match</code></a></li>
 <li><a href="#handle_error-expect"><code>handle_error</code></a></li>
 <li><a href="#peek-expect"><code>peek</code></a></li>
-<li><a href="#diagnostic_print-expect"><code>diagnostic_print</code></a></li>
+<li><a href="#diagnostic_output-expect"><code>diagnostic_output</code></a></li>
 </ul>
 </li>
 <li><a href="#error">Class <code>error</code></a>
@@ -479,7 +479,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#error_capture::unload"><code>unload</code></a></li>
 <li><a href="#handle_error-error_capture"><code>handle_error</code></a></li>
 <li><a href="#peek-error_capture"><code>peek</code></a></li>
-<li><a href="#diagnostic_print-error_capture"><code>diagnostic_print</code></a></li>
+<li><a href="#diagnostic_output-error_capture"><code>diagnostic_output</code></a></li>
 </ul>
 </li>
 <li><a href="#result">Class template <code>result</code></a>
@@ -491,7 +491,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#capture-result"><code>capture</code></a></li>
 <li><a href="#handle_error-result"><code>handle_error</code></a></li>
 <li><a href="#peek-result"><code>peek</code></a></li>
-<li><a href="#diagnostic_print-result"><code>diagnostic_print</code></a></li>
+<li><a href="#diagnostic_output-result"><code>diagnostic_output</code></a></li>
 <li><a href="#bad_result"><code>bad_result</code></a></li>
 <li><a href="#LEAF_AUTO"><code>LEAF_AUTO</code></a></li>
 <li><a href="#LEAF_CHECK"><code>LEAF_CHECK</code></a></li>
@@ -507,7 +507,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#get_error"><code>get_error</code></a></li>
 <li><a href="#handle_exception"><code>handle_exception</code></a></li>
 <li><a href="#peek-exception"><code>peek</code></a></li>
-<li><a href="#diagnostic_print-exception"><code>diagnostic_print</code></a></li>
+<li><a href="#diagnostic_output-exception"><code>diagnostic_output</code></a></li>
 </ul>
 </li>
 <li><a href="#common">Common e-types</a></li>
@@ -855,7 +855,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 
       default:
         std::cerr &lt;&lt; "Unknown error code " &lt;&lt; int(ec) &lt;&lt; ", cryptic information follows." &lt;&lt; std::endl; <i class="conum" data-value="7"></i><b>(7)</b>
-        diagnostic_print(std::cerr,exp,r);
+        diagnostic_output(std::cerr,exp,r);
         return 5;
     }
   }
@@ -1123,7 +1123,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
   catch(...) <i class="conum" data-value="5"></i><b>(5)</b>
   {
     std::cerr &lt;&lt; "Unknown error, cryptic information follows." &lt;&lt; std::endl;
-    current_exception_diagnostic_print(std::cerr,exp);
+    current_exception_diagnostic_output(std::cerr,exp);
     return 5;
   }
 }</code></pre>
@@ -1237,10 +1237,10 @@ struct e_maximum_temperature { int value; };</code></pre>
 <p><strong>Diagnostic Information</strong></p>
 </div>
 <div class="paragraph">
-<p>LEAF will attempt to print e-objects in various <code>diagnostic_print</code> overloads it defines. It will first attempt to use <code>operator&lt;&lt;</code> overload that takes the enclosing <code>struct</code>. If such overload does not exist, the fallback is to attempt to use <code>operator&lt;&lt;</code> overload that takes the <code>.value</code>. If that also doesn&#8217;t exist, LEAF is unable to print values of that particular e-type (this is permissible, not an error).</p>
+<p>LEAF will attempt to print e-objects in various <code>diagnostic_output</code> overloads it defines. It will first attempt to use <code>operator&lt;&lt;</code> overload that takes the enclosing <code>struct</code>. If such overload does not exist, the fallback is to attempt to use <code>operator&lt;&lt;</code> overload that takes the <code>.value</code>. If that also doesn&#8217;t exist, LEAF is unable to print values of that particular e-type (this is permissible, not an error).</p>
 </div>
 <div class="paragraph">
-<p>The <code>diagnostic_print</code> functions in LEAF can use the e-types defined in the snippet above by default, because <code>int</code> and <code>std::string</code> values are printable. But even with printable values, the user may still want to overload <code>operator&lt;&lt;</code> for the enclosing <code>struct</code>, e.g.:</p>
+<p>The <code>diagnostic_output</code> functions in LEAF can use the e-types defined in the snippet above by default, because <code>int</code> and <code>std::string</code> values are printable. But even with printable values, the user may still want to overload <code>operator&lt;&lt;</code> for the enclosing <code>struct</code>, e.g.:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1256,7 +1256,7 @@ struct e_maximum_temperature { int value; };</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>e_errno</code> type above is designed to hold <code>errno</code> values. The defined <code>operator&lt;&lt;</code> overload will automatically include the output from <code>strerror</code> when <code>e_errno</code> values are printed by <code>diagnostic_print</code> overloads (LEAF defines <code>e_errno</code> in <code>&lt;boost/leaf/common.hpp&gt;</code>, together with other commonly-used e-types).</p>
+<p>The <code>e_errno</code> type above is designed to hold <code>errno</code> values. The defined <code>operator&lt;&lt;</code> overload will automatically include the output from <code>strerror</code> when <code>e_errno</code> values are printed by <code>diagnostic_output</code> overloads (LEAF defines <code>e_errno</code> in <code>&lt;boost/leaf/common.hpp&gt;</code>, together with other commonly-used e-types).</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1265,7 +1265,7 @@ struct e_maximum_temperature { int value; };</code></pre>
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-The output from <code>diagnostic_print</code> overloads is developer-friendly but not user-friendly. Therefore, <code>operator&lt;&lt;</code> overloads for e-types should only print technical information in English, and should not attempt to localize strings or to format a message. Formatting a localized user-friendly message should be done at the time individual errors are handled.
+The output from <code>diagnostic_output</code> overloads is developer-friendly but not user-friendly. Therefore, <code>operator&lt;&lt;</code> overloads for e-types should only print technical information in English, and should not attempt to localize strings or to format a message. Formatting a localized user-friendly message should be done at the time individual errors are handled.
 </td>
 </tr>
 </table>
@@ -1301,10 +1301,10 @@ The output from <code>diagnostic_print</code> overloads is developer-friendly bu
   decltype(P::value) const * peek( expect&lt;E...&gt; const &amp; exp, error const &amp; e ) noexcept;
 
   template &lt;class... E&gt;
-  void diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp );
+  void diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp );
 
   template &lt;class... E&gt;
-  void diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, error const &amp; e );
+  void diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, error const &amp; e );
 
   template &lt;class... E,class F&gt;
   &lt;&lt;unspecified-type&gt; match( F &amp;&amp; f ) noexcept;
@@ -1594,17 +1594,17 @@ A call to <code><a href="#expect::propagate">propagate</a></code> restores the d
 <hr>
 </div>
 <div class="sect3">
-<h4 id="diagnostic_print-expect"><code>diagnostic_print</code></h4>
+<h4 id="diagnostic_output-expect"><code>diagnostic_output</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/expect.hpp&gt;</div>
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   template &lt;class... E&gt;
-  void diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp );
+  void diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp );
 
   template &lt;class... E&gt;
-  void diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, error const &amp; e );
+  void diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, error const &amp; e );
 
 } }</code></pre>
 </div>
@@ -1813,7 +1813,7 @@ The printing of each individual e-object is done by the rules described <a href=
   template &lt;class P&gt;
   decltype(P::value) const * peek( error_capture const &amp; ec ) noexcept;
 
-  void diagnostic_print( std::ostream &amp; os, error_capture const &amp; ec );
+  void diagnostic_output( std::ostream &amp; os, error_capture const &amp; ec );
 
 } }</code></pre>
 </div>
@@ -2049,13 +2049,13 @@ The printing of each individual e-object is done by the rules described <a href=
 <hr>
 </div>
 <div class="sect3">
-<h4 id="diagnostic_print-error_capture"><code>diagnostic_print</code></h4>
+<h4 id="diagnostic_output-error_capture"><code>diagnostic_output</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-  friend void diagnostic_print( std::ostream &amp; os, error_capture const &amp; ec );
+  friend void diagnostic_output( std::ostream &amp; os, error_capture const &amp; ec );
 
 } }</code></pre>
 </div>
@@ -2123,7 +2123,7 @@ The printing of each individual e-object is done by the rules described <a href=
   decltype(P::value) const * peek( expect&lt;E...&gt; const &amp;, result&lt;T&gt; const &amp; ) noexcept;
 
   template &lt;class... E,class T&gt;
-  friend void diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, result&lt;T&gt; const &amp; r );
+  friend void diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, result&lt;T&gt; const &amp; r );
 
   struct bad_result: std::exception { };
 
@@ -2395,14 +2395,14 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 <hr>
 </div>
 <div class="sect3">
-<h4 id="diagnostic_print-result"><code>diagnostic_print</code></h4>
+<h4 id="diagnostic_output-result"><code>diagnostic_output</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   template &lt;class... E,class T&gt;
-  friend void result::diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, result&lt;T&gt; const &amp; r );
+  friend void result::diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, result&lt;T&gt; const &amp; r );
 
 } }</code></pre>
 </div>
@@ -2418,10 +2418,10 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 <div class="ulist">
 <ul>
 <li>
-<p>If <code>r</code> stores an <code><a href="#error_capture">error_capture</a></code> object <code>cap</code>, returns <code><a href="#diagnostic_print-error_capture">diagnostic_print</a>(os,cap)</code>.</p>
+<p>If <code>r</code> stores an <code><a href="#error_capture">error_capture</a></code> object <code>cap</code>, returns <code><a href="#diagnostic_output-error_capture">diagnostic_output</a>(os,cap)</code>.</p>
 </li>
 <li>
-<p>If <code>r</code> stores a <code>leaf::<a href="#error">error</a></code> value <code>err</code>, returns <code><a href="#diagnostic_print-expect">diagnostic_print</a>(os,exp,err)</code>.</p>
+<p>If <code>r</code> stores a <code>leaf::<a href="#error">error</a></code> value <code>err</code>, returns <code><a href="#diagnostic_output-expect">diagnostic_output</a>(os,exp,err)</code>.</p>
 </li>
 </ul>
 </div>
@@ -2564,7 +2564,7 @@ namespace boost { namespace leaf {
   void handle_exception( expect&lt;E...&gt; &amp; exp, std::exception const &amp; ex, M &amp;&amp; ... m );
 
   template &lt;class... E&gt;
-  void diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, std::exception const &amp; ex );
+  void diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, std::exception const &amp; ex );
 
 } }</code></pre>
 </div>
@@ -2851,14 +2851,14 @@ In case the dynamic type of <code>ex</code> does not derive from <code>leaf::err
 <hr>
 </div>
 <div class="sect3">
-<h4 id="diagnostic_print-exception"><code>diagnostic_print</code></h4>
+<h4 id="diagnostic_output-exception"><code>diagnostic_output</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   template &lt;class... E&gt;
-  void diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, std::exception const &amp; ex );
+  void diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, std::exception const &amp; ex );
 
 } }</code></pre>
 </div>
@@ -2867,7 +2867,7 @@ In case the dynamic type of <code>ex</code> does not derive from <code>leaf::err
 <dl>
 <dt class="hdlist1">Effects: </dt>
 <dd>
-<p>Equivalent to: <code><a href="#diagnostic_print-expect">diagnostic_print</a>( os, exp, <a href="#get_error">get_error</a>(ex) );</code></p>
+<p>Equivalent to: <code><a href="#diagnostic_output-expect">diagnostic_output</a>( os, exp, <a href="#get_error">get_error</a>(ex) );</code></p>
 </dd>
 </dl>
 </div>
@@ -2942,10 +2942,10 @@ The passed value is stored as a C string, so you should only pass string literal
 <p>When a file operation fails, you could use <code>e_file_name</code> to store the name of the file.</p>
 </li>
 <li>
-<p><code>e_errno</code> is suitable to capture <code>errno</code>. <code>e_errno</code> objects use <code>strerror</code> to convert the <code>errno</code> code to a friendlier error message when <code><a href="#diagnostic_print-expect">diagnostic_print</a></code> is invoked.</p>
+<p><code>e_errno</code> is suitable to capture <code>errno</code>. <code>e_errno</code> objects use <code>strerror</code> to convert the <code>errno</code> code to a friendlier error message when <code><a href="#diagnostic_output-expect">diagnostic_output</a></code> is invoked.</p>
 </li>
 <li>
-<p>The <code>LEAF_SOURCE_LOCATION</code> macro captures <code>__FILE__</code>, <code>__LINE__</code> and <code>__FUNCTION__</code> into a <code>e_source_location</code> object.  When <code><a href="#diagnostic_print-expect">diagnostic_print</a></code> is invoked, all three items are printed.</p>
+<p>The <code>LEAF_SOURCE_LOCATION</code> macro captures <code>__FILE__</code>, <code>__LINE__</code> and <code>__FUNCTION__</code> into a <code>e_source_location</code> object.  When <code><a href="#diagnostic_output-expect">diagnostic_output</a></code> is invoked, all three items are printed.</p>
 </li>
 </ul>
 </div>
