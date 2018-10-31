@@ -498,11 +498,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#eh">Exception Handling Functions</a>
 <ul class="sectlevel3">
 <li><a href="#throw_exception"><code>throw_exception</code></a></li>
+<li><a href="#get_error"><code>get_error</code></a></li>
 <li><a href="#peek-exception"><code>peek</code></a></li>
 <li><a href="#handle_exception"><code>handle_exception</code></a></li>
 <li><a href="#diagnostic_print-exception"><code>diagnostic_print</code></a></li>
 <li><a href="#capture_exception"><code>capture_exception</code></a></li>
-<li><a href="#get-capture_exception"><code>get</code></a></li>
+<li><a href="#get"><code>get</code></a></li>
 </ul>
 </li>
 <li><a href="#common">Common e-types</a></li>
@@ -550,10 +551,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://github.com/zajo/leaf/blob/master/example/print_file_eh.cpp">print_file_eh.cpp</a> (with exception handling)</p>
+<p><a href="https://github.com/zajo/leaf/blob/master/example/print_file_result.cpp">print_file_result.cpp</a> (without exception handling)</p>
 </li>
 <li>
-<p><a href="https://github.com/zajo/leaf/blob/master/example/print_file_result.cpp">print_file_result.cpp</a> (without exception handling)</p>
+<p><a href="https://github.com/zajo/leaf/blob/master/example/print_file_eh.cpp">print_file_eh.cpp</a> (with exception handling)</p>
 </li>
 </ul>
 </div>
@@ -653,7 +654,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
   if( !f ) <i class="conum" data-value="1"></i><b>(1)</b>
     return f.error(); <i class="conum" data-value="2"></i><b>(2)</b>
 
-  leaf::preload( e_file_name{file_name} ); <i class="conum" data-value="3"></i><b>(3)</b>
+  auto propagate = leaf::preload( e_file_name{file_name} ); <i class="conum" data-value="3"></i><b>(3)</b>
 
   leaf::result&lt;int&gt; s = file_size(*f.value());
   if( !s ) <i class="conum" data-value="4"></i><b>(4)</b>
@@ -681,11 +682,11 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>&#8230;&#8203;we forward it to the caller.</td>
+<td>&#8230;&#8203;we forward it to the caller. Notice that we don&#8217;t return <code>leaf::error()</code>, which would indicate a newly detected error; we return <code>f.error()</code>, which propagates the error already stored in <code>f</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code><a href="#preload">preload</a></code> takes any number of <a href="#e-types">e-types</a> and prepares them to become associated with the first <code>leaf::<a href="#error">error</a></code> value created thereafter. The effect is that from this point on, all errors returned or forwarded by <code>print_file</code> will report the file name, in addition to everything else passed to <code>leaf::<a href="#error">error</a></code> explicitly (<code>e_file_name</code> is defined as <code>struct e_file_name { std::string value; }</code>).</td>
+<td><code><a href="#preload">preload</a></code> takes any number of <a href="#e-types">e-types</a> and prepares them to become associated (automatically, at the time the returned object expires) with the first <code>leaf::<a href="#error">error</a></code> value created thereafter. The effect is that from this point on, any error returned or forwarded by <code>print_file</code> will have an associated file name, in addition to everything else passed to <code>leaf::<a href="#error">error</a></code> explicitly (<code>e_file_name</code> is defined as <code>struct e_file_name { std::string value; }</code>).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -731,7 +732,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 {
   LEAF_AUTO(f,file_open(file_name)); <i class="conum" data-value="1"></i><b>(1)</b>
 
-  leaf::preload( e_file_name{file_name} );
+  auto propagate = leaf::preload( e_file_name{file_name} );
 
   LEAF_AUTO(s,file_size(*f)); <i class="conum" data-value="2"></i><b>(2)</b>
 
@@ -861,7 +862,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>We expect <code>e_error_code</code>, <code>e_file_name</code> and <code>e_errno</code> objects to arrive with errors handled in this function. They will be stored inside <code>exp</code>.</td>
+<td>We expect <code>e_error_code</code>, <code>e_file_name</code> and <code>e_errno</code> objects to be associated with errors handled in this function. They will be stored inside <code>exp</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -873,7 +874,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><code><a href="#handle_error-expect">handle_error</a></code> takes a list of match objects (in this case only one), each given a set of <a href="#e-types">e-types</a>. It attempts to match each set (in order) to objects of e-types available in <code>exp</code>, which are associated with the <code><a href="#error">error</a></code> value stored in <code>r</code>. If no set can be matched, <code>handle_error</code> returns false. When a match is found, <code>handle_error</code> calls the corresponding lambda, passing the <code>.value</code> of each of the e-types from the matched set.</td>
+<td><code><a href="#handle_error-expect">handle_error</a></code> takes a list of match objects (in this case only one), each given a set of <a href="#e-types">e-types</a>. It attempts to match each set (in order) to objects of e-types available in <code>exp</code>, which are associated with the <code><a href="#error">error</a></code> value stored in <code>r</code>. If no set can be matched, <code>handle_error</code> returns false. When a match is found, <code>handle_error</code> calls the corresponding lambda function, passing the <code>.value</code> of each of the e-types from the matched set.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
@@ -930,7 +931,7 @@ The complete program from this tutorial is available <a href="https://github.com
 <div class="sect2">
 <h3 id="tutorial-eh">Using LEAF with Exception Handling</h3>
 <div class="paragraph">
-<p>And now, we&#8217;ll write the same program that reads a text file in a buffer and prints it to <code>std::cout</code>, this time using exception handling. First, we need to define our exception class hierarchy:</p>
+<p>And now, we&#8217;ll write the same program that reads a text file in a buffer and prints it to <code>std::cout</code>, this time using exceptions to report errors. First, we need to define our exception class hierarchy:</p>
 </div>
 <div class="exampleblock">
 <div class="content">
@@ -1009,12 +1010,12 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 {
   std::shared_ptr&lt;FILE&gt; f = file_open( file_name ); <i class="conum" data-value="1"></i><b>(1)</b>
 
-  leaf::preload( e_file_name{file_name} ); <i class="conum" data-value="2"></i><b>(2)</b>
+  auto propagate1 = leaf::preload( e_file_name{file_name} ); <i class="conum" data-value="2"></i><b>(2)</b>
 
   std::string buffer( 1+file_size(*f), '\0' ); <i class="conum" data-value="3"></i><b>(3)</b>
   file_read(*f,&amp;buffer[0],buffer.size()-1);
 
-  auto propagate = leaf::defer([ ] { return e_errno{errno}; } ); <i class="conum" data-value="4"></i><b>(4)</b>
+  auto propagate2 = leaf::defer( [ ] { return e_errno{errno}; } ); <i class="conum" data-value="4"></i><b>(4)</b>
   std::cout &lt;&lt; buffer;
   std::cout.flush();
 }</code></pre>
@@ -1028,7 +1029,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code><a href="#preload">preload</a></code> takes any number of <a href="#e-types">e-type</a> objects and prepares them to become associated with the first exception thrown thereafter. The effect is that from this point on, any exception escaping <code>print_file</code> will report the file name, in addition to everything else passed to <code><a href="#throw_exception">throw_exception</a></code> explicitly (<code>e_file_name</code> is defined as <code>struct e_file_name { std::string value; }</code>).</td>
+<td><code><a href="#preload">preload</a></code> takes any number of <a href="#e-types">e-type</a> objects and prepares them to become associated (automatically, at the time the returned object expires) with the first exception thrown thereafter. The effect is that from this point on, any exception escaping <code>print_file</code> will report the file name, in addition to everything else passed to <code><a href="#throw_exception">throw_exception</a></code> explicitly (<code>e_file_name</code> is defined as <code>struct e_file_name { std::string value; }</code>).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -1036,7 +1037,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><code><a href="#defer">defer</a></code> is similar to <code>preload</code>: it prepares an e-type object to become associated with the first exception thrown thereafter, but instead of taking the e-type object itself, <code>defer</code> takes a function that returns it. The function is invoked in the returned object`s destructor, at which point it becomes associated with the exception being propagated. Assuming <code>std::cout</code> is configured to throw on error, the effect is that those exceptions will have the relevant <code>errno</code> associated with them.</td>
+<td><code><a href="#defer">defer</a></code> is similar to <code>preload</code>: it prepares an e-type object to become associated with the first exception thrown thereafter, but instead of taking the e-type object itself, <code>defer</code> takes a function that returns it. The function is invoked in the returned object`s destructor, at which point it becomes associated with the exception being propagated. Assuming <code>std::cout</code> is configured to throw on error, the effect of this line is that those exceptions will have the relevant <code>errno</code> associated with them.</td>
 </tr>
 </table>
 </div>
@@ -1218,7 +1219,7 @@ struct e_maximum_temperature { int value; };</code></pre>
 </ul>
 </div>
 <div class="paragraph">
-<p>LEAF itself never creates e-objects and only moves—never copies —the e-objects it is given. Therefore, users are free to define any constructors as needed to enforce invariants for their e-types, but the typical case is to simply enclose a <code>value</code> in a C-<code>struct</code>.</p>
+<p>LEAF itself never creates e-objects and generally only moves the e-objects it is given. Therefore, users are free to define any constructors as needed to enforce invariants for their e-types, but the typical case is to simply enclose a <code>value</code> in a C-<code>struct</code>.</p>
 </div>
 <div class="paragraph">
 <p>Various functions in LEAF take a list of e-objects to associate with an <code><a href="#error">error</a></code> value. For example, to indicate an error, a function that returns a <code><a href="#result">result</a>&lt;T&gt;</code> may use something like:</p>
@@ -1532,7 +1533,7 @@ A call to <code><a href="#propagate">propagate</a></code> restores the default b
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The printing of each individual e-object is done by the rules desgribed <a href="#e-types">here</a>.
+The printing of each individual e-object is done by the rules described <a href="#e-types">here</a>.
 </td>
 </tr>
 </table>
@@ -1633,7 +1634,7 @@ The printing of each individual e-object is done by the rules desgribed <a href=
 <p>Objects of class <code>error</code> are values that identify a errors across the entire program. They can be copied, moved, assigned to, and compared to other error objects. They occupy as much memory as <code>unsigned int</code>, and are as fast.</p>
 </div>
 <div class="paragraph">
-<p>Whenever an <code>e&#8230;&#8203;</code> sequence is passedo <code>error</code> functions, these objects are moved into matching storage provided by <code><a href="#expect">expect</a></code> instances and associated with the <code>error</code> object, which can later be passed to <code><a href="#peek-expect">peek</a></code> or <code><a href="#handle_error-expect">handle_error</a></code> to retrieve them.</p>
+<p>Whenever an <code>e&#8230;&#8203;</code> sequence is passed <code>error</code> functions, these objects are moved into matching storage provided by <code><a href="#expect">expect</a></code> instances and associated with the <code>error</code> object, which can later be passed to <code><a href="#peek-expect">peek</a></code> or <code><a href="#handle_error-expect">handle_error</a></code> to retrieve them.</p>
 </div>
 <hr>
 <div class="sect3">
@@ -1641,7 +1642,7 @@ The printing of each individual e-object is done by the rules desgribed <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   template &lt;class... E&gt;
   explicit error::error( E &amp;&amp; ... e ) noexcept;
@@ -1668,7 +1669,7 @@ The printing of each individual e-object is done by the rules desgribed <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   friend bool operator==( error const &amp; e1, error const &amp; e2 ) noexcept;
 
@@ -1690,7 +1691,7 @@ The printing of each individual e-object is done by the rules desgribed <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   friend bool operator!=( error const &amp; e1, error const &amp; e2 ) noexcept;
 
@@ -1712,7 +1713,7 @@ The printing of each individual e-object is done by the rules desgribed <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   friend std::ostream &amp; operator&lt;&lt;( std::ostream &amp; os, error const &amp; e )
 
@@ -1737,7 +1738,7 @@ The printing of each individual e-object is done by the rules desgribed <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   class error_capture
   {
@@ -1819,7 +1820,7 @@ The printing of each individual e-object is done by the rules desgribed <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   error_capture::error_capture() noexcept;
 
@@ -1844,7 +1845,7 @@ The printing of each individual e-object is done by the rules desgribed <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   error_capture::operator bool() const noexcept;
 
@@ -1866,7 +1867,7 @@ The printing of each individual e-object is done by the rules desgribed <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   template &lt;class P&gt;
   decltype(P::value) const * peek( error_capture const &amp; ec ) noexcept;
@@ -1889,7 +1890,7 @@ The printing of each individual e-object is done by the rules desgribed <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   template &lt;class... M&gt;
   friend bool error_capture::handle_error( error_capture const &amp; ec, M &amp;&amp; ... m ) noexcept;
@@ -1971,7 +1972,7 @@ The printing of each individual e-object is done by the rules desgribed <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   friend void diagnostic_print( std::ostream &amp; os, error_capture const &amp; ec );
 
@@ -1993,7 +1994,7 @@ The printing of each individual e-object is done by the rules desgribed <a href=
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The printing of each individual e-object is done by the rules desgribed <a href="#e-types">here</a>.
+The printing of each individual e-object is done by the rules described <a href="#e-types">here</a>.
 </td>
 </tr>
 </table>
@@ -2005,7 +2006,7 @@ The printing of each individual e-object is done by the rules desgribed <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   error error_capture::unload() noexcept;
 
@@ -2032,7 +2033,7 @@ The printing of each individual e-object is done by the rules desgribed <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   template &lt;class T&gt;
   result
@@ -2080,7 +2081,7 @@ The printing of each individual e-object is done by the rules desgribed <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   result::result() noexcept;
   result::result( T const &amp; v );
@@ -2129,7 +2130,7 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   result::operator bool() const noexcept;
 
@@ -2151,7 +2152,7 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   T const &amp; result::value() const;
   T &amp; result::value();
@@ -2176,7 +2177,7 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   template &lt;class... E&gt;
   leaf::error result::error( E &amp;&amp; ... e ) noexcept;
@@ -2221,7 +2222,7 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   template &lt;class P,class... E,class T&gt;
   decltype(P::value) const * peek( expect&lt;E...&gt; const &amp; exp, result&lt;T&gt; const &amp; r ) noexcept;
@@ -2257,7 +2258,7 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   template &lt;class... M,class... E&gt;
   friend bool result::handle_error( expect&lt;E...&gt; &amp; exp, result &amp; r, M &amp;&amp; ... m ) noexcept;
@@ -2293,7 +2294,7 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   template &lt;class... E&gt;
   friend void result::diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, result const &amp; r );
@@ -2329,7 +2330,7 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   template &lt;class... E&gt;
   friend result result::capture( expect&lt;E...&gt; &amp; exp, result const &amp; r );
@@ -2364,7 +2365,7 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost [ namespace leaf {
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   struct bad_result: std::exception { };
 
@@ -2385,7 +2386,7 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   template &lt;class... E&gt;
-  void preload( E &amp;&amp; ... e ) noexcept;
+  &lt;&lt;unspecified-type&gt;&gt; preload( E &amp;&amp; ... e ) noexcept;
 
 } }</code></pre>
 </div>
@@ -2394,7 +2395,17 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 <dl>
 <dt class="hdlist1">Effects: </dt>
 <dd>
-<p>As if <code>err.propagate(std::forward&lt;E&gt;(e&#8230;&#8203;))</code>, where <code>err</code> is a <code>leaf::<a href="#error">error</a></code> value that would compare equal to the error value that will be created the <strong>next</strong> time the <code><a href="#error::error">error</a></code> constructor is invoked.</p>
+<p>All <code>e&#8230;&#8203;</code> objects are forwarded and stored into the returned object of unspecified type, which should be captured by <code>auto</code> and kept alive in the calling scope. When that object is destroyed:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>If a new <code>leaf::<a href="#error">error</a></code> value was created (in the calling thread) since it was created, the stored <code>e&#8230;&#8203;</code> objects are propagated and become associated with  the <em>first</em> <code>leaf::error</code> value created after <code>preload</code> was called;</p>
+</li>
+<li>
+<p>Otherwise, the stored <code>e&#8230;&#8203;</code> objects are discarded.</p>
+</li>
+</ul>
+</div>
 </dd>
 </dl>
 </div>
@@ -2407,22 +2418,31 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 <div class="content">
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
-  template &lt;class F&gt;
-  &lt;&lt;unspecified-type&gt;&gt; defer( F &amp;&amp; f ) noexcept;
+  template &lt;class... F&gt;
+  &lt;&lt;unspecified-type&gt;&gt; defer( F &amp;&amp; ... f ) noexcept;
 
 } }</code></pre>
 </div>
 </div>
-<hr>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Requirements: </dt>
 <dd>
-<p><code>f</code> must be a function that does not throw exceptions, takes no arguments and returns an <a href="#e-types">e-type</a> object.</p>
+<p>All <code>f&#8230;&#8203;</code> objects must be functions that do not throw exceptions, take no arguments and return an <a href="#e-types">e-type</a> object.</p>
 </dd>
 <dt class="hdlist1">Effects: </dt>
 <dd>
-<p><code>f</code> is moved into the returned object of unspecified type, which should be captured by <code>auto</code> and kept alive in the calling scope. When that object is destroyed, it will call <code>f</code>, and will associate the returned e-object with  the first <code>leaf::<a href="#error">error</a></code> value created after <code>defer</code> was called.</p>
+<p>All <code>f&#8230;&#8203;</code> objects are forwarded and stored into the returned object of unspecified type, which should be captured by <code>auto</code> and kept alive in the calling scope. When that object is destroyed:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>If a new <code>leaf::<a href="#error">error</a></code> value was created (in the calling thread) since it was created, each of the stored <code>f&#8230;&#8203;</code> is called, and the returned <a href="#e-types">e-value</a> is propagated and becomes associated with  the <em>first</em> <code>leaf::error</code> value created after <code>defer</code> was called;</p>
+</li>
+<li>
+<p>Otherwise, the stored <code>f&#8230;&#8203;</code> objects are discarded.</p>
+</li>
+</ul>
+</div>
 </dd>
 </dl>
 </div>
@@ -2445,14 +2465,16 @@ namespace boost { namespace leaf {
   template &lt;class... E,class Ex&gt;
   [[noreturn]] void throw_exception( Ex &amp;&amp; ex, error const &amp; err, E &amp;&amp; ... e );
 
+  error get_error( std::exception const &amp; ex ) noexcept;
+
   template &lt;class P,class... E&gt;
-  decltype(P::value) const * peek( expect&lt;E...&gt; const &amp; exp, std::exception const &amp; e ) noexcept;
+  decltype(P::value) const * peek( expect&lt;E...&gt; const &amp; exp, std::exception const &amp; ex ) noexcept;
 
   template &lt;class... M,class... E&gt;
-  void handle_exception( expect&lt;E...&gt; &amp; exp, std::exception const &amp; e, M &amp;&amp; ... m );
+  void handle_exception( expect&lt;E...&gt; &amp; exp, std::exception const &amp; ex, M &amp;&amp; ... m );
 
   template &lt;class... E&gt;
-  void diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, std::exception const &amp; e );
+  void diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, std::exception const &amp; ex );
 
 } }</code></pre>
 </div>
@@ -2463,7 +2485,7 @@ namespace boost { namespace leaf {
 <pre>namespace boost { namespace leaf {
 
   template &lt;class... E,class F&gt;
-  leaf_detail::exception_trap&lt;F,E...&gt; capture_exception( F &amp;&amp; f ) noexcept;
+  &lt;&lt;unspecified-type&gt;&gt; capture_exception( F &amp;&amp; f ) noexcept;
 
   template &lt;class Future&gt;
   decltype(std::declval&lt;Future&gt;().get()) get( Future &amp;&amp; f );
@@ -2543,6 +2565,49 @@ Use <code>LEAF_THROW</code> to automatically pass the current source location in
 <hr>
 </div>
 <div class="sect3">
+<h4 id="get_error"><code>get_error</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
+<div class="content">
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
+
+  error get_error( std::exception const &amp; ex ) noexcept;
+
+} }</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Returns: </dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>If <code>auto e = dynamic_cast&lt;leaf::<a href="#error">error</a> const *&gt;(&amp;ex)</code> succeeds, returns <code>*e</code>.</p>
+</li>
+<li>
+<p>Othrewise, it returns an unspecified <code>leaf::error</code> value, which is "temporarily" associated with any and all currently unhandled exceptions.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+A successful call to <code><a href="#handle_exception">handle_exception</a></code> breaks this association.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+<hr>
+</div>
+<div class="sect3">
 <h4 id="peek-exception"><code>peek</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
@@ -2557,18 +2622,9 @@ Use <code>LEAF_THROW</code> to automatically pass the current source location in
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Returns: </dt>
+<dt class="hdlist1">Effects: </dt>
 <dd>
-<div class="ulist">
-<ul>
-<li>
-<p>If <code>auto e = dynamic_cast&lt;leaf::<a href="#error">error</a> const *&gt;(&amp;ex)</code> succeeds, returns <code><a href="#peek-expect">peek</a>&lt;P&gt;(exp,*e)</code>.</p>
-</li>
-<li>
-<p>Othrewise, it peeks into any <a href="#e-types">e-type</a> objects passed to <code><a href="#preload">preload</a></code>.</p>
-</li>
-</ul>
-</div>
+<p>As if <code>return leaf::<a href="#peek-expect">peek</a>&lt;P&gt;( exp, <a href="#get_error">get_error</a>(ex) );</code></p>
 </dd>
 </dl>
 </div>
@@ -2582,10 +2638,30 @@ Use <code>LEAF_THROW</code> to automatically pass the current source location in
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   template &lt;class... M,class... E&gt;
-  void handle_exception( expect&lt;E...&gt; &amp; exp, std::exception const &amp; e, M &amp;&amp; ... m );
+  void handle_exception( expect&lt;E...&gt; &amp; exp, std::exception const &amp; ex, M &amp;&amp; ... m );
 
 } }</code></pre>
 </div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Effects: </dt>
+<dd>
+<p>Equivalent to: <code>if( !<a href="#handle_error-expect">handle_error</a>( exp, <a href="#get_error">get_error</a>(ex), std::forward&lt;M&gt;(m)&#8230;&#8203;) ) throw;</code></p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+In case the dynamic type of <code>ex</code> does not derive from <code>leaf::error</code> and the call to <code>handle_error</code> succeeds, the association between the <code>leaf::error</code> value returned by <code><a href="#get_error">get_error</a></code> and the currently unhandled exceptions is broken.
+</td>
+</tr>
+</table>
 </div>
 <hr>
 </div>
@@ -2597,10 +2673,18 @@ Use <code>LEAF_THROW</code> to automatically pass the current source location in
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   template &lt;class... E&gt;
-  void diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, std::exception const &amp; e );
+  void diagnostic_print( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp, std::exception const &amp; ex );
 
 } }</code></pre>
 </div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Effects: </dt>
+<dd>
+<p>Equivalent to: <code><a href="#diagnostic_print-expect">diagnostic_print</a>( os, exp, <a href="#get_error">get_error</a>(ex) );</code></p>
+</dd>
+</dl>
 </div>
 <hr>
 </div>
@@ -2612,15 +2696,40 @@ Use <code>LEAF_THROW</code> to automatically pass the current source location in
 <pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
 
   template &lt;class... E,class F&gt;
-  leaf_detail::exception_trap&lt;F,E...&gt; capture_exception( F &amp;&amp; f ) noexcept;
+  &lt;&lt;unspecified-type&gt;&gt; capture_exception( F &amp;&amp; f ) noexcept;
 
 } }</code></pre>
 </div>
 </div>
 <hr>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Requirements: </dt>
+<dd>
+<p><code>F</code> must be a function type.</p>
+</dd>
+<dt class="hdlist1">Returns: </dt>
+<dd>
+<p>A function of unspecified type which wraps <code>f</code> and, when called, forwards all its arguments to <code>f</code>, capturing the specified <code>E&#8230;&#8203;</code> <a href="#e-types">e-types</a> in case it throws.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The <code>capture_exception</code> function is designed for use with <code><a href="#get">get</a></code>, to effectively transport <a href="#e-types">e-objects</a> across thread boundaries.
+</td>
+</tr>
+</table>
+</div>
+<hr>
 </div>
 <div class="sect3">
-<h4 id="get-capture_exception"><code>get</code></h4>
+<h4 id="get"><code>get</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/exception_capture.hpp&gt;</div>
 <div class="content">
@@ -2631,6 +2740,34 @@ Use <code>LEAF_THROW</code> to automatically pass the current source location in
 
 } }</code></pre>
 </div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Requirements: </dt>
+<dd>
+<p><code>Future</code> must be a <code>std::future</code> or other similar type used to recover future values by a member function <code>get()</code>.</p>
+</dd>
+<dt class="hdlist1">Returns: </dt>
+<dd>
+<p><code>f.get()</code>.</p>
+</dd>
+<dt class="hdlist1">Throws: </dt>
+<dd>
+<p>Any exception thrown by <code>f.get()</code>. If the future function was launched using <code><a href="#capture_exception">capture_exception</a>&lt;E&#8230;&#8203;&gt;</code>, all <code>E&#8230;&#8203;</code> type <a href="#e-types">e-objects</a> captured in the worker thread are transported to the calling thread.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+To store and to access the transported <a href="#e-types">e-objects</a>, the calling thread must provide a suitable <code><a href="#expect">expect</a></code> object.
+</td>
+</tr>
+</table>
 </div>
 <hr>
 </div>
@@ -2783,7 +2920,7 @@ void read_file( FILE * f )
 
 void process_file( char const * name )
 {
-  leaf::preload( e_file_name{name} );
+  auto propagate = leaf::preload( e_file_name{name} );
 
   if( FILE * fp=fopen(name,"rt")) {
     std::shared_ptr&lt;FILE&gt; f(fp,fclose);
@@ -2919,7 +3056,7 @@ This technique works exacly the same way when errors are reported using <code>le
 <p>But what if we need to include some e-object conditionally? When using excption handling, it would be nice to be able to do this in a <code>catch</code> statement which selectively augments passing exceptions.</p>
 </div>
 <div class="paragraph">
-<p>The correct way to do this with LEAF is to use two <code>catch</code> statements:</p>
+<p>LEAF supports the following approach, assuming all exceptions derive from <code>std::exception</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2929,25 +3066,19 @@ This technique works exacly the same way when errors are reported using <code>le
   function_that_throws();
   ....
 }
-catch( leaf::error e )
+catch( std::exception const &amp; e )
 {
   if( condition )
-    e.propagate( e_this{....}, e_that{....} );
-  throw;
-}
-catch(...)
-{
-  if( condition )
-    leaf::preload( e_this{....}, e_that{....} );
+    leaf::get_error(e).propagate( e_this{....}, e_that{....} );
   throw;
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The reason two <code>catch</code> statements are necessary is that if the exception we&#8217;re augmenting was thrown using <code><a href="#throw_exception">throw_exception</a></code>, it includes a <code>leaf::error</code> sub-object, so we can safely catch it by that type, which guarantees that the e-objects we&#8217;re propagating will definitely be associated with that and only with that exception object.</p>
+<p>The reason we need to use <code><a href="#get_error">get_error</a></code> is that not all exceptions have a <code>leaf::<a href="#error">error</a></code> value associated with them. If the exception we&#8217;re augmenting was thrown using <code><a href="#throw_exception">throw_exception</a></code>, it includes a <code>leaf::error</code> sub-object, and in this case <code>get_error</code> will return that <code>leaf::error</code> value. Also, such exceptions can be intercepted by <code>catch( error e )</code> if needed.</p>
 </div>
 <div class="paragraph">
-<p>The <code>catch(&#8230;&#8203;)</code> is designed to work with exceptions which were not thrown by <code>throw_exception</code> and therefore do not carry a <code>leaf::error</code> value. Remember that <code>preload</code> associates the e-objects it is given with the first <code>leaf::error</code> value that will be created in the future. The result is that in this case the association is not with a specific exception object, but rather with any and all exception objects that pass through, until <code><a href="#handle_exception">handle_exception</a></code> is called. If imperfect, this is the best that can be done in this case.</p>
+<p>But if the caught exception was not thrown by <code>throw_exception</code> (and therefore doesn&#8217;t derive from <code>leaf::error</code>), <code>get_error</code> returns an unspecified <code>leaf::error</code> value, which is temporarily associated with any and all current exceptions, until successfully handled by <code><a href="#handle_exception">handle_exception</a></code>. While this association is imperfect, because it does not pertain to a specific exception object, it is the best that can be done in this case.</p>
 </div>
 <hr>
 </div>
@@ -3029,7 +3160,7 @@ catch(...)
   }
   else
   {
-    leaf::preload( e_do_work_error{-42} ); <i class="conum" data-value="3"></i><b>(3)</b>
+    auto propagate = leaf::preload( e_do_work_error{-42} ); <i class="conum" data-value="3"></i><b>(3)</b>
     return luaL_error(L,"do_work_error"); <i class="conum" data-value="4"></i><b>(4)</b>
   }
 }</code></pre>
@@ -3065,7 +3196,7 @@ catch(...)
   lua_getfield( L, LUA_GLOBALSINDEX, "call_do_work" );
   if( int err=lua_pcall(L,0,1,0) ) <i class="conum" data-value="1"></i><b>(1)</b>
   {
-    leaf::preload( e_lua_error_message{lua_tostring(L,1)} ); <i class="conum" data-value="2"></i><b>(2)</b>
+    auto propagate = leaf::preload( e_lua_error_message{lua_tostring(L,1)} ); <i class="conum" data-value="2"></i><b>(2)</b>
     lua_pop(L,1);
     return leaf::error( e_lua_pcall_error{err} );
   }
