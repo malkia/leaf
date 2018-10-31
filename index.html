@@ -456,6 +456,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#expect::expect">Constructor</a></li>
 <li><a href="#expect-dtor">Destructor</a></li>
 <li><a href="#peek-expect"><code>peek</code></a></li>
+<li><a href="#match"><code>match</code></a></li>
 <li><a href="#handle_error-expect"><code>handle_error</code></a></li>
 <li><a href="#diagnostic_print-expect"><code>diagnostic_print</code></a></li>
 <li><a href="#capture-expect"><code>capture</code></a></li>
@@ -465,6 +466,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#error">Class <code>error</code></a>
 <ul class="sectlevel3">
 <li><a href="#error::error">Constructor</a></li>
+<li><a href="#error::propagate"><code>propagate</code></a></li>
 <li><a href="#operator_eq-error"><code>operator==</code></a></li>
 <li><a href="#operator_neq-error"><code>operator!=</code></a></li>
 <li><a href="#operator_shl-error"><code>operator&lt;&lt;</code></a></li>
@@ -492,7 +494,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#capture-result"><code>capture</code></a></li>
 <li><a href="#bad_result"><code>bad_result</code></a></li>
 <li><a href="#LEAF_AUTO"><code>LEAF_AUTO</code></a></li>
-<li><a href="#LEAF_AUTO"><code>LEAF_CHECK</code></a></li>
+<li><a href="#LEAF_CHECK"><code>LEAF_CHECK</code></a></li>
 </ul>
 </li>
 <li><a href="#preload"><code>preload</code></a></li>
@@ -1302,6 +1304,12 @@ The output from <code>diagnostic_print</code> overloads is developer-friendly bu
   template &lt;class P,class... E&gt;
   decltype(P::value) const * peek( expect&lt;E...&gt; const &amp; exp, error const &amp; e ) noexcept;
 
+  template &lt;class... E,class F&gt;
+  &lt;&lt;unspecified-type&gt; match( F &amp;&amp; f ) noexcept;
+
+  template &lt;class... E&gt;
+  &lt;&lt;unspecified-type&gt; match() noexcept;
+
 } }</code></pre>
 </div>
 </div>
@@ -1389,7 +1397,7 @@ The output from <code>diagnostic_print</code> overloads is developer-friendly bu
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-A call to <code><a href="#propagate">propagate</a></code> restores the default behavior of <code>~expect</code> after a successful call to <code>handle_error</code>.
+A call to <code><a href="#expect::propagate">propagate</a></code> restores the default behavior of <code>~expect</code> after a successful call to <code>handle_error</code>.
 </td>
 </tr>
 </table>
@@ -1416,6 +1424,27 @@ A call to <code><a href="#propagate">propagate</a></code> restores the default b
 <p>If <code>exp</code> currently stores an object of type <code>P</code> associated with the <code><a href="#error">error</a></code> value <code>e</code>, returns a read-only pointer to that object. Otherwise returns <code>0</code>.</p>
 </dd>
 </dl>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="match"><code>match</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/expect.hpp&gt;</div>
+<div class="content">
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
+
+  template &lt;class... E,class F&gt;
+  &lt;&lt;unspecified-type&gt; match( F &amp;&amp; f ) noexcept;
+
+  template &lt;class... E&gt;
+  &lt;&lt;unspecified-type&gt; match() noexcept;
+
+} }</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>See <code><a href="#handle_error-expect"><code>handle_error</code></a></code> below.</p>
 </div>
 <hr>
 </div>
@@ -1451,7 +1480,7 @@ A call to <code><a href="#propagate">propagate</a></code> restores the default b
 <p>Its function is called with the <code>.value</code> members of the entire set of matching e-objects from <code>exp</code> (the function may not modify those values);</p>
 </li>
 <li>
-<p><code>exp</code> is marked so that <code><a href="#expect_dtor">~expect</a></code> will destroy all of the stored e-objects (this can be undone by a later call to <code><a href="#propagate">propagate</a></code>);</p>
+<p><code>exp</code> is marked so that <code><a href="#expect-dtor">~expect</a></code> will destroy all of the stored e-objects (this can be undone by a later call to <code><a href="#expect::propagate">propagate</a></code>);</p>
 </li>
 <li>
 <p><code>handle_error</code> returns true.</p>
@@ -1661,6 +1690,29 @@ The printing of each individual e-object is done by the rules described <a href=
 <dt class="hdlist1">Postconditions: </dt>
 <dd>
 <p><code>*this</code> is a unique value across the entire program. The user may create any number of other <code>error</code> values that compare equal to <code>*this</code>, by copy, move or assignment, just like with any other value type.</p>
+</dd>
+</dl>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="error::propagate"><code>propagate</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
+<div class="content">
+<pre class="highlight"><code class="language-c++" data-lang="c++">namespace boost { namespace leaf {
+
+    template &lt;class... E&gt;
+    error error::propagate( E &amp;&amp; ... e ) const noexcept;
+
+} }</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Effects: </dt>
+<dd>
+<p>Each of the <code>e&#8230;&#8203;</code> objects is either moved into the corresponding storage provided by <code>expect</code> instances and associated with <code>*this</code>; or discarded. See <code><a href="#expect">expect</a></code>.</p>
 </dd>
 </dl>
 </div>
@@ -2405,7 +2457,7 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 <hr>
 </div>
 <div class="sect3">
-<h4 id="LEAF_AUTO"><code>LEAF_CHECK</code></h4>
+<h4 id="LEAF_CHECK"><code>LEAF_CHECK</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
@@ -3456,7 +3508,7 @@ Follow this link to see a complete example program: <a href="https://github.com/
 </div>
 </div>
 <div class="paragraph">
-<p>Later, instead of using <code>std::future::get</code>, we use <code>leaf::<a href="#get-capture_exception">get</a></code>, then catch exceptions as if the function was called locally:</p>
+<p>Later, instead of using <code>std::future::get</code>, we use <code>leaf::<a href="#get">get</a></code>, then catch exceptions as if the function was called locally:</p>
 </div>
 <div class="listingblock">
 <div class="content">
