@@ -493,8 +493,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#bad_result"><code>bad_result</code></a></li>
 </ul>
 </li>
-<li><a href="#_preload"><code>preload</code></a></li>
-<li><a href="#_defer"><code>defer</code></a></li>
+<li><a href="#preload"><code>preload</code></a></li>
+<li><a href="#defer"><code>defer</code></a></li>
 <li><a href="#eh">Exception Handling Functions</a>
 <ul class="sectlevel3">
 <li><a href="#throw_exception"><code>throw_exception</code></a></li>
@@ -512,13 +512,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#techniques">Programming Techniques</a>
 <ul class="sectlevel2">
 <li><a href="#technique_preload">Preloading Errors</a></li>
-<li><a href="#_capturing_errno_with_defer">Capturing <code>errno</code> with <code>defer</code></a></li>
-<li><a href="#_augmenting_exceptions_in_a_catch">Augmenting Exceptions in a <code>catch</code></a></li>
-<li><a href="#_using_preload_in_c_callbacks">Using <code>preload</code> in C-callbacks</a></li>
-<li><a href="#_transporting_errors_between_threads">Transporting Errors between Threads</a>
+<li><a href="#technique_defer">Capturing <code>errno</code> with <code>defer</code></a></li>
+<li><a href="#technique_augment_in_catch">Augmenting Exceptions in a <code>catch</code></a></li>
+<li><a href="#technique_preload_in_c_callbacks">Using <code>preload</code> in C-callbacks</a></li>
+<li><a href="#technique_transport">Transporting Errors between Threads</a>
 <ul class="sectlevel3">
-<li><a href="#_using_resultt">Using <code>result&lt;T&gt;</code></a></li>
-<li><a href="#_using_exception_handling">Using Exception Handling</a></li>
+<li><a href="#technique_transport-result">Using <code>result&lt;T&gt;</code></a></li>
+<li><a href="#technique_transport-exceptions">Using Exception Handling</a></li>
 </ul>
 </li>
 </ul>
@@ -2358,6 +2358,18 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 </dd>
 </dl>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+For an example, see <a href="#technique_transport-result">Transporting Errors between Threads using <code>result&lt;T&gt;</code></a>.
+</td>
+</tr>
+</table>
+</div>
 <hr>
 </div>
 <div class="sect3">
@@ -2379,7 +2391,7 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 </div>
 </div>
 <div class="sect2">
-<h3 id="_preload"><code>preload</code></h3>
+<h3 id="preload"><code>preload</code></h3>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
 <div class="content">
@@ -2412,7 +2424,7 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_defer"><code>defer</code></h3>
+<h3 id="defer"><code>defer</code></h3>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
 <div class="content">
@@ -2701,6 +2713,18 @@ In case the dynamic type of <code>ex</code> does not derive from <code>leaf::err
 } }</code></pre>
 </div>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+For an, example see <a href="#technique_transport-exceptions">Transporting Errors between Threads using Exception Handling</a>.
+</td>
+</tr>
+</table>
+</div>
 <hr>
 <div class="dlist">
 <dl>
@@ -2974,7 +2998,7 @@ This technique works exacly the same way when errors are reported using <code>le
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_capturing_errno_with_defer">Capturing <code>errno</code> with <code>defer</code></h3>
+<h3 id="technique_defer">Capturing <code>errno</code> with <code>defer</code></h3>
 <div class="paragraph">
 <p>Consider the following function:</p>
 </div>
@@ -3048,7 +3072,7 @@ This technique works exacly the same way when errors are reported using <code>le
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_augmenting_exceptions_in_a_catch">Augmenting Exceptions in a <code>catch</code></h3>
+<h3 id="technique_augment_in_catch">Augmenting Exceptions in a <code>catch</code></h3>
 <div class="paragraph">
 <p>What makes <code><a href="#preload">preload</a></code> and <code><a href="#defer">defer</a></code> useful (see <a href="#technique_preload">Preloading Errors</a> and <a href="#technique_defer">Capturing <code>errno</code> with <code>defer</code></a>) is that they automatically include <a href="#e-types">e-type</a> objects with any exception or error reported by a function.</p>
 </div>
@@ -3083,7 +3107,7 @@ catch( std::exception const &amp; e )
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_using_preload_in_c_callbacks">Using <code>preload</code> in C-callbacks</h3>
+<h3 id="technique_preload_in_c_callbacks">Using <code>preload</code> in C-callbacks</h3>
 <div class="paragraph">
 <p>Communicating information pertaining to a failure detected in a C callback is tricky, because C callbacks are limited to a specific static signature, which may not use C++ types.</p>
 </div>
@@ -3299,7 +3323,7 @@ catch( std::exception const &amp; e )
 <hr>
 </div>
 <div class="sect2">
-<h3 id="_transporting_errors_between_threads">Transporting Errors between Threads</h3>
+<h3 id="technique_transport">Transporting Errors between Threads</h3>
 <div class="paragraph">
 <p>With LEAF, <a href="#e-types">e-objects</a> use automatic storage duration, stored inside <code><a href="#expect">expect</a></code> instances. When using concurrency, we need a mechanism to detach e-objects from a worker thread and transport them to another thread where errors are handled.</p>
 </div>
@@ -3307,7 +3331,7 @@ catch( std::exception const &amp; e )
 <p>LEAF offers two interfaces for this purpose, one using <code>result&lt;T&gt;</code>, and for programs that use exception handling.</p>
 </div>
 <div class="sect3">
-<h4 id="_using_resultt">Using <code>result&lt;T&gt;</code></h4>
+<h4 id="technique_transport-result">Using <code>result&lt;T&gt;</code></h4>
 <div class="paragraph">
 <p>Without exceptions, transporting <a href="#e-types">e-objects</a> between threads is as easy as calling <code><a href="#capture-result">capture</a></code>, passing the <code><a href="#expect">expect</a></code> object whose contents needs to be transported, and a <code><a href="#result">result</a>&lt;T&gt;</code> which may be in either value state or error state. This gets us a new <code><a href="#result">result</a>&lt;T&gt;</code> object which can be sent across thread boundaries.</p>
 </div>
@@ -3379,7 +3403,7 @@ Follow this link to see a complete example program: <a href="https://github.com/
 <hr>
 </div>
 <div class="sect3">
-<h4 id="_using_exception_handling">Using Exception Handling</h4>
+<h4 id="technique_transport-exceptions">Using Exception Handling</h4>
 <div class="paragraph">
 <p>When using exception handling, we need to capture the exception using <code>std::exception_ptr</code>, then capture the current <a href="#e-types">e-objects</a> in an <code><a href="#error_capture">error_capture</a></code> and wrap both into another exception. In the main thread we unwrap and throw the original exception.</p>
 </div>
