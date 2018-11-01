@@ -563,7 +563,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#operator_eq-error"><code>operator==</code></a></li>
 <li><a href="#operator_neq-error"><code>operator!=</code></a></li>
 <li><a href="#operator_shl-error"><code>operator&lt;&lt;</code></a></li>
-<li><a href="#error::peek_next_error"><code>peek_next_error</code></a></li>
+<li><a href="#peek_next_error"><code>peek_next_error</code></a></li>
 </ul>
 </li>
 <li><a href="#preload"><code>preload</code></a></li>
@@ -2016,8 +2016,9 @@ The printing of each individual e-object is done by the rules described <a href=
 
     <span class="directive">friend</span> std::ostream &amp; <span class="directive">operator</span>&lt;&lt;( std::ostream &amp; os, error <span class="directive">const</span> &amp; e )
 
-    <span class="directive">static</span> error peek_next_error() <span class="directive">noexcept</span>;
   };
+
+  error peek_next_error() <span class="directive">noexcept</span>;
 
 } }</code></pre>
 </div>
@@ -2148,13 +2149,13 @@ The printing of each individual e-object is done by the rules described <a href=
 <hr>
 </div>
 <div class="sect3">
-<h4 id="error::peek_next_error"><code>peek_next_error</code></h4>
+<h4 id="peek_next_error"><code>peek_next_error</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
-  error error::peek_next_error() <span class="directive">noexcept</span>;
+  error peek_next_error() <span class="directive">noexcept</span>;
 
 } }</code></pre>
 </div>
@@ -3714,7 +3715,7 @@ This technique works exacly the same way when errors are reported using <code>le
   }
   <span class="keyword">else</span>
   {
-    leaf::error::peek_next_error().propagate( e_do_work_error{-<span class="integer">42</span>} ); <i class="conum" data-value="3"></i><b>(3)</b>
+    leaf::peek_next_error().propagate( e_do_work_error{-<span class="integer">42</span>} ); <i class="conum" data-value="3"></i><b>(3)</b>
     <span class="keyword">return</span> luaL_error(L,<span class="string"><span class="delimiter">&quot;</span><span class="content">do_work_error</span><span class="delimiter">&quot;</span></span>); <i class="conum" data-value="4"></i><b>(4)</b>
   }
 }</code></pre>
