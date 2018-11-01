@@ -654,7 +654,7 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">{
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">{
   leaf::expect&lt;e_error_code, e_file_name, e_request_id&gt; exp; <i class="conum" data-value="1"></i><b>(1)</b>
 
   <span class="keyword">if</span>( result&lt;T&gt; r = f() )
@@ -715,7 +715,7 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">struct</span> e_error_code { <span class="predefined-type">int</span> value; };
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">struct</span> e_error_code { <span class="predefined-type">int</span> value; };
 
 <span class="keyword">struct</span> e_file_name { std::<span class="predefined-type">string</span> value; };
 
@@ -731,7 +731,7 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">leaf::result&lt;T&gt; g()
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">leaf::result&lt;T&gt; g()
 {
   <span class="keyword">if</span>( success )
     <span class="keyword">return</span> T(....);
@@ -757,7 +757,7 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">leaf::result&lt;T&gt; f()
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">leaf::result&lt;T&gt; f()
 {
   <span class="keyword">if</span>( leaf::error&lt;T&gt; r=g() )
   {
@@ -813,7 +813,7 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">enum</span>
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">enum</span>
 {
   input_file_open_error,
   input_file_size_error,
@@ -837,7 +837,7 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">leaf::result&lt;<span class="directive">void</span>&gt; file_read( FILE &amp; f, <span class="directive">void</span> * buf, <span class="predefined-type">int</span> size )
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">leaf::result&lt;<span class="directive">void</span>&gt; file_read( FILE &amp; f, <span class="directive">void</span> * buf, <span class="predefined-type">int</span> size )
 {
   <span class="predefined-type">int</span> n = fread(buf,<span class="integer">1</span>,size,&amp;f);
   <span class="keyword">if</span>( ferror(&amp;f) )
@@ -891,7 +891,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">leaf::result&lt;<span class="directive">void</span>&gt; print_file( <span class="predefined-type">char</span> <span class="directive">const</span> * file_name )
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">leaf::result&lt;<span class="directive">void</span>&gt; print_file( <span class="predefined-type">char</span> <span class="directive">const</span> * file_name )
 {
   leaf::result&lt;std::shared_ptr&lt;FILE&gt;&gt; f = file_open(file_name);
   <span class="keyword">if</span>( !f ) <i class="conum" data-value="1"></i><b>(1)</b>
@@ -971,7 +971,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">leaf::result&lt;<span class="directive">void</span>&gt; print_file( <span class="predefined-type">char</span> <span class="directive">const</span> * file_name )
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">leaf::result&lt;<span class="directive">void</span>&gt; print_file( <span class="predefined-type">char</span> <span class="directive">const</span> * file_name )
 {
   LEAF_AUTO(f,file_open(file_name)); <i class="conum" data-value="1"></i><b>(1)</b>
 
@@ -1016,7 +1016,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">int</span> main( <span class="predefined-type">int</span> argc, <span class="predefined-type">char</span> <span class="directive">const</span> * argv[ ] )
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="predefined-type">int</span> main( <span class="predefined-type">int</span> argc, <span class="predefined-type">char</span> <span class="directive">const</span> * argv[ ] )
 {
   <span class="predefined-type">char</span> <span class="directive">const</span> * fn = parse_command_line(argc,argv);
   <span class="keyword">if</span>( !fn )
@@ -1180,7 +1180,7 @@ The complete program from this tutorial is available <a href="https://github.com
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">struct</span> print_file_error : <span class="directive">virtual</span> std::exception { };
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">struct</span> print_file_error : <span class="directive">virtual</span> std::exception { };
 <span class="keyword">struct</span> command_line_error : <span class="directive">virtual</span> print_file_error { };
 <span class="keyword">struct</span> bad_command_line : <span class="directive">virtual</span> command_line_error { };
 <span class="keyword">struct</span> input_error : <span class="directive">virtual</span> print_file_error { };
@@ -1200,7 +1200,7 @@ The complete program from this tutorial is available <a href="https://github.com
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">void</span> file_read( FILE &amp; f, <span class="directive">void</span> * buf, <span class="predefined-type">int</span> size )
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="directive">void</span> file_read( FILE &amp; f, <span class="directive">void</span> * buf, <span class="predefined-type">int</span> size )
 {
   <span class="predefined-type">int</span> n = fread(buf,<span class="integer">1</span>,size,&amp;f);
 
@@ -1249,7 +1249,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">void</span> print_file( <span class="predefined-type">char</span> <span class="directive">const</span> * file_name )
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="directive">void</span> print_file( <span class="predefined-type">char</span> <span class="directive">const</span> * file_name )
 {
   std::shared_ptr&lt;FILE&gt; f = file_open( file_name ); <i class="conum" data-value="1"></i><b>(1)</b>
 
@@ -1293,7 +1293,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">int</span> main( <span class="predefined-type">int</span> argc, <span class="predefined-type">char</span> <span class="directive">const</span> * argv[ ] )
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="predefined-type">int</span> main( <span class="predefined-type">int</span> argc, <span class="predefined-type">char</span> <span class="directive">const</span> * argv[ ] )
 {
    std::cout.exceptions ( std::ostream::failbit | std::ostream::badbit ); <i class="conum" data-value="1"></i><b>(1)</b>
 
@@ -1436,7 +1436,7 @@ The complete program from this tutorial is available <a href="https://github.com
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">struct</span> e_input_name { std::<span class="predefined-type">string</span> value; };
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">struct</span> e_input_name { std::<span class="predefined-type">string</span> value; };
 
 <span class="keyword">struct</span> e_output_name { std::<span class="predefined-type">string</span> value; };
 
@@ -1469,7 +1469,7 @@ The complete program from this tutorial is available <a href="https://github.com
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">return</span> leaf::error( e_error_code{<span class="integer">42</span>}, e_input_name{n1}, e_output_name{n2} );</code></pre>
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">return</span> leaf::error( e_error_code{<span class="integer">42</span>}, e_input_name{n1}, e_output_name{n2} );</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1483,7 +1483,7 @@ The complete program from this tutorial is available <a href="https://github.com
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">struct</span> e_errno
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">struct</span> e_errno
 {
   <span class="predefined-type">int</span> value;
 
@@ -1518,7 +1518,7 @@ The output from <code>diagnostic_output</code> overloads is developer-friendly b
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/expect.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
   <span class="keyword">class</span> <span class="class">expect</span>
@@ -1564,7 +1564,7 @@ The output from <code>diagnostic_output</code> overloads is developer-friendly b
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">struct</span> e_file_name { std::<span class="predefined-type">string</span> value; };</code></pre>
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">struct</span> e_file_name { std::<span class="predefined-type">string</span> value; };</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1588,7 +1588,7 @@ The output from <code>diagnostic_output</code> overloads is developer-friendly b
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/expect.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
   expect&lt;E...&gt;::expect() <span class="directive">noexcept</span>;
@@ -1615,7 +1615,7 @@ The output from <code>diagnostic_output</code> overloads is developer-friendly b
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/expect.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
   expect&lt;E...&gt;::~expect() <span class="directive">noexcept</span>;
@@ -1650,7 +1650,7 @@ A call to <code><a href="#expect::propagate">propagate</a></code> restores the d
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/expect.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
   <span class="directive">void</span> expect&lt;E...&gt;::propagate() <span class="directive">noexcept</span>;
@@ -1673,7 +1673,7 @@ A call to <code><a href="#expect::propagate">propagate</a></code> restores the d
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/expect.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
   error_capture capture( expect&lt;E...&gt; &amp; exp, error <span class="directive">const</span> &amp; e );
@@ -1708,7 +1708,7 @@ A call to <code><a href="#expect::propagate">propagate</a></code> restores the d
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/expect.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">F</span>&gt;
   &lt;&lt;unspecified-type&gt; match( F &amp;&amp; f ) <span class="directive">noexcept</span>;
@@ -1729,7 +1729,7 @@ A call to <code><a href="#expect::propagate">propagate</a></code> restores the d
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/expect.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span><span class="error">.</span>.. M&gt;
   <span class="predefined-type">bool</span> handle_error( expect&lt;E...&gt; &amp; exp, error <span class="directive">const</span> &amp; e, M &amp;&amp; ... m ) <span class="directive">noexcept</span>;
@@ -1773,7 +1773,7 @@ A call to <code><a href="#expect::propagate">propagate</a></code> restores the d
 <dd>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">bool</span> matched = handle_error( exp, e,
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="predefined-type">bool</span> matched = handle_error( exp, e,
 
   leaf::match&lt;e_file_name,e_errno&gt;( [ ] ( std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; fn, <span class="predefined-type">int</span> errn )
   {
@@ -1814,7 +1814,7 @@ A call to <code><a href="#expect::propagate">propagate</a></code> restores the d
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/expect.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">P</span>,<span class="keyword">class</span><span class="error">.</span>.. E&gt;
   <span class="directive">decltype</span>(P::value) <span class="directive">const</span> * peek( expect&lt;E...&gt; <span class="directive">const</span> &amp; exp, error <span class="directive">const</span> &amp; e ) <span class="directive">noexcept</span>;
@@ -1837,7 +1837,7 @@ A call to <code><a href="#expect::propagate">propagate</a></code> restores the d
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/expect.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
   <span class="directive">void</span> diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; <span class="directive">const</span> &amp; exp );
@@ -1878,7 +1878,7 @@ The printing of each individual e-object is done by the rules described <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">class</span> <span class="class">error</span>
   {
@@ -1914,7 +1914,7 @@ The printing of each individual e-object is done by the rules described <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
   <span class="directive">explicit</span> error::error( E &amp;&amp; ... e ) <span class="directive">noexcept</span>;
@@ -1941,7 +1941,7 @@ The printing of each individual e-object is done by the rules described <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
     <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
     error error::propagate( E &amp;&amp; ... e ) <span class="directive">const</span> <span class="directive">noexcept</span>;
@@ -1964,7 +1964,7 @@ The printing of each individual e-object is done by the rules described <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="directive">friend</span> <span class="predefined-type">bool</span> <span class="directive">operator</span>==( error <span class="directive">const</span> &amp; e1, error <span class="directive">const</span> &amp; e2 ) <span class="directive">noexcept</span>;
 
@@ -1986,7 +1986,7 @@ The printing of each individual e-object is done by the rules described <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="directive">friend</span> <span class="predefined-type">bool</span> <span class="directive">operator</span>!=( error <span class="directive">const</span> &amp; e1, error <span class="directive">const</span> &amp; e2 ) <span class="directive">noexcept</span>;
 
@@ -2008,7 +2008,7 @@ The printing of each individual e-object is done by the rules described <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="directive">friend</span> std::ostream &amp; <span class="directive">operator</span>&lt;&lt;( std::ostream &amp; os, error <span class="directive">const</span> &amp; e )
 
@@ -2031,7 +2031,7 @@ The printing of each individual e-object is done by the rules described <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
   &lt;&lt;unspecified-type&gt;&gt; preload( E &amp;&amp; ... e ) <span class="directive">noexcept</span>;
@@ -2064,7 +2064,7 @@ The printing of each individual e-object is done by the rules described <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. F&gt;
   &lt;&lt;unspecified-type&gt;&gt; defer( F &amp;&amp; ... f ) <span class="directive">noexcept</span>;
@@ -2103,7 +2103,7 @@ The printing of each individual e-object is done by the rules described <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">class</span> <span class="class">error_capture</span>
   {
@@ -2184,7 +2184,7 @@ The printing of each individual e-object is done by the rules described <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   error_capture::error_capture() <span class="directive">noexcept</span>;
 
@@ -2209,7 +2209,7 @@ The printing of each individual e-object is done by the rules described <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   error_capture::<span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> <span class="directive">noexcept</span>;
 
@@ -2231,7 +2231,7 @@ The printing of each individual e-object is done by the rules described <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   error error_capture::unload() <span class="directive">noexcept</span>;
 
@@ -2257,7 +2257,7 @@ The printing of each individual e-object is done by the rules described <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. M&gt;
   <span class="directive">friend</span> <span class="predefined-type">bool</span> error_capture::handle_error( error_capture <span class="directive">const</span> &amp; ec, M &amp;&amp; ... m ) <span class="directive">noexcept</span>;
@@ -2298,7 +2298,7 @@ The printing of each individual e-object is done by the rules described <a href=
 <dd>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">bool</span> matched = handle_error( ec,
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="predefined-type">bool</span> matched = handle_error( ec,
 
   leaf::match&lt;e_file_name,e_errno&gt;( [ ] ( std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; fn, <span class="predefined-type">int</span> errn )
   {
@@ -2339,7 +2339,7 @@ The printing of each individual e-object is done by the rules described <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">P</span>&gt;
   <span class="directive">decltype</span>(P::value) <span class="directive">const</span> * peek( error_capture <span class="directive">const</span> &amp; ec ) <span class="directive">noexcept</span>;
@@ -2362,7 +2362,7 @@ The printing of each individual e-object is done by the rules described <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="directive">friend</span> <span class="directive">void</span> diagnostic_output( std::ostream &amp; os, error_capture <span class="directive">const</span> &amp; ec );
 
@@ -2399,7 +2399,7 @@ The printing of each individual e-object is done by the rules described <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">T</span>&gt;
   result
@@ -2452,7 +2452,7 @@ The printing of each individual e-object is done by the rules described <a href=
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   result::result() <span class="directive">noexcept</span>;
   result::result( T <span class="directive">const</span> &amp; v );
@@ -2501,7 +2501,7 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   result::<span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> <span class="directive">noexcept</span>;
 
@@ -2523,7 +2523,7 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   T <span class="directive">const</span> &amp; result::value() <span class="directive">const</span>;
   T &amp; result::value();
@@ -2548,7 +2548,7 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
   leaf::error result::error( E &amp;&amp; ... e ) <span class="directive">noexcept</span>;
@@ -2593,7 +2593,7 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
   <span class="directive">friend</span> result result::capture( expect&lt;E...&gt; &amp; exp, result <span class="directive">const</span> &amp; r );
@@ -2640,7 +2640,7 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">T</span>,<span class="keyword">class</span><span class="error">.</span>.. M&gt;
   <span class="directive">friend</span> <span class="predefined-type">bool</span> result::handle_error( expect&lt;E...&gt; &amp; exp, result&lt;T&gt; &amp; r, M &amp;&amp; ... m ) <span class="directive">noexcept</span>;
@@ -2676,7 +2676,7 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">P</span>,<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">T</span>&gt;
   <span class="directive">decltype</span>(P::value) <span class="directive">const</span> * peek( expect&lt;E...&gt; <span class="directive">const</span> &amp; exp, result&lt;T&gt; <span class="directive">const</span> &amp; r ) <span class="directive">noexcept</span>;
@@ -2712,7 +2712,7 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">T</span>&gt;
   <span class="directive">friend</span> <span class="directive">void</span> result::diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; <span class="directive">const</span> &amp; exp, result&lt;T&gt; <span class="directive">const</span> &amp; r );
@@ -2748,7 +2748,7 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">struct</span> bad_result: std::exception { };
 
@@ -2765,7 +2765,7 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> LEAF_AUTO(v,r) <span class="directive">auto</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> = r; <span class="keyword">if</span>( !_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> ) <span class="keyword">return</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>.error(); <span class="directive">auto</span> &amp; v = *_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span></code></pre>
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="preprocessor">#define</span> LEAF_AUTO(v,r) <span class="directive">auto</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> = r; <span class="keyword">if</span>( !_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> ) <span class="keyword">return</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>.error(); <span class="directive">auto</span> &amp; v = *_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span></code></pre>
 </div>
 </div>
 <hr>
@@ -2775,7 +2775,7 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> LEAF_CHECK(r) {<span class="directive">auto</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> = r; <span class="keyword">if</span>( !_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> ) <span class="keyword">return</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>.error();}</code></pre>
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="preprocessor">#define</span> LEAF_CHECK(r) {<span class="directive">auto</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> = r; <span class="keyword">if</span>( !_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> ) <span class="keyword">return</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>.error();}</code></pre>
 </div>
 </div>
 <hr>
@@ -2788,7 +2788,7 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> LEAF_THROW(e) ::boost::leaf::throw_exception(e,LEAF_SOURCE_LOCATION)
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="preprocessor">#define</span> LEAF_THROW(e) ::boost::leaf::throw_exception(e,LEAF_SOURCE_LOCATION)
 
 <span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
@@ -2815,7 +2815,7 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/exception_capture.hpp&gt;</div>
 <div class="content">
-<pre>namespace boost { namespace leaf {
+<pre class="nowrap">namespace boost { namespace leaf {
 
   template &lt;class... E,class F&gt;
   &lt;&lt;unspecified-type&gt;&gt; capture_exception( F &amp;&amp; f ) noexcept;
@@ -2837,7 +2837,7 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> LEAF_THROW(e) ::boost::leaf::throw_exception(e,LEAF_SOURCE_LOCATION)
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="preprocessor">#define</span> LEAF_THROW(e) ::boost::leaf::throw_exception(e,LEAF_SOURCE_LOCATION)
 
 <span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
@@ -2902,7 +2902,7 @@ Use <code>LEAF_THROW</code> to automatically pass the current source location in
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/exception_capture.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">F</span>&gt;
   &lt;&lt;unspecified-type&gt;&gt; capture_exception( F &amp;&amp; f ) <span class="directive">noexcept</span>;
@@ -2954,7 +2954,7 @@ The <code>capture_exception</code> function is designed for use with <code><a hr
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/exception_capture.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">Future</span>&gt;
   <span class="directive">decltype</span>(std::declval&lt;Future&gt;().get()) get( Future &amp;&amp; f );
@@ -2997,7 +2997,7 @@ To store and to access the transported <a href="#e-types">e-objects</a>, the cal
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   error get_error( std::exception <span class="directive">const</span> &amp; ex ) <span class="directive">noexcept</span>;
 
@@ -3040,7 +3040,7 @@ A successful call to <code><a href="#handle_exception">handle_exception</a></cod
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. M,<span class="keyword">class</span><span class="error">.</span>.. E&gt;
   <span class="directive">void</span> handle_exception( expect&lt;E...&gt; &amp; exp, std::exception <span class="directive">const</span> &amp; ex, M &amp;&amp; ... m );
@@ -3075,7 +3075,7 @@ In case the dynamic type of <code>ex</code> does not derive from <code>leaf::err
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">P</span>,<span class="keyword">class</span><span class="error">.</span>.. E&gt;
   <span class="directive">decltype</span>(P::value) <span class="directive">const</span> * peek( expect&lt;E...&gt; <span class="directive">const</span> &amp; exp, std::exception <span class="directive">const</span> &amp; ex ) <span class="directive">noexcept</span>;
@@ -3098,7 +3098,7 @@ In case the dynamic type of <code>ex</code> does not derive from <code>leaf::err
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
   <span class="directive">void</span> diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; <span class="directive">const</span> &amp; exp, std::exception <span class="directive">const</span> &amp; ex );
@@ -3124,7 +3124,7 @@ In case the dynamic type of <code>ex</code> does not derive from <code>leaf::err
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/common.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="preprocessor">#define</span> LEAF_SOURCE_LOCATION ::boost::leaf::e_source_location{::boost::leaf::e_source_location::loc(__FILE__,__LINE__,__FUNCTION__)}
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="preprocessor">#define</span> LEAF_SOURCE_LOCATION ::boost::leaf::e_source_location{::boost::leaf::e_source_location::loc(__FILE__,__LINE__,__FUNCTION__)}
 
 <span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
@@ -3207,7 +3207,7 @@ The passed value is stored as a C string, so you should only pass string literal
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">class</span> <span class="class">file_read_error</span>: <span class="directive">public</span> std::exception
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">class</span> <span class="class">file_read_error</span>: <span class="directive">public</span> std::exception
 {
   std::<span class="predefined-type">string</span> file_name_;
 
@@ -3228,7 +3228,7 @@ The passed value is stored as a C string, so you should only pass string literal
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">catch</span>( file_read_error &amp; e )
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">catch</span>( file_read_error &amp; e )
 {
   std::cerr &lt;&lt; <span class="string"><span class="delimiter">&quot;</span><span class="content">Error reading </span><span class="char">\&quot;</span><span class="delimiter">&quot;</span></span> &lt;&lt; e.file_name() &lt;&lt; <span class="string"><span class="delimiter">&quot;</span><span class="char">\&quot;</span><span class="char">\n</span><span class="delimiter">&quot;</span></span>;
 }</code></pre>
@@ -3243,7 +3243,7 @@ The passed value is stored as a C string, so you should only pass string literal
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">void</span> read_file( FILE * f ) {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="directive">void</span> read_file( FILE * f ) {
   ....
   size_t nr=fread(buf,<span class="integer">1</span>,count,f);
   <span class="keyword">if</span>( ferror(f) )
@@ -3264,7 +3264,7 @@ The passed value is stored as a C string, so you should only pass string literal
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">class</span> <span class="class">file_read_error</span>: <span class="directive">public</span> std::exception { };
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">class</span> <span class="class">file_read_error</span>: <span class="directive">public</span> std::exception { };
 <span class="keyword">struct</span> e_file_name { std::<span class="predefined-type">string</span> value; };
 <span class="keyword">struct</span> e_errno { <span class="predefined-type">int</span> value; };
 
@@ -3304,7 +3304,7 @@ The passed value is stored as a C string, so you should only pass string literal
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">leaf::expect&lt;e_errno,e_file_name&gt; exp;
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">leaf::expect&lt;e_errno,e_file_name&gt; exp;
 <span class="keyword">try</span>
 {
   process_file(<span class="string"><span class="delimiter">&quot;</span><span class="content">example.txt</span><span class="delimiter">&quot;</span></span>);
@@ -3347,7 +3347,7 @@ This technique works exacly the same way when errors are reported using <code>le
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">void</span> read_file(FILE * f) {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="directive">void</span> read_file(FILE * f) {
   ....
   size_t nr=fread(buf,<span class="integer">1</span>,count,f);
   <span class="keyword">if</span>( ferror(f) )
@@ -3365,7 +3365,7 @@ This technique works exacly the same way when errors are reported using <code>le
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">void</span> read_file(FILE * f) {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="directive">void</span> read_file(FILE * f) {
   ....
   size_t nr1=fread(buf1,<span class="integer">1</span>,count1,f);
   <span class="keyword">if</span>( ferror(f) )
@@ -3397,7 +3397,7 @@ This technique works exacly the same way when errors are reported using <code>le
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="directive">void</span> read_file(FILE * f) {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="directive">void</span> read_file(FILE * f) {
 
   <span class="directive">auto</span> propagate = leaf::defer( [ ] { <span class="keyword">return</span> e_errno{errno} } );
 
@@ -3439,7 +3439,7 @@ This technique works exacly the same way when errors are reported using <code>le
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">try</span>
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">try</span>
 {
   ....
   function_that_throws();
@@ -3478,7 +3478,7 @@ This technique works exacly the same way when errors are reported using <code>le
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c"><span class="predefined-type">int</span> do_work( lua_State * L );</code></pre>
+<pre class="CodeRay highlight nowrap"><code data-lang="c"><span class="predefined-type">int</span> do_work( lua_State * L );</code></pre>
 </div>
 </div>
 </div>
@@ -3493,7 +3493,7 @@ This technique works exacly the same way when errors are reported using <code>le
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">std::shared_ptr&lt;lua_State&gt; init_lua_state() <span class="directive">noexcept</span>
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">std::shared_ptr&lt;lua_State&gt; init_lua_state() <span class="directive">noexcept</span>
 {
   std::shared_ptr&lt;lua_State&gt; L(lua_open(),&amp;lua_close); <i class="conum" data-value="1"></i><b>(1)</b>
 
@@ -3533,7 +3533,7 @@ This technique works exacly the same way when errors are reported using <code>le
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">struct</span> e_do_work_error { <span class="predefined-type">int</span> value; };</code></pre>
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">struct</span> e_do_work_error { <span class="predefined-type">int</span> value; };</code></pre>
 </div>
 </div>
 </div>
@@ -3545,7 +3545,7 @@ This technique works exacly the same way when errors are reported using <code>le
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">int</span> do_work( lua_State * L ) <span class="directive">noexcept</span>
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="predefined-type">int</span> do_work( lua_State * L ) <span class="directive">noexcept</span>
 {
   <span class="predefined-type">bool</span> success=rand()%<span class="integer">2</span>; <i class="conum" data-value="1"></i><b>(1)</b>
   <span class="keyword">if</span>( success )
@@ -3590,7 +3590,7 @@ This technique works exacly the same way when errors are reported using <code>le
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">leaf::result&lt;<span class="predefined-type">int</span>&gt; call_lua( lua_State * L )
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">leaf::result&lt;<span class="predefined-type">int</span>&gt; call_lua( lua_State * L )
 {
   lua_getfield( L, LUA_GLOBALSINDEX, <span class="string"><span class="delimiter">&quot;</span><span class="content">call_do_work</span><span class="delimiter">&quot;</span></span> );
   <span class="keyword">if</span>( <span class="predefined-type">int</span> err=lua_pcall(L,<span class="integer">0</span>,<span class="integer">1</span>,<span class="integer">0</span>) ) <i class="conum" data-value="1"></i><b>(1)</b>
@@ -3633,7 +3633,7 @@ This technique works exacly the same way when errors are reported using <code>le
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="predefined-type">int</span> main() <span class="directive">noexcept</span>
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="predefined-type">int</span> main() <span class="directive">noexcept</span>
 {
   std::shared_ptr&lt;lua_State&gt; L=init_lua_state();
 
@@ -3723,7 +3723,7 @@ This technique works exacly the same way when errors are reported using <code>le
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">leaf::result&lt;task_result&gt; task();</code></pre>
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">leaf::result&lt;task_result&gt; task();</code></pre>
 </div>
 </div>
 </div>
@@ -3735,7 +3735,7 @@ This technique works exacly the same way when errors are reported using <code>le
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">std::future&lt;leaf::result&lt;task_result&gt;&gt; launch_task()
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">std::future&lt;leaf::result&lt;task_result&gt;&gt; launch_task()
 {
   <span class="keyword">return</span> std::async( std::launch::async, [ ]
     {
@@ -3754,7 +3754,7 @@ This technique works exacly the same way when errors are reported using <code>le
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">....
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">....
 leaf::expect&lt;E1,E2,E3&gt; exp;
 
 <span class="keyword">if</span>( leaf::result&lt;task_result&gt; r = fut.get() )
@@ -3807,7 +3807,7 @@ Follow this link to see a complete example program: <a href="https://github.com/
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">task_result task();</code></pre>
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">task_result task();</code></pre>
 </div>
 </div>
 </div>
@@ -3819,7 +3819,7 @@ Follow this link to see a complete example program: <a href="https://github.com/
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">std::future&lt;task_result&gt; launch_task()
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">std::future&lt;task_result&gt; launch_task()
 {
   <span class="keyword">return</span> std::async( std::launch::async,
     leaf::capture_exception&lt;E1,E2,E3&gt;( [ ]
@@ -3838,7 +3838,7 @@ Follow this link to see a complete example program: <a href="https://github.com/
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++">....
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">....
 leaf::expect&lt;E1,E2,E3&gt; exp;
 
 <span class="keyword">try</span>
@@ -3896,7 +3896,7 @@ Follow this link to see a complete example program: <a href="https://github.com/
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">try</span> {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">try</span> {
 
   process_file();
 
