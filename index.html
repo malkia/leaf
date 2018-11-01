@@ -533,6 +533,8 @@ table.CodeRay td.code>pre{padding:0}
 <div id="toctitle"></div>
 <ul class="sectlevel1">
 <li><a href="#_abstract">Abstract</a></li>
+<li><a href="#_two_minute_introduction">Two minute introduction</a></li>
+<li><a href="#_what_if_i_want_to_use_exception_handling">What if I want to use exception handling?</a></li>
 <li><a href="#tutorial">Tutorial</a>
 <ul class="sectlevel2">
 <li><a href="#tutorial-noexcept">Using LEAF without Exception Handling</a></li>
@@ -648,8 +650,13 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_two_minute_introduction">Two minute introduction</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Basic error handling with LEAF looks like this:</p>
+<p>Error handling with LEAF looks like this:</p>
 </div>
 <div class="exampleblock">
 <div class="content">
@@ -687,7 +694,7 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Error objects returned by <code>f</code> (next line) are stored in <code>exp</code>, but only if their types are specified in the instantiation of the <code>expect</code> template (otherwise they&#8217;re discarded).</td>
+<td>In case <code>f()</code> (next line) fails, error objects will be stored in <code>exp</code>, but only if their types are specified in the instantiation of the <code>expect</code> template (otherwise they&#8217;re discarded).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -695,15 +702,15 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>In case of error, we pass <code>exp</code> and the returned <code>r</code> to <code>handle_error</code>, followed by several (in this case, two) sets of error object types to be matched (<code>handle_error</code> returns false if it doesn`t find a match).</td>
+<td><code>f()</code> has failed, so we pass <code>exp</code> and the returned <code>r</code> to <code>handle_error</code>, followed by several (in this case, two) sets of error object types to be matched (<code>handle_error</code> returns false if it doesn`t find a match).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Handle the case where we got <code>e_error_code</code>, <code>e_file_name</code> and <code>e_request_id</code> with the error reported in <code>r</code>.</td>
+<td>Handle the case where we got <code>e_error_code</code>, <code>e_file_name</code> and <code>e_request_id</code> associated with the failure reported in <code>r</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Handle the case where we only got <code>e_error_code</code> and <code>e_file_name</code> with the error reported in <code>r</code>.</td>
+<td>Handle the case where we only got <code>e_error_code</code> and <code>e_file_name</code> associated with the failure reported in <code>r</code>.</td>
 </tr>
 </table>
 </div>
@@ -779,6 +786,119 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Forward the error reported in <code>r</code>, in addition storing <code>e_file_name</code> in <code>expect</code> objects from calling scopes.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_what_if_i_want_to_use_exception_handling">What if I want to use exception handling?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>That would be a 1-minute introduction :)</p>
+</div>
+<div class="paragraph">
+<p>Exception handling with LEAF looks like this:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">{
+  leaf::expect&lt;e_error_code, e_file_name, e_request_id&gt; exp; <i class="conum" data-value="1"></i><b>(1)</b>
+
+  <span class="keyword">try</span>
+  {
+    f();
+  }
+  <span class="keyword">catch</span>( my_exception <span class="directive">const</span> &amp; e )
+  {
+    leaf::handle_exception( exp, e, <i class="conum" data-value="2"></i><b>(2)</b>
+
+      leaf::match&lt;e_error_code, e_file_name, e_request_id&gt;( [ ]( <span class="predefined-type">int</span> ec, std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; fn, uuid <span class="directive">const</span> &amp; id )
+      {
+        <i class="conum" data-value="3"></i><b>(3)</b>
+      } ),
+
+      leaf::match&lt;e_error_code, e_file_name&gt;( [ ]( <span class="predefined-type">int</span> ec, std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; fn )
+      {
+        <i class="conum" data-value="4"></i><b>(4)</b>
+      } )
+    );
+
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>In case <code>f()</code> throws, error objects associated with the exception are stored in <code>exp</code>, but only if their types are specified in the instantiation of the <code>expect</code> template (otherwise they&#8217;re discarded).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>We pass <code>exp</code> and the caught exception <code>e</code> to <code>handle_exception</code>, followed by several (in this case, two) sets of error object types to be matched (<code>handle_exception</code> rethrows the original exception if it doesn&#8217;t find a match).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Handle the case where we got <code>e_error_code</code>, <code>e_file_name</code> and <code>e_request_id</code>, associated with <code>e</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Handle the case where we only got <code>e_error_code</code> and <code>e_file_name</code>, associated with <code>e</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Error objects can be passed to LEAF at the point of the <code>throw</code>:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="directive">void</span> g()
+{
+  ....
+  <span class="keyword">if</span>( failure )
+    leaf::throw_exception( my_exception(), e_error_code{<span class="integer">42</span>}, e_request_id{id} ); <i class="conum" data-value="1"></i><b>(1)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Throws <code>my_exception</code>, stores the passed <code>e_error_code</code> and <code>e_request_id</code> in <code>expect</code> object(s) from calling scopes.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Exceptions can be augmented in exception-neutral contexts:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="directive">void</span> f()
+{
+  <span class="directive">auto</span> propagate = leaf::preload( e_file_name{<span class="string"><span class="delimiter">&quot;</span><span class="content">file.txt</span><span class="delimiter">&quot;</span></span>} ); <i class="conum" data-value="1"></i><b>(1)</b>
+
+  g();
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>In case <code>g()</code> throws (next line), additionally store this <code>e_file_name</code> object in <code>expect</code> object(s) from calling scopes, and associate it with the passing exception.</td>
 </tr>
 </table>
 </div>
