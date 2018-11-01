@@ -635,6 +635,154 @@ table.CodeRay td.code>pre{padding:0}
 <div class="paragraph">
 <p>LEAF does not allocate dynamic memory<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>, which makes it suitable for low-latency and other performance-critical environments. It is equally applicable to programs that use exception handling and programs that do not.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+LEAF is compatible with, not a replacement for <code>std::error_code</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Basic error handling with LEAF looks like this:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++">{
+  leaf::expect&lt;e_error_code, e_file_name, e_request_id&gt; exp; <i class="conum" data-value="1"></i><b>(1)</b>
+
+  <span class="keyword">if</span>( result&lt;T&gt; r = f() )
+  {
+    <span class="comment">//Success! </span><i class="conum" data-value="2"></i><b>(2)</b>
+  }
+  <span class="keyword">else</span>
+  {
+    <span class="comment">//Handle errors</span>
+
+    <span class="predefined-type">bool</span> matched = leaf::handle_error( exp, r, <i class="conum" data-value="3"></i><b>(3)</b>
+
+      leaf::match&lt;e_error_code, e_file_name, e_request_id&gt;( [ ]( <span class="predefined-type">int</span> ec, std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; fn, uuid <span class="directive">const</span> &amp; id )
+      {
+        <i class="conum" data-value="4"></i><b>(4)</b>
+      } ),
+
+      leaf::match&lt;e_error_code, e_file_name&gt;( [ ]( <span class="predefined-type">int</span> ec, std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; fn )
+      {
+        <i class="conum" data-value="5"></i><b>(5)</b>
+      } )
+    );
+
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Error objects returned by <code>f</code> (next line) are stored in <code>exp</code>, but only if their types are specified in the instantiation of the <code>expect</code> template (otherwise they&#8217;re discarded).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Successful result values are stored inside <code>r</code> of type <code>result&lt;T&gt;</code>, which is a value-or-error variant type.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>In case of error, we pass <code>exp</code> and the returned <code>r</code> to <code>handle_error</code>, followed by several (in this case, two) sets of error object types to be matched (<code>handle_error</code> returns false if it doesn`t find a match).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Handle the case where we got <code>e_error_code</code>, <code>e_file_name</code> and <code>e_request_id</code> with the error reported in <code>r</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Handle the case where we only got <code>e_error_code</code> and <code>e_file_name</code> with the error reported in <code>r</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p><code>e_error_code</code>, <code>e_file_name</code>, <code>e_request_id</code>, etc. are user-defined, e.g.:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++"><span class="keyword">struct</span> e_error_code { <span class="predefined-type">int</span> value; };
+
+<span class="keyword">struct</span> e_file_name { std::<span class="predefined-type">string</span> value; };
+
+<span class="keyword">struct</span> e_request_id { uuid value; };</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Reporting an error with LEAF looks like this:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++">leaf::result&lt;T&gt; g()
+{
+  <span class="keyword">if</span>( success )
+    <span class="keyword">return</span> T(....);
+  <span class="keyword">else</span>
+    <span class="keyword">return</span> leaf::error( e_error_code{<span class="integer">42</span>}, e_request_id{id} ); <i class="conum" data-value="1"></i><b>(1)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Report an error, store the passed <code>e_error_code</code> and <code>e_request_id</code> in <code>expect</code> object(s) from calling scopes.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Forwarding an error reported by a lower level function looks like this:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="c++">leaf::result&lt;T&gt; f()
+{
+  <span class="keyword">if</span>( leaf::error&lt;T&gt; r=g() )
+  {
+    ....
+    <span class="keyword">return</span> r; <i class="conum" data-value="1"></i><b>(1)</b>
+  }
+  <span class="keyword">else</span>
+    <span class="keyword">return</span> r.error( e_file_name{<span class="string"><span class="delimiter">&quot;</span><span class="content">file.txt</span><span class="delimiter">&quot;</span></span>} ); <i class="conum" data-value="2"></i><b>(2)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Success, return <code>r</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Forward the error reported in <code>r</code>, in addition storing <code>e_file_name</code> in <code>expect</code> objects from calling scopes.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
