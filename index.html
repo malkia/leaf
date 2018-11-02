@@ -636,10 +636,10 @@ table.CodeRay td.code>pre{padding:0}
 <h2 id="_abstract">Abstract</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>LEAF is a non-intrusive C&#43;&#43;11 error handling library capable of transporting arbitrary error information from contexts that detect and report failures, as well as from intermediate error-neutral contexts, to scopes where the error is ultimately handled.</p>
+<p>LEAF is a C&#43;&#43;11 error handling library capable of transporting arbitrary error information from contexts that detect and report failures, as well as from intermediate error-neutral contexts, to scopes where the error is handled.</p>
 </div>
 <div class="paragraph">
-<p>LEAF does not allocate dynamic memory<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>, which makes it suitable for low-latency and other performance-critical environments. It is equally applicable to programs that use exception handling and programs that do not.</p>
+<p>LEAF does not allocate memory dynamically<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>, which makes it suitable for low-latency and other performance-critical environments. It is equally applicable to programs that use exception handling and programs that do not.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -659,7 +659,7 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <h2 id="_two_minute_introduction">Two Minute Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Error handling with LEAF looks like this:</p>
+<p>Let&#8217;s assume that to handle a particular failure, we need an error code, a file name, and, optionally, a request ID. In terms of LEAF, we can write:</p>
 </div>
 <div class="exampleblock">
 <div class="content">
@@ -674,8 +674,6 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
   }
   <span class="keyword">else</span>
   {
-    <span class="comment">//Handle errors</span>
-
     <span class="predefined-type">bool</span> matched = leaf::handle_error( exp, r, <i class="conum" data-value="3"></i><b>(3)</b>
 
       leaf::match&lt;e_error_code, e_file_name, e_request_id&gt;( [ ]( <span class="predefined-type">int</span> ec, std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; fn, uuid <span class="directive">const</span> &amp; id )
@@ -687,8 +685,8 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
       {
         <i class="conum" data-value="5"></i><b>(5)</b>
       } )
-    );
 
+    );
   }
 }</code></pre>
 </div>
@@ -697,30 +695,30 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>In case <code>f()</code> (next line) fails, error objects will be stored in <code>exp</code>, but only if their types are specified in the instantiation of the <code>expect</code> template (otherwise they&#8217;re discarded).</td>
+<td>The <code>exp</code> object provides storage for an <code>e_error_code</code>, an <code>e_file_name</code> and an <code>e_request_id</code>, which <code>f()</code> (next line) may communicate in case it fails.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Successful result values are stored inside <code>r</code> of type <code>result&lt;T&gt;</code>, which is a value-or-error variant type.</td>
+<td>Successful result values are stored inside of <code>r</code> of type <code>result&lt;T&gt;</code>, which is a value-or-error variant type.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code>f()</code> has failed, so we pass <code>exp</code> and the returned <code>r</code> to <code>handle_error</code>, followed by several (in this case, two) sets of error object types to be matched (<code>handle_error</code> returns false if it doesn`t find a match).</td>
+<td>The call to <code>f()</code> has failed, so we pass <code>exp</code> and the returned <code>r</code> to <code>handle_error</code>, followed by several (in this case, two) <strong>sets of error object types</strong> to be matched (<code>handle_error</code> returns false if it doesn&#8217;t find a match).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Handle the case where we got <code>e_error_code</code>, <code>e_file_name</code> and <code>e_request_id</code> associated with the failure reported in <code>r</code>.</td>
+<td>Handle the case where we received <code>e_error_code</code>, <code>e_file_name</code> and <code>e_request_id</code>, associated with the failure reported in <code>r</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Handle the case where we only got <code>e_error_code</code> and <code>e_file_name</code> associated with the failure reported in <code>r</code>.</td>
+<td>Handle the case where we only received <code>e_error_code</code> and <code>e_file_name</code>, associated with the failure reported in <code>r</code>.</td>
 </tr>
 </table>
 </div>
 </div>
 </div>
 <div class="paragraph">
-<p><code>e_error_code</code>, <code>e_file_name</code>, <code>e_request_id</code>, etc. are user-defined, e.g.:</p>
+<p><code>e_error_code</code>, <code>e_file_name</code> and <code>e_request_id</code> are user-defined, e.g.:</p>
 </div>
 <div class="exampleblock">
 <div class="content">
@@ -742,12 +740,12 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="c++">leaf::result&lt;T&gt; g()
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">leaf::result&lt;T&gt; g() <span class="directive">noexcept</span>
 {
   <span class="keyword">if</span>( success )
-    <span class="keyword">return</span> T(....);
+    <span class="keyword">return</span> T(....); <i class="conum" data-value="1"></i><b>(1)</b>
   <span class="keyword">else</span>
-    <span class="keyword">return</span> leaf::error( e_error_code{<span class="integer">42</span>}, e_request_id{id} ); <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="keyword">return</span> leaf::error( e_error_code{<span class="integer">42</span>}, e_request_id{id} ); <i class="conum" data-value="2"></i><b>(2)</b>
 }</code></pre>
 </div>
 </div>
@@ -755,7 +753,11 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Report an error, store the passed <code>e_error_code</code> and <code>e_request_id</code> in <code>expect</code> object(s) from calling scopes.</td>
+<td>Initializing the returned <code>result&lt;T&gt;</code> with a <code>T</code> object indicates a success.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Report an error, store the passed <code>e_error_code</code> and <code>e_request_id</code> in appropriate <code>expect</code> object(s) from calling scopes. Presumably, at this point we don&#8217;t have access to a relevant file name, but that&#8217;s fine&#8201;&#8212;&#8201;we associate with the reported error what relevant information we do have: the error code and the request ID.</td>
 </tr>
 </table>
 </div>
@@ -768,7 +770,7 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="c++">leaf::result&lt;T&gt; f()
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">leaf::result&lt;T&gt; f() <span class="directive">noexcept</span>
 {
   <span class="keyword">if</span>( leaf::error&lt;T&gt; r=g() )
   {
@@ -788,7 +790,7 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Forward the error reported in <code>r</code>, in addition storing <code>e_file_name</code> in <code>expect</code> object(s) from calling scopes.</td>
+<td>Forward the error reported in <code>r</code>, storing <code>e_file_name</code> in appropriate <code>expect</code> object(s) from calling scopes. The file name will be associated with the error in addition to the relevant <code>e_error_code</code> and <code>e_request_id</code> which (presumably) <code>g()</code> has already communicated.</td>
 </tr>
 </table>
 </div>
@@ -803,7 +805,7 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <p>That would be a 1-minute introduction. :-)</p>
 </div>
 <div class="paragraph">
-<p>Exception handling with LEAF looks like this:</p>
+<p>Let&#8217;s again assume that to handle a particular exception, we need an error code, a file name, and, optionally, a request ID. In terms of LEAF, we can write:</p>
 </div>
 <div class="exampleblock">
 <div class="content">
@@ -829,8 +831,8 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
       {
         <i class="conum" data-value="4"></i><b>(4)</b>
       } )
-    );
 
+    );
   }
 }</code></pre>
 </div>
@@ -839,19 +841,19 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>In case <code>f()</code> throws, error objects associated with the exception are stored in <code>exp</code>, but only if their types are specified in the instantiation of the <code>expect</code> template (otherwise they&#8217;re discarded).</td>
+<td>The <code>exp</code> object provides storage for an <code>e_error_code</code>, an <code>e_file_name</code> and an <code>e_request_id</code>, which <code>f()</code> (next line) may communicate in case it throws.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>We pass <code>exp</code> and the caught exception <code>e</code> to <code>handle_exception</code>, followed by several (in this case, two) sets of error object types to be matched (<code>handle_exception</code> rethrows the original exception if it doesn&#8217;t find a match).</td>
+<td>We caught a <code>my_exception</code> from <code>f()</code>, so we pass <code>exp</code> and the the exception object <code>e</code> to <code>handle_exception</code>, followed by several (in this case, two) <strong>sets of error object types</strong> to be matched (<code>handle_exception</code> rethrows the original exception if it doesn`t find a match).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Handle the case where we got <code>e_error_code</code>, <code>e_file_name</code> and <code>e_request_id</code>, associated with <code>e</code>.</td>
+<td>Handle the case where we received <code>e_error_code</code>, <code>e_file_name</code> and <code>e_request_id</code>, associated with <code>e</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Handle the case where we only got <code>e_error_code</code> and <code>e_file_name</code>, associated with <code>e</code>.</td>
+<td>Handle the case where we only received <code>e_error_code</code> and <code>e_file_name</code>, associated with <code>e</code>.</td>
 </tr>
 </table>
 </div>
@@ -864,11 +866,12 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="directive">void</span> g()
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">T g()
 {
-  ....
-  <span class="keyword">if</span>( failure )
-    leaf::throw_exception( my_exception(), e_error_code{<span class="integer">42</span>}, e_request_id{id} ); <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="keyword">if</span>( success )
+    <span class="keyword">return</span> T(....); <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="keyword">else</span>
+    leaf::throw_exception( my_exception(), e_error_code{<span class="integer">42</span>}, e_request_id{id} ); <i class="conum" data-value="2"></i><b>(2)</b>
 }</code></pre>
 </div>
 </div>
@@ -876,7 +879,11 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Throws <code>my_exception</code>, stores the passed <code>e_error_code</code> and <code>e_request_id</code> in <code>expect</code> object(s) from calling scopes.</td>
+<td>Success, just return <code>T</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Throw a <code>my_exception</code> object, store the passed <code>e_error_code</code> and <code>e_request_id</code> in appropriate <code>expect</code> object(s) from calling scopes. Presumably, at this point we don&#8217;t have access to a relevant file name, but that&#8217;s fine&#8201;&#8212;&#8201;we associate with exception object what relevant information we do have: the error code and the request ID.</td>
 </tr>
 </table>
 </div>
@@ -901,7 +908,7 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>In case <code>g()</code> throws (next line), additionally store this <code>e_file_name</code> object in <code>expect</code> object(s) from calling scopes, and associate it with the passing exception.</td>
+<td>In case <code>g()</code> throws, the file name will be associated with the exception object, in addition to the relevant <code>e_error_code</code> and <code>e_request_id</code> which (presumably) <code>g()</code> has already communicated.</td>
 </tr>
 </table>
 </div>
@@ -913,7 +920,7 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <h2 id="tutorial">Tutorial</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>We&#8217;ll write a program that reads a text file in a buffer and prints it to <code>std::cout</code>, using LEAF to handle errors. We&#8217;ll implement two versions, one that uses exception handling, and one that does not. To see the source code of the complete programs from this tutorial follow these links:</p>
+<p>We&#8217;ll write a short but complete program, using LEAF to handle errors. We&#8217;ll implement two versions, one that uses exception handling, and one that does not. To see the source code of the complete programs from this tutorial follow these links:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -955,7 +962,7 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <p>We don&#8217;t need an enumerated value that indicates success. That&#8217;s because we will use the convenient class template <code><a href="#result">result</a>&lt;T&gt;</code> as the return type in functions which may fail. It is a value-or-error variant type which holds a <code>T</code> except if initialized with a <code>leaf::<a href="#error">error</a></code>.</p>
 </div>
 <div class="paragraph">
-<p>Here is a function that reads data from a file into a buffer and reports the various errors which may occur (it returns <code>result&lt;void&gt;</code> because in case of success it doesn&#8217;t return a value):</p>
+<p>Here is a function that reads data from a <code>FILE</code> into a buffer and reports the various errors which may occur (it returns <code>result&lt;void&gt;</code> because in case of success it doesn&#8217;t return a value):</p>
 </div>
 <div class="exampleblock">
 <div class="content">
@@ -1149,19 +1156,28 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
     <span class="keyword">return</span> <span class="integer">1</span>;
   }
 
-  leaf::expect&lt;e_error_code, e_file_name, e_errno&gt; exp; <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="comment">//We expect e_error_code, e_file_name and e_errno objects to be associated</span>
+  <span class="comment">//with errors handled in this function. They will be stored inside of exp.</span>
+  leaf::expect&lt;e_error_code, e_file_name, e_errno&gt; exp;
 
   <span class="keyword">if</span>( <span class="directive">auto</span> r = print_file(fn) )
   {
-    <span class="keyword">return</span> <span class="integer">0</span>; <i class="conum" data-value="2"></i><b>(2)</b>
+    <span class="keyword">return</span> <span class="integer">0</span>; <span class="comment">//Success, we're done!</span>
   }
   <span class="keyword">else</span>
   {
-    <span class="keyword">switch</span>( <span class="directive">auto</span> ec = *leaf::peek&lt;e_error_code&gt;(exp,r) ) <i class="conum" data-value="3"></i><b>(3)</b>
+    <span class="comment">//Probe exp for the e_error_code object associated with the error stored in r.</span>
+    <span class="keyword">switch</span>( <span class="directive">auto</span> ec = *leaf::peek&lt;e_error_code&gt;(exp,r) )
     {
       <span class="keyword">case</span> input_file_open_error:
       {
-        <span class="predefined-type">bool</span> matched = handle_error( exp, r, <i class="conum" data-value="4"></i><b>(4)</b>
+        <span class="comment">//handle_error takes a list of match objects (in this case only one), each given</span>
+        <span class="comment">//a set of e-types. It attempts to match each set (in order) to objects of e-types</span>
+        <span class="comment">//available in exp, which are associated with the error value stored in r. If no</span>
+        <span class="comment">//set can be matched, handle_error returns false. When a match is found,</span>
+        <span class="comment">//handle_error calls the corresponding lambda function, passing the .value of</span>
+        <span class="comment">//each of the e-types from the matched set.</span>
+        <span class="predefined-type">bool</span> matched = handle_error( exp, r,
 
           leaf::match&lt;e_file_name,e_errno&gt;( [ ] ( std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; fn, <span class="predefined-type">int</span> errn )
           {
@@ -1180,7 +1196,11 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
       <span class="keyword">case</span> input_file_read_error:
       <span class="keyword">case</span> input_eof_error:
       {
-        <span class="predefined-type">bool</span> matched = handle_error( exp, r, <i class="conum" data-value="5"></i><b>(5)</b>
+        <span class="comment">//In this case handle_error is given 3 match sets. It will first check if both</span>
+        <span class="comment">//e_file_name and e_errno, associated with r, are avialable in exp; if not, it will</span>
+        <span class="comment">//next check if just e_errno is available; and if not, the last (empty) set will</span>
+        <span class="comment">//always match to print a generic error message.</span>
+        <span class="predefined-type">bool</span> matched = handle_error( exp, r,
 
           leaf::match&lt;e_file_name,e_errno&gt;( [ ] ( std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; fn, <span class="predefined-type">int</span> errn )
           {
@@ -1204,7 +1224,8 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 
       <span class="keyword">case</span> cout_error:
       {
-        <span class="predefined-type">bool</span> matched = handle_error( exp, r, <i class="conum" data-value="6"></i><b>(6)</b>
+        <span class="comment">//Report failure to write to std::cout, print the relevant errno.</span>
+        <span class="predefined-type">bool</span> matched = handle_error( exp, r,
 
           leaf::match&lt;e_errno&gt;( [ ] ( <span class="predefined-type">int</span> errn )
           {
@@ -1216,46 +1237,18 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
         <span class="keyword">return</span> <span class="integer">4</span>;
       }
 
+      <span class="comment">//This catch-all case helps diagnose logic errors (presumably, missing case labels</span>
+      <span class="comment">//in the switch statement).</span>
       <span class="keyword">default</span>:
+      {
         std::cerr &lt;&lt; <span class="string"><span class="delimiter">&quot;</span><span class="content">Unknown error code </span><span class="delimiter">&quot;</span></span> &lt;&lt; <span class="predefined-type">int</span>(ec) &lt;&lt; <span class="string"><span class="delimiter">&quot;</span><span class="content">, cryptic information follows.</span><span class="delimiter">&quot;</span></span> &lt;&lt; std::endl; <i class="conum" data-value="7"></i><b>(7)</b>
         diagnostic_output(std::cerr,exp,r);
         <span class="keyword">return</span> <span class="integer">5</span>;
+      }
     }
   }
 }</code></pre>
 </div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>We expect <code>e_error_code</code>, <code>e_file_name</code> and <code>e_errno</code> objects to be associated with errors handled in this function. They will be stored inside <code>exp</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Success, we&#8217;re done!</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Probe <code>exp</code> for objects associated with the error stored in <code>r</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><code><a href="#handle_error-expect">handle_error</a></code> takes a list of match objects (in this case only one), each given a set of <a href="#e-types">e-types</a>. It attempts to match each set (in order) to objects of e-types available in <code>exp</code>, which are associated with the <code><a href="#error">error</a></code> value stored in <code>r</code>. If no set can be matched, <code>handle_error</code> returns false. When a match is found, <code>handle_error</code> calls the corresponding lambda function, passing the <code>.value</code> of each of the e-types from the matched set.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>In this case <code>handle_error</code> is given 3 match sets. It will first check if both <code>e_file_name</code> and <code>e_errno</code>, associated with <code>r</code>, are avialable in <code>exp</code>; if not, it will next check if just <code>e_errno</code> is available; and if not, the last (empty) set will always match to print a generic error message.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Report failure to write to <code>std::cout</code>, print the relevant <code>errno</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>This catch-all case helps diagnose logic errors (presumably, missing case labels in the <code>switch</code> statement).</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -1396,7 +1389,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code><a href="#preload">preload</a></code> takes any number of <a href="#e-types">e-type</a> objects and prepares them to become associated (automatically, at the time the returned object expires) with the first exception thrown thereafter. The effect is that from this point on, any exception escaping <code>print_file</code> will report the file name, in addition to everything else passed to <code><a href="#throw_exception">throw_exception</a></code> explicitly (<code>e_file_name</code> is defined as <code>struct e_file_name { std::string value; }</code>).</td>
+<td><code><a href="#preload">preload</a></code> takes any number of <a href="#e-types">e-type</a> objects and prepares them to become associated (automatically, at the time the returned object expires) with the first exception thrown thereafter. The effect is that from this point on, a file name will be associated with any exception escaping <code>print_file</code>, in addition to everything else passed to <code><a href="#throw_exception">throw_exception</a></code> explicitly (<code>e_file_name</code> is defined as <code>struct e_file_name { std::string value; }</code>).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -1404,7 +1397,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><code><a href="#defer">defer</a></code> is similar to <code>preload</code>: it prepares an e-type object to become associated with the first exception thrown thereafter, but instead of taking the e-type object itself, <code>defer</code> takes a function that returns it. The function is invoked in the returned object`s destructor, at which point it becomes associated with the exception being propagated. Assuming <code>std::cout</code> is configured to throw on error, the effect of this line is that those exceptions will have the relevant <code>errno</code> associated with them.</td>
+<td><code><a href="#defer">defer</a></code> is similar to <code>preload</code>: it prepares an e-type object to become associated with the first exception thrown thereafter, but instead of taking the e-type object itself, <code>defer</code> takes a function that returns it. The function is invoked in the returned object&#8217;s destructor, at which point it becomes associated with the exception being propagated. Assuming <code>std::cout</code> is configured to throw on error, the effect of this line is that those exceptions will have the relevant <code>errno</code> associated with them.</td>
 </tr>
 </table>
 </div>
@@ -1419,9 +1412,12 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="predefined-type">int</span> main( <span class="predefined-type">int</span> argc, <span class="predefined-type">char</span> <span class="directive">const</span> * argv[ ] )
 {
-   std::cout.exceptions ( std::ostream::failbit | std::ostream::badbit ); <i class="conum" data-value="1"></i><b>(1)</b>
+  <span class="comment">//Configure std::cout to throw on error.</span>
+   std::cout.exceptions ( std::ostream::failbit | std::ostream::badbit );
 
-  leaf::expect&lt;e_file_name, e_errno&gt; exp; <i class="conum" data-value="2"></i><b>(2)</b>
+  <span class="comment">//We expect e_error_code, e_file_name and e_errno objects to be associated</span>
+  <span class="comment">//with exceptions handled in this function. They will be stored inside of exp.</span>
+  leaf::expect&lt;e_file_name, e_errno&gt; exp;
 
   <span class="keyword">try</span>
   {
@@ -1435,7 +1431,13 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
   }
   <span class="keyword">catch</span>( input_file_open_error <span class="directive">const</span> &amp; ex )
   {
-    handle_exception( exp, ex, <i class="conum" data-value="3"></i><b>(3)</b>
+    <span class="comment">//handle_exception takes a list of match objects (in this case only one), each</span>
+    <span class="comment">//given a set of e-types. It attempts to match each set (in order) to objects of</span>
+    <span class="comment">//e-types available in exp, which are associated with the exception ex. If no</span>
+    <span class="comment">//set can be matched, handle_exeption rethrows the current exception. When</span>
+    <span class="comment">//a match is found, handle_exception calls the corresponding lambda function,</span>
+    <span class="comment">//passing the .value of each of the e-types from the matched set.</span>
+    handle_exception( exp, ex,
 
       leaf::match&lt;e_file_name, e_errno&gt;( [ ] ( std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; fn, <span class="predefined-type">int</span> errn )
       {
@@ -1450,7 +1452,11 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
   }
   <span class="keyword">catch</span>( input_error <span class="directive">const</span> &amp; ex )
   {
-    handle_exception( exp, ex, <i class="conum" data-value="4"></i><b>(4)</b>
+    <span class="comment">//In this case handle_exception is given 3 match sets. It will first check if both</span>
+    <span class="comment">//e_file_name and e_errno, associated with ex, are avialable in exp; if not, it will</span>
+    <span class="comment">//next check if just e_errno is available; and if not, the last (empty) set will</span>
+    <span class="comment">//always match to print a generic error message.</span>
+    handle_exception( exp, ex,
 
       leaf::match&lt;e_file_name, e_errno&gt;( [ ] ( std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; fn, <span class="predefined-type">int</span> errn )
       {
@@ -1472,7 +1478,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
   }
   <span class="keyword">catch</span>( std::ostream::failure <span class="directive">const</span> &amp; ex )
   {
-    <span class="comment">//Report failure to write to std::cout, print the relevant errno, if available.</span>
+    <span class="comment">//Report failure to write to std::cout, print the relevant errno.</span>
     handle_exception( exp, ex,
 
       leaf::match&lt;e_errno&gt;( [ ] ( <span class="predefined-type">int</span> errn )
@@ -1483,39 +1489,15 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
     );
     <span class="keyword">return</span> <span class="integer">4</span>;
   }
-  <span class="keyword">catch</span>(...) <i class="conum" data-value="5"></i><b>(5)</b>
+  <span class="keyword">catch</span>(...)
   {
+    <span class="comment">//This catch-all case helps diagnose logic errors (presumably, missing catch).</span>
     std::cerr &lt;&lt; <span class="string"><span class="delimiter">&quot;</span><span class="content">Unknown error, cryptic information follows.</span><span class="delimiter">&quot;</span></span> &lt;&lt; std::endl;
     current_exception_diagnostic_output(std::cerr,exp);
     <span class="keyword">return</span> <span class="integer">5</span>;
   }
 }</code></pre>
 </div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Configure <code>std::cout</code> to throw on error.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>We expect <code>e_file_name</code> and <code>e_errno</code> objects to arrive with errors handled in this function. They will be stored inside <code>exp</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code><a href="#handle_exception">handle_exception</a></code> takes a list of match objects (in this case only one), each given a set of <a href="#e-types">e-types</a>. It attempts to match each set (in order) to objects of e-types, associated with <code>ex</code>, available in <code>exp</code>. If no set can be matched, <code>handle_exception</code> rethrows the current exception. When a match is found,
-<code>handle_exception</code> calls the corresponding lambda, passing the <code>.value</code> of each of the e-types from the matched set.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>In this case <code>handle_exception</code> is given 3 match sets. It will first check if both <code>e_file_name</code> and <code>e_errno</code>, associated with <code>ex</code>, are avialable in <code>exp</code>; if not, it will next check if just <code>e_errno</code> is available; and if not, the last (empty) set will always match to print a generic error message.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>This catch-all is designed to help diagnose logic errors (main should be able to deal with any failures).</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
