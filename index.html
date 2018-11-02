@@ -593,15 +593,18 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#LEAF_CHECK"><code>LEAF_CHECK</code></a></li>
 </ul>
 </li>
-<li><a href="#eh">Exception Handling Functions</a>
+<li><a href="#eh">Exception Handling Interface</a>
 <ul class="sectlevel3">
+<li><a href="#make_exception"><code>make_exception</code></a></li>
 <li><a href="#throw_exception"><code>throw_exception</code></a></li>
+<li><a href="#LEAF_THROW"><code>LEAF_THROW</code></a></li>
 <li><a href="#capture_exception"><code>capture_exception</code></a></li>
 <li><a href="#get"><code>get</code></a></li>
 <li><a href="#get_error"><code>get_error</code></a></li>
 <li><a href="#handle_exception"><code>handle_exception</code></a></li>
 <li><a href="#peek-exception"><code>peek</code></a></li>
 <li><a href="#diagnostic_output-exception"><code>diagnostic_output</code></a></li>
+<li><a href="#current_exception_diagnostic_output-exception"><code>current_exception_diagnostic_output</code></a></li>
 </ul>
 </li>
 <li><a href="#common">Common e-types</a></li>
@@ -2942,21 +2945,19 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 </div>
 </div>
 <div class="sect2">
-<h3 id="eh">Exception Handling Functions</h3>
+<h3 id="eh">Exception Handling Interface</h3>
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="preprocessor">#define</span> LEAF_THROW(e) ::boost::leaf::throw_exception(e,LEAF_SOURCE_LOCATION)
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
-<span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">Ex</span>,<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+  &lt;&lt;unspecified-type&gt;&gt; make_exception( Ex &amp;&amp; ex, E &amp;&amp; ... e ) <span class="directive">noexcept</span>;
 
-  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">Ex</span>&gt;
-  [[noreturn]] <span class="directive">void</span> throw_exception( Ex &amp;&amp; ex, E &amp;&amp; ... e );
-
-  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">Ex</span>&gt;
-  [[noreturn]] <span class="directive">void</span> throw_exception( Ex &amp;&amp; ex, error <span class="directive">const</span> &amp; err, E &amp;&amp; ... e );
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">Ex</span>,<span class="keyword">class</span><span class="error">.</span>.. E&gt; [[noreturn]]
+  <span class="directive">void</span> throw_exception( Ex &amp;&amp; ex, E &amp;&amp; ... e );
 
   error get_error( std::exception <span class="directive">const</span> &amp; ex ) <span class="directive">noexcept</span>;
 
@@ -2969,7 +2970,9 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
   <span class="directive">void</span> diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; <span class="directive">const</span> &amp; exp, std::exception <span class="directive">const</span> &amp; ex );
 
-} }</code></pre>
+} }
+
+<span class="preprocessor">#define</span> LEAF_THROW &lt;&lt;unspecified&gt;&gt;</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -2983,6 +2986,9 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
   template &lt;class Future&gt;
   decltype(std::declval&lt;Future&gt;().get()) get( Future &amp;&amp; f );
 
+  template &lt;class... E&gt;
+  void current_exception_diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; const &amp; exp );
+
 } }</pre>
 </div>
 </div>
@@ -2993,19 +2999,53 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 </div>
 <hr>
 <div class="sect3">
+<h4 id="make_exception"><code>make_exception</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">Ex</span>,<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+  &lt;&lt;unspecified-type&gt;&gt; make_exception( Ex &amp;&amp; ex, E &amp;&amp; ... e ) <span class="directive">noexcept</span>;
+
+} }</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Requirements: </dt>
+<dd>
+<p><code>Ex</code> must derive from <code>std::exception</code>.</p>
+</dd>
+<dt class="hdlist1">Returns: </dt>
+<dd>
+<p>An exception object of unspecified type which derives publicly from both <code>Ex</code> and <code>leaf::<a href="#error">error</a></code>, its <code>Ex</code> sub-object initialized by <code>std::forward&lt;Ex&gt;(ex)</code>, its <code>error</code> sub-object initialized by <code><a href="#error::error">error</a>(std::forward&lt;E&gt;(e&#8230;&#8203;))</code>.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If thrown, the returned exception object can be caught as <code>Ex &amp;</code> or as <code>leaf::<a href="#error">error</a></code>.
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+<div class="sect3">
 <h4 id="throw_exception"><code>throw_exception</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="preprocessor">#define</span> LEAF_THROW(e) ::boost::leaf::throw_exception(e,LEAF_SOURCE_LOCATION)
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
-<span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
-
-  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">Ex</span>&gt;
-  [[noreturn]] <span class="directive">void</span> throw_exception( Ex &amp;&amp; ex, E &amp;&amp; ... e );
-
-  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">Ex</span>&gt;
-  [[noreturn]] <span class="directive">void</span> throw_exception( Ex &amp;&amp; ex, error <span class="directive">const</span> &amp; err, E &amp;&amp; ... e );
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">Ex</span>,<span class="keyword">class</span><span class="error">.</span>.. E&gt; [[noreturn]]
+  <span class="directive">void</span> throw_exception( Ex &amp;&amp; ex, E &amp;&amp; ... e );
 
 } }</code></pre>
 </div>
@@ -3018,16 +3058,7 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 </dd>
 <dt class="hdlist1">Effects: </dt>
 <dd>
-<div class="ulist">
-<ul>
-<li>
-<p>The first overload throws an exception object of unspecified type which derives publicly from both <code>Ex</code> and <code>leaf::<a href="#error">error</a></code>, its <code>Ex</code> sub-object initialized by moing from <code>ex</code>, its <code>error</code> sub-object initialized by <code><a href="#error::error">error</a>(std::forward&lt;E&gt;(e&#8230;&#8203;))</code>;</p>
-</li>
-<li>
-<p>The second overload throws an exception object of unspecified type which derives publicly from both <code>Ex</code> and <code>leaf::<a href="#error">error</a></code>, its <code>Ex</code> sub-object initialized by moing from <code>ex</code>, its <code>error</code> sub-object initialized by <code>err.<a href="#error::propagate">propagate</a>(std::forward&lt;E&gt;(e&#8230;&#8203;))</code>.</p>
-</li>
-</ul>
-</div>
+<p>As if: <code>throw <a href="#make_exception">make_exception</a>( std::forward&lt;Ex&gt;(ex), std::forward&lt;E&gt;(e)&#8230;&#8203; )</code>.</p>
 </dd>
 </dl>
 </div>
@@ -3043,17 +3074,23 @@ The thrown exception object can be caught as <code>Ex &amp;</code> or as <code>l
 </tr>
 </table>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-Use <code>LEAF_THROW</code> to automatically pass the current source location in an instance of <code><a href="#common">e_source_location</a></code> object to <code>throw_exception</code>.
-</td>
-</tr>
-</table>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="LEAF_THROW"><code>LEAF_THROW</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="preprocessor">#define</span> LEAF_THROW &lt;&lt;unspecified&gt;&gt;</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Effects: </dt>
+<dd>
+<p><code>LEAF_THROW(ex,e&#8230;&#8203;)</code> is equivalent to <code><a href="#throw_exception">throw_exception</a>(ex,e&#8230;&#8203;)</code>, except the current source location is also passed to <code>throw_exception</code>, in a <code><a href="#common">e_source_location</a></code> object.</p>
+</dd>
+</dl>
 </div>
 <hr>
 </div>
@@ -3070,19 +3107,6 @@ Use <code>LEAF_THROW</code> to automatically pass the current source location in
 } }</code></pre>
 </div>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-For an, example see <a href="#technique_transport-exceptions">Transporting Errors between Threads using Exception Handling</a>.
-</td>
-</tr>
-</table>
-</div>
-<hr>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Requirements: </dt>
@@ -3102,7 +3126,7 @@ For an, example see <a href="#technique_transport-exceptions">Transporting Error
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The <code>capture_exception</code> function is designed for use with <code><a href="#get">get</a></code>, to effectively transport <a href="#e-types">e-objects</a> across thread boundaries.
+The <code>capture_exception</code> function is designed for use with <code><a href="#get">get</a></code>, to effectively transport <a href="#e-types">e-objects</a> across thread boundaries (for an, example see <a href="#technique_transport-exceptions">Transporting Errors between Threads using Exception Handling</a>).
 </td>
 </tr>
 </table>
@@ -3271,6 +3295,29 @@ In case the dynamic type of <code>ex</code> does not derive from <code>leaf::err
 <dt class="hdlist1">Effects: </dt>
 <dd>
 <p>Equivalent to: <code><a href="#diagnostic_output-expect">diagnostic_output</a>( os, exp, <a href="#get_error">get_error</a>(ex) );</code></p>
+</dd>
+</dl>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="current_exception_diagnostic_output-exception"><code>current_exception_diagnostic_output</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/exception_capture.hpp&gt;</div>
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+  <span class="directive">void</span> current_exception_diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; <span class="directive">const</span> &amp; exp );
+
+} }</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Effects: </dt>
+<dd>
+<p>This function prints a developer-friendly (but not user-friendly) diagnostic information about the current exception to <code>os</code>.</p>
 </dd>
 </dl>
 </div>
