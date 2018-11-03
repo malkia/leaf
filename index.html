@@ -537,8 +537,8 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_what_if_i_want_to_use_exception_handling">What If I Want to Use Exception Handling?</a></li>
 <li><a href="#tutorial">Tutorial</a>
 <ul class="sectlevel2">
-<li><a href="#tutorial-noexcept">Using LEAF without Exception Handling</a></li>
-<li><a href="#tutorial-eh">Using LEAF with Exception Handling</a></li>
+<li><a href="#tutorial-noexcept">Using <code>result&lt;T&gt;</code></a></li>
+<li><a href="#tutorial-eh">Using Exception Handling</a></li>
 </ul>
 </li>
 <li><a href="#reference">Reference</a>
@@ -936,7 +936,7 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <p>First, let&#8217;s see how to use LEAF without exception handling.</p>
 </div>
 <div class="sect2">
-<h3 id="tutorial-noexcept">Using LEAF without Exception Handling</h3>
+<h3 id="tutorial-noexcept">Using <code>result&lt;T&gt;</code></h3>
 <div class="paragraph">
 <p>We&#8217;ll write a program that reads a text file in a buffer and prints it to <code>std::cout</code>, using LEAF to handle errors. First, we need an <code>enum</code> to define our different error codes, and a simple type <code>e_error_code</code> to help LEAF tell error codes apart from other <code>int</code> values:</p>
 </div>
@@ -1289,7 +1289,7 @@ The complete program from this tutorial is available <a href="https://github.com
 <hr>
 </div>
 <div class="sect2">
-<h3 id="tutorial-eh">Using LEAF with Exception Handling</h3>
+<h3 id="tutorial-eh">Using Exception Handling</h3>
 <div class="paragraph">
 <p>And now, we&#8217;ll write the same program that reads a text file in a buffer and prints it to <code>std::cout</code>, this time using exceptions to report errors. First, we need to define our exception class hierarchy:</p>
 </div>
@@ -3898,12 +3898,12 @@ This technique works exacly the same way when errors are reported using <code>le
 <p>With LEAF, <a href="#e-types">e-objects</a> use automatic storage duration, stored inside <code><a href="#expect">expect</a></code> instances. When using concurrency, we need a mechanism to detach e-objects from a worker thread and transport them to another thread where errors are handled.</p>
 </div>
 <div class="paragraph">
-<p>LEAF offers two interfaces for this purpose, one using <code>result&lt;T&gt;</code>, and for programs that use exception handling.</p>
+<p>LEAF offers two interfaces for this purpose, one using <code>result&lt;T&gt;</code>, and another designed for programs that use exception handling.</p>
 </div>
 <div class="sect3">
 <h4 id="technique_transport-result">Using <code>result&lt;T&gt;</code></h4>
 <div class="paragraph">
-<p>Without exceptions, transporting <a href="#e-types">e-objects</a> between threads is as easy as calling <code><a href="#capture-result">capture</a></code>, passing the <code><a href="#expect">expect</a></code> object whose contents needs to be transported, and a <code><a href="#result">result</a>&lt;T&gt;</code> which may be in either value state or error state. This gets us a new <code><a href="#result">result</a>&lt;T&gt;</code> object which can be sent across thread boundaries.</p>
+<p>Without exceptions, transporting <a href="#e-types">e-objects</a> between threads is as easy as calling <code><a href="#capture-result">capture</a></code>, passing the <code><a href="#expect">expect</a></code> object whose contents needs to be transported, and a <code><a href="#result">result</a>&lt;T&gt;</code> which may be in either value state or error state. This gets us a new <code><a href="#result">result</a>&lt;T&gt;</code> object which can be safely sent across thread boundaries.</p>
 </div>
 <div class="paragraph">
 <p>Let&#8217;s assume we have a <code>task</code> which produces a result but could also fail:</p>
@@ -4067,7 +4067,6 @@ Follow this link to see a complete example program: <a href="https://github.com/
 </tr>
 </table>
 </div>
-<hr>
 </div>
 </div>
 </div>
@@ -4076,7 +4075,7 @@ Follow this link to see a complete example program: <a href="https://github.com/
 <h2 id="_design_rationale">Design Rationale</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The first observation driving the LEAF design is that unless a specific type of info (e.g. a file name) is used at the time an error is being handled, there is no need for it to be reported. On the other hand, if the error handling context can use or requires some info, it would not be burdened by having to explicitly declare that need. The end result of this reasoning is <code><a href="#expect">expect</a></code>.</p>
+<p>The first observation driving the LEAF design is that unless a specific type of info (e.g. a file name) is used at the time an error is being handled, there is no need for it to be reported. On the other hand, if the error handling context can use or requires some info, that context would not be burdened by having to explicitly declare that need. The end result of this reasoning is <code><a href="#expect">expect</a></code>.</p>
 </div>
 <div class="paragraph">
 <p>The second observation is that ideally, like any other communication mechanism, it makes sense to formally define an interface for the error info that can be used by the error handling code. In terms of C&#43;&#43; exception handling, it would be nice to be able to say something like:</p>
@@ -4150,7 +4149,41 @@ LEAF is not part of Boost. Please post questions and feedback on the Boost Devel
 <h2 id="building">Building</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>LEAF is a header-only library and it requires no building. The unit tests use Boost Build, but the library itself has no dependency on Boost or any other library.</p>
+<p>LEAF is a header-only library and it requires no building. It does not depend on Boost or on any other library.</p>
+</div>
+<div class="paragraph">
+<p>The unit tests require Boost and can be run with Boost Build or with <a href="https://mesonbuild.com">Meson Build</a>. To run the unit tests:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Clone LEAF under your <code>boost/libs</code> directory.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>If using Boost Build:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="sh">cd leaf/test
+../../../b2</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>If using Meson Build:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="sh">cd leaf
+meson bld/debug
+cd bld/debug
+meson test</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ol>
 </div>
 </div>
 </div>
@@ -4161,7 +4194,7 @@ LEAF is not part of Boost. Please post questions and feedback on the Boost Devel
 <p>LEAF requires a C&#43;&#43;11 compiler.</p>
 </div>
 <div class="paragraph">
-<p>See unit test matrix at <a href="https://travis-ci.org/zajo/leaf">Travis-CI</a>. It has also been tested with Microsoft Visual Studio 2015 and 2017.</p>
+<p>See unit test matrix at <a href="https://travis-ci.org/zajo/leaf">Travis-CI</a>. It has also been tested with Microsoft Visual Studio 2015 and 2017 (please install the latest patches from Microsoft).</p>
 </div>
 </div>
 </div>
