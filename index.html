@@ -1014,7 +1014,7 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The <code>e_error_code</code> and <code>e_errno</code> structs are examples of types that may be passed to the <code>leaf::error</code> constructor. The requirement for such types is that they define an accessible data member <code>value</code> and <code>noexcept</code> move constructor. These types allow us to assign different error-related semantics to different valies of otherwise identical static types.<br>
+The <code>e_error_code</code> and <code>e_errno</code> structs are examples of types that may be passed to the <code>leaf::error</code> constructor. The requirement for such types is that they define an accessible data member <code>value</code> and <code>noexcept</code> move constructor. These types allow us to assign different error-related semantics to different values of otherwise identical static types.<br>
 <br>
 For example, we could define <code>struct e_input_name { std::string value; }</code> and <code>struct e_output_name { std::string value; }</code> and LEAF will treat them as separate entities even though their <code>.value</code> members are of the same type <code>std::string</code>.<br>
 <br>
@@ -1205,7 +1205,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
       <span class="keyword">case</span> input_eof_error:
       {
         <span class="comment">//In this case handle_error is given 3 match sets. It will first check if both</span>
-        <span class="comment">//e_file_name and e_errno, associated with r, are avialable in exp; if not, it will</span>
+        <span class="comment">//e_file_name and e_errno, associated with r, are available in exp; if not, it will</span>
         <span class="comment">//next check if just e_errno is available; and if not, the last (empty) set will</span>
         <span class="comment">//always match to print a generic error message.</span>
         <span class="predefined-type">bool</span> matched = handle_error( exp, r,
@@ -1358,7 +1358,7 @@ The complete program from this tutorial is available <a href="https://github.com
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The <code>e_error_code</code> and <code>e_errno</code> structs are examples of types that may be passed to <code><a href="#throw_exception">throw_exception</a></code> (and to the <code>leaf::error</code> constructor). The requirement for such types is that they define an accessible data member <code>value</code> and <code>noexcept</code> move constructor. These types allow us to assign different error-related semantics to different valies of otherwise identical static types.<br>
+The <code>e_error_code</code> and <code>e_errno</code> structs are examples of types that may be passed to <code><a href="#throw_exception">throw_exception</a></code> (and to the <code>leaf::error</code> constructor). The requirement for such types is that they define an accessible data member <code>value</code> and <code>noexcept</code> move constructor. These types allow us to assign different error-related semantics to different values of otherwise identical static types.<br>
 <br>
 For example, we could define <code>struct e_input_name { std::string value; }</code> and <code>struct e_output_name { std::string value; }</code> and LEAF will treat them as separate entities even though their <code>.value</code> members are of the same type <code>std::string</code>.<br>
 <br>
@@ -1461,7 +1461,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
   <span class="keyword">catch</span>( input_error <span class="directive">const</span> &amp; ex )
   {
     <span class="comment">//In this case handle_exception is given 3 match sets. It will first check if both</span>
-    <span class="comment">//e_file_name and e_errno, associated with ex, are avialable in exp; if not, it will</span>
+    <span class="comment">//e_file_name and e_errno, associated with ex, are available in exp; if not, it will</span>
     <span class="comment">//next check if just e_errno is available; and if not, the last (empty) set will</span>
     <span class="comment">//always match to print a generic error message.</span>
     handle_exception( exp, ex,
@@ -1834,7 +1834,7 @@ A call to <code><a href="#expect::propagate">propagate</a></code> restores the d
 </div>
 </div>
 <div class="paragraph">
-<p>See <code><a href="#handle_error-expect"><code>handle_error</code></a></code> below.</p>
+<p>See <code><a href="#handle_error-expect">handle_error</a></code> below.</p>
 </div>
 <hr>
 </div>
@@ -3528,7 +3528,7 @@ The passed value is stored as a C string, so you should only pass string literal
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-This technique works exacly the same way when errors are reported using <code>leaf::<a href="#result">result</a></code> rather than by throwing exceptions.
+This technique works exactly the same way when errors are reported using <code>leaf::<a href="#result">result</a></code> rather than by throwing exceptions.
 </td>
 </tr>
 </table>
@@ -3627,7 +3627,7 @@ This technique works exacly the same way when errors are reported using <code>le
 <p>What makes <code><a href="#preload">preload</a></code> and <code><a href="#defer">defer</a></code> useful (see <a href="#technique_preload">Preloading Errors</a> and <a href="#technique_defer">Capturing <code>errno</code> with <code>defer</code></a>) is that they automatically include <a href="#e-types">e-type</a> objects with any exception or error reported by a function.</p>
 </div>
 <div class="paragraph">
-<p>But what if we need to include some e-object conditionally? When using excption handling, it would be nice to be able to do this in a <code>catch</code> statement which selectively augments passing exceptions.</p>
+<p>But what if we need to include some e-object conditionally? When using exception handling, it would be nice to be able to do this in a <code>catch</code> statement which selectively augments passing exceptions.</p>
 </div>
 <div class="paragraph">
 <p>LEAF supports the following approach, assuming all exceptions derive from <code>std::exception</code>:</p>
