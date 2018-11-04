@@ -10,9 +10,8 @@
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
 /* Uncomment @import statement below to use as custom stylesheet */
-@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";
 @import "https://fonts.googleapis.com/css?family=Anonymous+Pro";
-@import "https://fonts.googleapis.com/css?family=Play";
+@import "https://fonts.googleapis.com/css?family=Istok Web";
 @import "https://fonts.googleapis.com/css?family=Quicksand";
 article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block}
 audio,canvas,video{display:inline-block}
@@ -51,7 +50,7 @@ textarea{overflow:auto;vertical-align:top}
 table{border-collapse:collapse;border-spacing:0}
 *,*::before,*::after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
 html,body{font-size:100%}
-body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Play","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto;tab-size:4;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Istok Web","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto;tab-size:4;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
 a:hover{cursor:pointer}
 img,object,embed{max-width:100%;height:auto}
 object,embed{height:100%}
@@ -123,7 +122,7 @@ h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-s
 h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
 .clearfix::before,.clearfix::after,.float-group::before,.float-group::after{content:" ";display:table}
 .clearfix::after,.float-group::after{clear:both}
-*:not(pre)>code{font-size:1.1em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed;word-wrap:break-word}
+*:not(pre)>code{font-size:1.05em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed;word-wrap:break-word}
 *:not(pre)>code.nobreak{word-wrap:normal}
 *:not(pre)>code.nowrap{white-space:nowrap}
 pre,pre>code{line-height:1.45;color:rgba(0,0,0,.9);font-family:"Anonymous Pro","DejaVu Sans Mono",monospace;font-weight:400;text-rendering:optimizeSpeed}
@@ -147,7 +146,7 @@ p a>code:hover{color:rgba(0,0,0,.9)}
 #header::after,#content::after,#footnotes::after,#footer::after{clear:both}
 #content{margin-top:1.25em}
 #content::before{content:none}
-#header>h1:first-child{color:#ff5100;margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child{color:#ff5100;margin-top:2.25rem;margin-bottom:0;letter-spacing:-.141em}
 #header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #dddddf}
 #header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
 #header .details{border-bottom:1px solid #dddddf;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:-ms-flexbox;display:-webkit-flex;display:flex;-ms-flex-flow:row wrap;-webkit-flex-flow:row wrap;flex-flow:row wrap}
@@ -164,7 +163,7 @@ p a>code:hover{color:rgba(0,0,0,.9)}
 #toc>ul{margin-left:.125em}
 #toc ul.sectlevel0>li>a{font-style:italic}
 #toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
-#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc ul{font-family:inherit,sans-serif;list-style-type:none}
 #toc li{line-height:1.3334;margin-top:.3334em}
 #toc a{text-decoration:none}
 #toc a:hover{color:#000000}
@@ -927,7 +926,7 @@ LEAF is compatible with, not a replacement for <code>std::error_code</code>.
 <h2 id="tutorial">Tutorial</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>We&#8217;ll write a short but complete program, using LEAF to handle errors. We&#8217;ll implement two versions, one that uses exception handling, and one that does not. To see the source code of the complete programs from this tutorial follow these links:</p>
+<p>We&#8217;ll write a short but complete program, using LEAF to handle errors. We&#8217;ll implement two versions, one that uses exception handling, and one that does not. To see the source code of the complete programs from this tutorial, follow these links:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1316,6 +1315,18 @@ The complete program from this tutorial is available <a href="https://github.com
 </div>
 </div>
 </div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+To avoid ambiguities in the implicit type conversion done when catching a base type, it is generally recommended to use virtual inheritance in exception type hierarchies.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Here is a function that reads data from a file into a buffer and throws exceptions to communicate failures:</p>
@@ -2018,7 +2029,7 @@ The printing of each individual e-object is done by the rules described <a href=
 </div>
 </div>
 <div class="paragraph">
-<p>Objects of class <code>error</code> are values that identify a errors across the entire program. They can be copied, moved, assigned to, and compared to other error objects. They occupy as much memory as <code>unsigned int</code>, and are as fast.</p>
+<p>Objects of class <code>error</code> are values that identify a errors across the entire program. They can be copied, moved, assigned to, and compared to other error objects. They occupy as much memory, and are as fast as <code>unsigned int</code>.</p>
 </div>
 <div class="paragraph">
 <p>Whenever an <code>e&#8230;&#8203;</code> sequence is passed <code>error</code> functions, these objects are moved into matching storage provided by <code><a href="#expect">expect</a></code> instances and associated with the <code>error</code> object, which can later be passed to <code><a href="#peek-expect">peek</a></code> or <code><a href="#handle_error-expect">handle_error</a></code> to retrieve them.</p>
@@ -3451,7 +3462,7 @@ The passed value is stored as a C string, so you should only pass string literal
 </div>
 </div>
 <div class="paragraph">
-<p>This is a problem: the <code>catch</code> needs a file name, but at the point of the <code>throw</code> a file name is not available (only a <code>FILE</code> pointer is). In general the error might be detected in a library which can not assume that a meaningful name is available for any <code>FILE</code> it reads, even if a program that uses the library could reasonably make the same assumption.</p>
+<p>This is a problem: the <code>catch</code> needs a file name, but at the point of the <code>throw</code> a file name is not available (only a <code>FILE</code> pointer is). In general, the error might be detected in a library which can not assume that a meaningful name is available for any <code>FILE</code> it reads, even if a program that uses the library could reasonably make the same assumption.</p>
 </div>
 <div class="paragraph">
 <p>Using LEAF, a file name may be associated with any exception after it has been thrown, while anything available at the point of the <code>throw</code> (e.g. <code>errno</code>) may be passed directly to <code><a href="#throw_exception">throw_exception</a></code>:</p>
