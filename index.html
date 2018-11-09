@@ -437,7 +437,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 h1{font-size:4em}
 h2{font-size:1.74em}
 h3,#toctitle,.sidebarblock>.content>.title{font-size:1.5em}
-h4{font-size:1.4em}}
+h4{font-size:1.4em}
 h5{font-size:1.125em}
 h6{font-size:1em}
 h1 code{color:#4101a7; font-size:113%}
@@ -445,19 +445,20 @@ h2 code{color:#4101a7; font-size:113%}
 h3 code{color:#4101a7; font-size:113%}
 h4 code{color:#4101a7; font-size:113%}
 h5 code{color:#4101a7; font-size:113%}
-#toc ul code{font-size:113%}
+#toc {text-align:left}
+#toc ul code{font-size:111%}
 #toc a:hover code {color:#4101a7}
 a:focus{outline:0}
-body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Istok Web","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto;tab-size:4;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+body{text-align:justify; background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Istok Web","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto;tab-size:4;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
 .subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#a0a0a0;font-weight:400;margin-top:0;margin-bottom:.25em}
 a{color:#000000;text-decoration:underline;line-height:inherit}
 a:hover{color:#4101a7}
 h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Quicksand","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#4101a7;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
 code{font-family:"Anonymous Pro","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
-*:not(pre)>code{font-size:1.05em;font-style:normal!important;letter-spacing:0;padding:0 0;word-spacing:-.15em;background-color:transparent;-webkit-border-radius:0;border-radius:0;line-height:1.45;text-rendering:optimizeLegibility;word-wrap:break-word}
+*:not(pre)>code{font-size:1.09em;font-style:normal!important;letter-spacing:0;padding:0 0;word-spacing:-.15em;background-color:transparent;-webkit-border-radius:0;border-radius:0;line-height:1.45;text-rendering:optimizeLegibility;word-wrap:break-word}
 pre,pre>code{line-height:1.45;color:rgba(0,0,0,.9);font-family:"Anonymous Pro","DejaVu Sans Mono",monospace;font-weight:400;text-rendering:optimizeLegibility;font-size:1.05em}
 kbd{font-family:"Anonymous Pro","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background-color:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
-#header>h1:first-child{font-family:"Poiret One";color:#ff5100;margin-top:2.25rem;margin-bottom:0;letter-spacing:-.06em}
+#header>h1:first-child{font-family:"Poiret One";color:#ff5100;margin-top:2.25rem;margin-bottom:0;letter-spacing:-.07em}
 #toc ul{font-family:"Quicksand","DejaVu Sans",sans-serif;list-style-type:none}
 #toc a:hover{color:#4101a7}
 #toc.toc2{background-color:#f7f8f7}
@@ -468,6 +469,30 @@ kbd{font-family:"Anonymous Pro","DejaVu Sans Mono",monospace;display:inline-bloc
 .admonitionblock td.icon .icon-important::before{content:"\f06a";color:#ff5100}
 .conum[data-value]{display:inline-block;color:#fff!important;background-color:#606060;-webkit-border-radius:100px;border-radius:100px;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
 .exampleblock>.content{background-color:#ffffff;border-color:#e0e0dc;-webkit-box-shadow:0 1px 4px #e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+
+/*
+Barlow Semi Condensed
+Biryani
+Cambay
+Carme
+Gill Sans
+Gothic A1
+Gudea
+JejuGothic
+Mplus 1p
+OxygenProza Libre
+Roboto
+Scada
+Signika
+Ubuntu
+Work Sans
+Yantramanav
+
+Doppio One
+K2D
+Martel Sans
+Tauri
+*/
 
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -666,6 +691,7 @@ table.CodeRay td.code>pre{padding:0}
 </ul>
 </li>
 <li><a href="#_design_rationale">Design Rationale</a></li>
+<li><a href="#_alternatives_to_leaf">Alternatives to LEAF</a></li>
 <li><a href="#building">Building</a></li>
 <li><a href="#portability">Portability</a></li>
 </ul>
@@ -4137,48 +4163,293 @@ Follow this link to see a complete example program: <a href="https://github.com/
 <div class="sect1">
 <h2 id="_design_rationale">Design Rationale</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>The first observation driving the LEAF design is that unless a specific type of info (e.g. a file name) is used at the time an error is being handled, there is no need for it to be reported. On the other hand, if the error handling context can use or requires some info, that context would not be burdened by having to explicitly declare that need. The end result of this reasoning is <code><a href="#expect">expect</a></code>.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Definition: </dt>
+<dd>
+<p>Objects that carry information about error conditions are called error objects. For example, objects of type <code>std::error_code</code> are error objects.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The following reasoning is independent of what mechanics are used to transport error objects, whether it is exception handling or anything else.
+</td>
+</tr>
+</table>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Definition: </dt>
+<dd>
+<p>Depending on their interaction with error objects, functions can be classified as follows:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Error-initiating</strong>: functions that initiate error conditions by creating new error objects.</p>
+</li>
+<li>
+<p><strong>Error-neutral</strong>: functions that forward to the caller error objects returned by functions they call.</p>
+</li>
+<li>
+<p><strong>Error-handling</strong>: functions that dispose of error objects forwarded to them, recovering normal program operation.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
 </div>
 <div class="paragraph">
-<p>The second observation is that ideally, like any other communication mechanism, it makes sense to formally define an interface for the error info that can be used by the error handling code. In terms of C&#43;&#43; exception handling, it would be nice to be able to say something like:</p>
+<p>A crucial observation is that <em>error-initiating</em> functions are typically low level functions that lack any context and can not determine, much less dictate, the correct program behavior in response to errors they initiate. Error conditions which (correctly) lead to termination in some programs may (correctly) be ignored in others; yet other programs may recover from them and resume normal operation.</p>
+</div>
+<div class="paragraph">
+<p>Stronger: authors of <em>error-initiating</em> functions may not even reason about what information about the error is required to deal with it, by a specific <em>error-handling</em> function in a specific program domain, except to pass any relevant information which is naturally available to them.</p>
+</div>
+<div class="paragraph">
+<p>If this is true about <em>error-initiating</em> functions, it is doubly true about <em>error-neutral</em> functions. Frequently, the error they receive is initiated by a function multiple levels removed from them in the call chain, a function which usually is&#8201;&#8212;&#8201;and should be treated as&#8201;&#8212;&#8201;an implementation detail. The <em>error-neutral</em> function should not be coupled with any error object types used by <em>error-initiating</em> functions, for the same reason it should not be coupled with their interface.</p>
+</div>
+<div class="paragraph">
+<p>Finally, <em>error-handling</em> functions, by definition, have the full context they need to deal with at least some, if not all, failures. In this scope it is an absolute necessity that the author knows exactly what information must be communicated by lower level functions in order to recover from each error condition. Specifically, none of this necessary information can be treated as implementation details; the coupling which is to be avoided by <em>error-neutral</em> functions is unavoidable and even desirable here.</p>
+</div>
+<div class="paragraph">
+<p>We&#8217;re now ready to define our</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Design goals: </dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Error-initiating</strong> functions should be able to communicate all information available to them that is relevant to the failure being reported.</p>
+</li>
+<li>
+<p><strong>Error-neutral</strong> functions should not interfere or be coupled with error-related information that passes through them. They should be able to augment it with any additional information available to them, which may be relevant to any error they forward to the caller.</p>
+</li>
+<li>
+<p><strong>Error-handling</strong> functions should be able to access all the information communicated by <em>error-initiating</em> or <em>error-neutral</em> functions that is needed in their domain in order to deal with failures.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>The difficulty in reaching these design goals is in that they seem to require that all error objects be allocated dynamically (the Boost Exception library meets these design goals at the cost of dynamic memory allocation).</p>
+</div>
+<div class="paragraph">
+<p>As it turns out, dynamic memory allocation is not necessary with the following</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Adjustment: </dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Error-handling</strong> functions should specify which of the information <em>error-initiating</em> and <em>error-neutral</em> functions are <span class="underline">able</span> to communicate is <span class="underline">actually needed</span> in order to deal with failures in a particular program domain. Ideally, no resources should be <span class="line-through">used</span> wasted storing or communicating information which is not currently needed, even if it is relevant to the failure.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>The <code>leaf::<a href="#expect">expect</a>&lt;E&#8230;&#8203;&gt;</code> class template implements this idea: it provides local storage for error objects of the <code>E&#8230;&#8203;</code> types. Users instantiate this template in <em>error-handling</em> functions, knowing which types of error information are needed. When an <code>expect</code> object is created, <code>thread_local</code> pointers of the <code>E&#8230;&#8203;</code> types are set to point to the corresponding storage within it. Later on, error-reporting functions wanting to communicate an error object of type <code>E</code> access the corresponding <code>thread_local</code> pointer to see if there is currently storage available for this type:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If the pointer is not null, storage is available and the object is moved into that storage, exactly once&#8201;&#8212;&#8201;regardless of how many levels of function calls must unwind before an appropriate <em>error-handling</em> function is reached.</p>
+</li>
+<li>
+<p>If the pointer is null, storage is not available and the error object is discarded, saving resources.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This almost works, except we need to make sure that <em>error-handling</em> functions are protected from accessing stale error objects stored in <code>expect</code> objects, left there from previous failures, which would be a serious logic error. To this end, each failure is assigned a unique serial number, which is transported inside <code>leaf::<a href="#result">result</a></code> objects that communicate failures. Each of the <code>E&#8230;&#8203;</code> objects stored in an <code>expect&lt;E&#8230;&#8203;&gt;</code> object is assigned the same unique identifier, permanently associating it with a particular failure.</p>
+</div>
+<div class="paragraph">
+<p>Lastly, in <em>error-handling</em> functions it makes sense to be able to not only recognize individual error conditions, but match specific error-handling code with the complete set of error objects that is required in each case.</p>
+</div>
+<div class="paragraph">
+<p>In terms of C&#43;&#43; exception handling, it would be nice to be able to say something like:</p>
 </div>
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">try</span> {
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">try</span>
+{
+  T r = process_file();
 
-  process_file();
-
-} <span class="keyword">catch</span>( file_read_error&lt;e_file_name,e_errno&gt; &amp; e ) {
-
+  <span class="comment">//Success, use r:</span>
+  ....
+}
+<span class="keyword">catch</span>( file_read_error&lt;e_file_name,e_errno&gt; &amp; e )
+{
   std::cerr &lt;&lt;
     <span class="string"><span class="delimiter">&quot;</span><span class="content">Could not read </span><span class="delimiter">&quot;</span></span> &lt;&lt; e.get&lt;e_file_name&gt;() &lt;&lt;
     <span class="string"><span class="delimiter">&quot;</span><span class="content">, errno=</span><span class="delimiter">&quot;</span></span> &lt;&lt; e.get&lt;e_errno&gt;() &lt;&lt; std::endl;
-
-} <span class="keyword">catch</span>( file_read_error&lt;e_errno&gt; &amp; e ) {
-
+}
+<span class="keyword">catch</span>( file_read_error&lt;e_errno&gt; &amp; e )
+{
   std::cerr &lt;&lt;
     <span class="string"><span class="delimiter">&quot;</span><span class="content">File read error, errno=</span><span class="delimiter">&quot;</span></span> &lt;&lt; e.get&lt;e_errno&gt;() &lt;&lt; std::endl;
-
-} <span class="keyword">catch</span>( file_read_error&lt;&gt; &amp; e ) {
-
+}
+<span class="keyword">catch</span>( file_read_error&lt;&gt; &amp; e )
+{
   std::cerr &lt;&lt; <span class="string"><span class="delimiter">&quot;</span><span class="content">File read error!</span><span class="delimiter">&quot;</span></span> &lt;&lt; std::endl;
-
 }</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="paragraph">
-<p>That is to say, it is desirable to be able to dispatch error handling based not only on the kind of failure being handled, but also based on the kind of error info available. Unfortunately this syntax is not possible and, even if it were, not all programs use exceptions to handle errors. The result of this train of thought is <code><a href="#handle_error-expect">handle_error</a></code>/<code><a href="#handle_exception">handle_exception</a></code>.</p>
+<p>That is to say, it is desirable to be able to dispatch error handling based not only on the kind of failure being handled, but also based on the kind of error objects available. Unfortunately this syntax is not possible and, even if it were, not all programs use exceptions to handle errors.</p>
 </div>
 <div class="paragraph">
-<p>Last but not least, there is certain redundancy and repetition in error-neutral contexts that simply forward errors to their caller. What is the point in receiving some error info from a lower level function (e.g. a file name), when at this point we can&#8217;t do anything with it, except forward it to our caller, until we reach a scope that can actually make use of the data? Even with move semantics, why bother move such data one level at a time, from one stack location to another immediately above, only to move it again when we <code>return</code> again?</p>
+<p>Below is the same snippet, expressed in terms of LEAF:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">leaf::expect&lt;e_file_name, e_errno&gt; exp;
+
+<span class="keyword">try</span>
+{
+  T r = process_file(); <span class="comment">//Throws in case of failure, error objects stored inside exp.</span>
+
+  <span class="comment">//Success, use r:</span>
+  ....
+}
+<span class="keyword">catch</span>( file_read_error &amp; e )
+{
+  <span class="comment">//Match available error objects stored in exp,</span>
+  <span class="comment">//associated with the specific failure communicated by e.</span>
+  leaf::handle_exception( exp, e,
+
+    match&lt;e_file_name, e_errno&gt;( [ ]( std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; file_name, <span class="predefined-type">int</span> errno_ )
+    {
+      std::cerr &lt;&lt;
+        <span class="string"><span class="delimiter">&quot;</span><span class="content">Could not read </span><span class="delimiter">&quot;</span></span> &lt;&lt; file_name &lt;&lt;
+        <span class="string"><span class="delimiter">&quot;</span><span class="content">, errno=</span><span class="delimiter">&quot;</span></span> &lt;&lt; errno_ &lt;&lt; std::endl;
+    } ),
+
+    match&lt;e_errno&gt;( [ ]( <span class="predefined-type">int</span> errno_ )
+    {
+      std::cerr &lt;&lt;
+        <span class="string"><span class="delimiter">&quot;</span><span class="content">File read error, errno=</span><span class="delimiter">&quot;</span></span> &lt;&lt; errno_ &lt;&lt; std::endl;
+    } ),
+
+    match&lt;&gt;( [ ]
+    {
+      std::cerr &lt;&lt; <span class="string"><span class="delimiter">&quot;</span><span class="content">File read error!</span><span class="delimiter">&quot;</span></span> &lt;&lt; std::endl;
+    } )
+
+  );
+}</code></pre>
+</div>
+</div>
+</div>
 </div>
 <div class="paragraph">
-<p>It is more correct for such information to be passed from a context where it is available, <em>directly to the exact stack location where it would be accessed by the error handling code</em>. This is another reason why the storage for <a href="#e-types">e-objects</a> is provided by <code><a href="#expect">expect</a></code> instances, which all use automatic storage duration.</p>
+<p>Of course LEAF works without exception handling as well. Below is the same snippet, written using <code><a href="#result">result</a>&lt;T&gt;</code>:</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="c++">leaf::expect&lt;e_what, e_file_name, e_errno&gt; exp;
+
+<span class="keyword">if</span>( result&lt;T&gt; r = process_file() ) <span class="comment">//In case of failure error objects are stored inside exp.</span>
+{
+  <span class="comment">//Success, use r.value():</span>
+  ....
+}
+<span class="keyword">else</span>
+{
+  <span class="comment">//e_what is used to dispatch between error conditions:</span>
+  <span class="keyword">switch</span>( *leaf::peek&lt;e_what&gt;(exp,r) )
+  {
+    <span class="keyword">case</span> file_read_error:
+    {
+      <span class="comment">//Match available error objects stored in exp,</span>
+      <span class="comment">//associated with the specific failure communicated by r.</span>
+      <span class="predefined-type">bool</span> handled = leaf::handle_error( exp, r,
+
+        match&lt;e_file_name, e_errno&gt;( [ ]( std::<span class="predefined-type">string</span> <span class="directive">const</span> &amp; file_name, <span class="predefined-type">int</span> errno_ )
+        {
+          std::cerr &lt;&lt;
+            <span class="string"><span class="delimiter">&quot;</span><span class="content">Could not read </span><span class="delimiter">&quot;</span></span> &lt;&lt; file_name &lt;&lt;
+            <span class="string"><span class="delimiter">&quot;</span><span class="content">, errno=</span><span class="delimiter">&quot;</span></span> &lt;&lt; errno_ &lt;&lt; std::endl;
+        } ),
+
+        match&lt;e_errno&gt;( [ ]( <span class="predefined-type">int</span> errno_ )
+        {
+          std::cerr &lt;&lt;
+          <span class="string"><span class="delimiter">&quot;</span><span class="content">File read error, errno=</span><span class="delimiter">&quot;</span></span> &lt;&lt; errno_ &lt;&lt; std::endl;
+        } ),
+
+        match&lt;&gt;( [ ]
+        {
+          std::cerr &lt;&lt; <span class="string"><span class="delimiter">&quot;</span><span class="content">File read error!</span><span class="delimiter">&quot;</span></span> &lt;&lt; std::endl;
+        } )
+
+      );
+      <span class="keyword">if</span>( handled )
+        <span class="keyword">break</span>;
+    }
+    <span class="comment">//fallthrough:</span>
+    <span class="keyword">default</span>:
+      <span class="keyword">return</span> r; <span class="comment">//Error not handled, forward to the caller.</span>
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Please post questions and feedback on the Boost Developers Mailing List (LEAF is not part of Boost).
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_alternatives_to_leaf">Alternatives to LEAF</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Here is a list of other error handling libraries:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://www.boost.org/doc/libs/release/libs/exception/doc/boost-exception.html">Boost Exception</a></p>
+</li>
+<li>
+<p><a href="https://ned14.github.io/outcome">Boost Outcome</a></p>
+</li>
+<li>
+<p><a href="https://github.com/pdimov/variant2">variant2 / <code>expected&lt;T,E&#8230;&#8203;&gt;</code></a></p>
+</li>
+<li>
+<p><a href="https://zajo.github.io/boost-noexcept">Noexcept</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
