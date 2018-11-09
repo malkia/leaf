@@ -598,8 +598,7 @@ table.CodeRay td.code>pre{padding:0}
 <div id="toctitle"></div>
 <ul class="sectlevel1">
 <li><a href="#_abstract">Abstract</a></li>
-<li><a href="#distribution">Distribution</a></li>
-<li><a href="#_two_minute_introduction">Two Minute Introduction</a></li>
+<li><a href="#introduction">Two Minute Introduction</a></li>
 <li><a href="#_what_if_i_want_to_use_exception_handling">What If I Want to Use Exception Handling?</a></li>
 <li><a href="#tutorial">Tutorial</a>
 <ul class="sectlevel2">
@@ -690,10 +689,11 @@ table.CodeRay td.code>pre{padding:0}
 </li>
 </ul>
 </li>
-<li><a href="#_design_rationale">Design Rationale</a></li>
+<li><a href="#rationale">Design Rationale</a></li>
 <li><a href="#_alternatives_to_leaf">Alternatives to LEAF</a></li>
-<li><a href="#building">Building</a></li>
+<li><a href="#distribution">Distribution</a></li>
 <li><a href="#portability">Portability</a></li>
+<li><a href="#building">Building</a></li>
 </ul>
 </div>
 </div>
@@ -702,38 +702,47 @@ table.CodeRay td.code>pre{padding:0}
 <h2 id="_abstract">Abstract</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>LEAF is a C&#43;&#43;11 error handling library capable of transporting arbitrary error information from contexts that detect and report failures, as well as from intermediate error-neutral contexts, to scopes where the error is handled.</p>
+<p>LEAF is a C&#43;&#43;11 error handling library. Features:</p>
 </div>
-<div class="paragraph">
-<p>LEAF does not allocate memory dynamically<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>, which makes it suitable for low-latency and other performance-critical environments. It is equally applicable to programs that use exception handling and programs that do not.</p>
+<div class="exampleblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>No dynamic memory allocations.<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
+</li>
+<li>
+<p>Asociate objects of arbitrary types with any failure&#8201;&#8212;&#8201;when it is initially reported or at a later time.</p>
+</li>
+<li>
+<p>Compatible with <code>std::error_code</code>, <code>errno</code> and any other error handling API.</p>
+</li>
+<li>
+<p>Use with or without exception handling.</p>
+</li>
+<li>
+<p>Support for multi-thread programming.</p>
+</li>
+</ul>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-LEAF is compatible with (not an alternative to) <code>std::error_code</code>.
-</td>
-</tr>
-</table>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Quick links: </dt>
+<dd>
+<p><a href="#introduction">Two Minute Introduction</a><br>
+<a href="#tutorial">Tutorial</a><br>
+<a href="#techniques">Programming Techniques</a><br>
+<a href="#reference">Reference</a><br>
+<a href="#rationale">Design Rationale</a></p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="distribution">Distribution</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Copyright (c) 2018 Emil Dotchevski. Distributed under the <a href="http://www.boost.org/LICENSE_1_0.txt">Boost Software License, Version 1.0</a>. The source code is <a href="https://github.com/zajo/leaf">available</a> on GitHub.</p>
-</div>
-<div class="paragraph">
-<p>Please post questions and feedback on the Boost Developers Mailing List (LEAF is not part of Boost).</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_two_minute_introduction">Two Minute Introduction</h2>
+<h2 id="introduction">Two Minute Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Let&#8217;s assume that to handle a particular failure, we need an error code, a file name, and, optionally, a request ID. In terms of LEAF, we can write:</p>
@@ -4161,7 +4170,7 @@ Follow this link to see a complete example program: <a href="https://github.com/
 </div>
 </div>
 <div class="sect1">
-<h2 id="_design_rationale">Design Rationale</h2>
+<h2 id="rationale">Design Rationale</h2>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
@@ -4454,6 +4463,28 @@ Please post questions and feedback on the Boost Developers Mailing List (LEAF is
 </div>
 </div>
 <div class="sect1">
+<h2 id="distribution">Distribution</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Copyright (c) 2018 Emil Dotchevski. Distributed under the <a href="http://www.boost.org/LICENSE_1_0.txt">Boost Software License, Version 1.0</a>. The source code is <a href="https://github.com/zajo/leaf">available</a> on GitHub.</p>
+</div>
+<div class="paragraph">
+<p>Please post questions and feedback on the Boost Developers Mailing List (LEAF is not part of Boost).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="portability">Portability</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>LEAF requires a C&#43;&#43;11 compiler.</p>
+</div>
+<div class="paragraph">
+<p>See unit test matrix at <a href="https://travis-ci.org/zajo/leaf">Travis-CI</a>. It has also been tested with Microsoft Visual Studio 2015 and 2017 (please install the latest patches from Microsoft).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="building">Building</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -4495,22 +4526,11 @@ meson test</code></pre>
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="portability">Portability</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>LEAF requires a C&#43;&#43;11 compiler.</p>
-</div>
-<div class="paragraph">
-<p>See unit test matrix at <a href="https://travis-ci.org/zajo/leaf">Travis-CI</a>. It has also been tested with Microsoft Visual Studio 2015 and 2017 (please install the latest patches from Microsoft).</p>
-</div>
-</div>
-</div>
 </div>
 <div id="footnotes">
 <hr>
 <div class="footnote" id="_footnotedef_1">
-<a href="#_footnoteref_1">1</a>. Except when transporting error info between threads, see <a href="#capture-expect"><code>capture</code></a>.
+<a href="#_footnoteref_1">1</a>. Except when error objects are transported between threads, see <a href="#capture-expect"><code>capture</code></a>.
 </div>
 </div>
 <div id="footer">
