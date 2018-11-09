@@ -449,7 +449,7 @@ h5 code{color:#4101a7; font-size:113%}
 #toc ul code{font-size:111%}
 #toc a:hover code {color:#4101a7}
 a:focus{outline:0}
-body{text-align:justify; background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Istok Web","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto;tab-size:4;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+body{text-align:left; background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Istok Web","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto;tab-size:4;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
 .subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#a0a0a0;font-weight:400;margin-top:0;margin-bottom:.25em}
 a{color:#000000;text-decoration:underline;line-height:inherit}
 a:hover{color:#4101a7}
@@ -635,7 +635,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#defer"><code>defer</code></a></li>
 <li><a href="#error_capture">Class <code>error_capture</code></a>
 <ul class="sectlevel3">
-<li><a href="#error_capture::error_captere">Constructor</a></li>
+<li><a href="#error_capture::error_capture">Constructor</a></li>
 <li><a href="#error_capture::operator_bool">Conversion to <code>bool</code></a></li>
 <li><a href="#error_capture::unload"><code>unload</code></a></li>
 <li><a href="#handle_error-error_capture"><code>handle_error</code></a></li>
@@ -660,8 +660,7 @@ table.CodeRay td.code>pre{padding:0}
 </li>
 <li><a href="#eh">Exception Handling Interface</a>
 <ul class="sectlevel3">
-<li><a href="#make_exception"><code>make_exception</code></a></li>
-<li><a href="#throw_exception"><code>throw_exception</code></a></li>
+<li><a href="#exception::exception"><code>Constructors</code></a></li>
 <li><a href="#LEAF_THROW"><code>LEAF_THROW</code></a></li>
 <li><a href="#capture_exception"><code>capture_exception</code></a></li>
 <li><a href="#get"><code>get</code></a></li>
@@ -669,7 +668,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#handle_exception"><code>handle_exception</code></a></li>
 <li><a href="#peek-exception"><code>peek</code></a></li>
 <li><a href="#diagnostic_output-exception"><code>diagnostic_output</code></a></li>
-<li><a href="#current_exception_diagnostic_output-exception"><code>current_exception_diagnostic_output</code></a></li>
+<li><a href="#current_exception_diagnostic_output"><code>current_exception_diagnostic_output</code></a></li>
 </ul>
 </li>
 <li><a href="#common">Common e-types</a></li>
@@ -725,19 +724,13 @@ table.CodeRay td.code>pre{padding:0}
 </li>
 </ul>
 </div>
+<div class="paragraph text-right">
+<p><a href="#tutorial">Tutorial</a> | <a href="#techniques">Programming Techniques</a> | <a href="#reference">Reference</a> | <a href="#rationale">Design Rationale</a></p>
 </div>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Quick links: </dt>
-<dd>
-<p><a href="#introduction">Two Minute Introduction</a><br>
-<a href="#tutorial">Tutorial</a><br>
-<a href="#techniques">Programming Techniques</a><br>
-<a href="#reference">Reference</a><br>
-<a href="#rationale">Design Rationale</a></p>
-</dd>
-</dl>
+</div>
+<div class="paragraph">
+<p>&#160;</p>
 </div>
 </div>
 </div>
@@ -801,6 +794,9 @@ table.CodeRay td.code>pre{padding:0}
 </tr>
 </table>
 </div>
+<div class="paragraph text-right">
+<p><code><a href="#expect">expect</a></code> | <code><a href="#result">result</a></code> | <a href="#handle_error-result"><code>handle_error</code></a> | <a href="#match"><code>match</code></a></p>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -847,6 +843,9 @@ table.CodeRay td.code>pre{padding:0}
 </tr>
 </table>
 </div>
+<div class="paragraph text-right">
+<p><code><a href="#result">result</a></code> | <code><a href="#error::error">error::error</a></code></p>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -858,7 +857,7 @@ table.CodeRay td.code>pre{padding:0}
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="c++">leaf::result&lt;T&gt; f() <span class="directive">noexcept</span>
 {
-  <span class="keyword">if</span>( leaf::error&lt;T&gt; r=g() )
+  <span class="keyword">if</span>( leaf::result&lt;T&gt; r=g() )
   {
     ....
     <span class="keyword">return</span> r; <i class="conum" data-value="1"></i><b>(1)</b>
@@ -879,6 +878,9 @@ table.CodeRay td.code>pre{padding:0}
 <td>Forward the error reported in <code>r</code>, storing <code>e_file_name</code> in appropriate <code>expect</code> object(s) from calling scopes. The file name will be associated with the error in addition to the relevant <code>e_error_code</code> and <code>e_request_id</code> which (presumably) <code>g()</code> has already communicated.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph text-right">
+<p><code><a href="#result">result</a></code> | <code><a href="#result::error">result::error</a></code></p>
 </div>
 </div>
 </div>
@@ -943,6 +945,9 @@ table.CodeRay td.code>pre{padding:0}
 </tr>
 </table>
 </div>
+<div class="paragraph text-right">
+<p><code><a href="#expect">expect</a></code> | <a href="#handle_exception"><code>handle_exception</code></a> | <a href="#match"><code>match</code></a></p>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -957,7 +962,7 @@ table.CodeRay td.code>pre{padding:0}
   <span class="keyword">if</span>( success )
     <span class="keyword">return</span> T(....); <i class="conum" data-value="1"></i><b>(1)</b>
   <span class="keyword">else</span>
-    leaf::throw_exception( my_exception(), e_error_code{<span class="integer">42</span>}, e_request_id{id} ); <i class="conum" data-value="2"></i><b>(2)</b>
+    <span class="keyword">throw</span> leaf::exception&lt;my_exception&gt;( e_error_code{<span class="integer">42</span>}, e_request_id{id} ); <i class="conum" data-value="2"></i><b>(2)</b>
 }</code></pre>
 </div>
 </div>
@@ -972,6 +977,9 @@ table.CodeRay td.code>pre{padding:0}
 <td>Throw a <code>my_exception</code> object, store the passed <code>e_error_code</code> and <code>e_request_id</code> in appropriate <code>expect</code> object(s) from calling scopes. Presumably, at this point we don&#8217;t have access to a relevant file name, but that&#8217;s fine&#8201;&#8212;&#8201;we associate with exception object what relevant information we do have: the error code and the request ID.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph text-right">
+<p><code><a href="#eh">exception</a></code></p>
 </div>
 </div>
 </div>
@@ -997,6 +1005,9 @@ table.CodeRay td.code>pre{padding:0}
 <td>In case <code>g()</code> throws, the file name will be associated with the exception object, in addition to the relevant <code>e_error_code</code> and <code>e_request_id</code> which (presumably) <code>g()</code> has already communicated.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph text-right">
+<p><a href="#preload"><code>preload</code></a></p>
 </div>
 </div>
 </div>
@@ -1083,6 +1094,9 @@ table.CodeRay td.code>pre{padding:0}
 </tr>
 </table>
 </div>
+<div class="paragraph text-right">
+<p><code><a href="#result">result</a></code> | <code><a href="#error::error">error::error</a></code></p>
+</div>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -1166,6 +1180,9 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 </tr>
 </table>
 </div>
+<div class="paragraph text-right">
+<p><code><a href="#result">result</a></code> | <code><a href="#result::error">result::error</a></code> | <a href="#preload"><code>preload</code></a></p>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -1223,6 +1240,9 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 <td>Call <code>file_read</code>, check for errors (<code>file_read</code> returns <code>result&lt;void&gt;</code>).</td>
 </tr>
 </table>
+</div>
+<div class="paragraph text-right">
+<p><a href="#LEAF_AUTO"><code>LEAF_AUTO</code></a> | <a href="#LEAF_CHECK"><code>LEAF_CHECK</code></a> | <a href="#preload"><code>preload</code></a> | <code><a href="#error::error">error::error</a></code></p>
 </div>
 </div>
 </div>
@@ -1336,6 +1356,9 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 }</code></pre>
 </div>
 </div>
+<div class="paragraph text-right">
+<p><code><a href="#expect">expect</a></code> | <a href="#peek-result"><code>peek</code></a> | <a href="#handle_error-result"><code>handle_error</code></a> | <a href="#match"><code>match</code></a> | <a href="#diagnostic_output-result"><code>diagnostic_output</code></a></p>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -1420,7 +1443,7 @@ To avoid ambiguities in the implicit type conversion done when catching a base t
   <span class="predefined-type">int</span> n = fread(buf,<span class="integer">1</span>,size,&amp;f);
 
   <span class="keyword">if</span>( ferror(&amp;f) )
-    leaf::throw_exception( input_file_read_error(), e_errno{errno} ); <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="keyword">throw</span> leaf::exception&lt;input_file_read_error&gt;( e_errno{errno} ); <i class="conum" data-value="1"></i><b>(1)</b>
 
   <span class="keyword">if</span>( n!=size )
     <span class="keyword">throw</span> input_eof_error(); <i class="conum" data-value="2"></i><b>(2)</b>
@@ -1431,13 +1454,16 @@ To avoid ambiguities in the implicit type conversion done when catching a base t
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>If <code>ferror</code> indicates an error, we throw <code>input_file_read_error</code> and, because there is a relevant <code>errno</code> code, we pass that to <code><a href="#throw_exception">throw_exception</a></code> <em>also</em> (LEAF defines <code>struct e_errno { int value; }</code>).</td>
+<td>If <code>ferror</code> indicates an error, we throw <code>input_file_read_error</code> and, because there is a relevant <code>errno</code> code, we pass that to the <code><a href="#eh">exception</a></code> constructor <em>also</em> (LEAF defines <code>struct e_errno { int value; }</code>).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>If <code>fread</code> reports that it couldn&#8217;t read all of the data requested, we throw <code>input_eof_error</code>. In this case there is no relevant <code>errno</code> to pass on, because this is not an error as far as <code>fread</code> is concerned.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph text-right">
+<p><code><a href="#eh">exception</a></code></p>
 </div>
 </div>
 </div>
@@ -1448,7 +1474,7 @@ To avoid ambiguities in the implicit type conversion done when catching a base t
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The <code>e_error_code</code> and <code>e_errno</code> structs are examples of types that may be passed to <code><a href="#throw_exception">throw_exception</a></code> (and to the <code>leaf::error</code> constructor). The requirement for such types is that they define an accessible data member <code>value</code> and <code>noexcept</code> move constructor. These types allow us to assign different error-related semantics to different values of otherwise identical static types.<br>
+The <code>e_error_code</code> and <code>e_errno</code> structs are examples of types that may be passed to the <code>leaf::<a href="#eh">exception</a></code> (and to the <code>leaf::<a href="#error">error</a></code> constructor). The requirement for such types is that they define an accessible data member <code>value</code> and <code>noexcept</code> move constructor. These types allow us to assign different error-related semantics to different values of otherwise identical static types.<br>
 <br>
 For example, we could define <code>struct e_input_name { std::string value; }</code> and <code>struct e_output_name { std::string value; }</code> and LEAF will treat them as separate entities even though their <code>.value</code> members are of the same type <code>std::string</code>.<br>
 <br>
@@ -1487,7 +1513,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code><a href="#preload">preload</a></code> takes any number of <a href="#e-types">e-type</a> objects and prepares them to become associated (automatically, at the time the returned object expires) with the first exception thrown thereafter. The effect is that from this point on, a file name will be associated with any exception escaping <code>print_file</code>, in addition to everything else passed to <code><a href="#throw_exception">throw_exception</a></code> explicitly (<code>e_file_name</code> is defined as <code>struct e_file_name { std::string value; }</code>).</td>
+<td><code><a href="#preload">preload</a></code> takes any number of <a href="#e-types">e-type</a> objects and prepares them to become associated (automatically, at the time the returned object expires) with the first exception thrown thereafter. The effect is that from this point on, a file name will be associated with any exception escaping <code>print_file</code>, in addition to everything else passed earlier to the <code>leaf::<a href="#eh">exception</a></code> constructor explicitly (<code>e_file_name</code> is defined as <code>struct e_file_name { std::string value; }</code>).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -1498,6 +1524,9 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 <td><code><a href="#defer">defer</a></code> is similar to <code>preload</code>: it prepares an e-type object to become associated with the first exception thrown thereafter, but instead of taking the e-type object itself, <code>defer</code> takes a function that returns it. The function is invoked in the returned object&#8217;s destructor, at which point it becomes associated with the exception being propagated. Assuming <code>std::cout</code> is configured to throw on error, the effect of this line is that those exceptions will have the relevant <code>errno</code> associated with them.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph text-right">
+<p><a href="#preload"><code>preload</code></a> | <a href="#defer"><code>defer</code></a></p>
 </div>
 </div>
 </div>
@@ -1597,6 +1626,9 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 }</code></pre>
 </div>
 </div>
+<div class="paragraph text-right">
+<p><code><a href="#expect">expect</a></code> | <a href="#handle_exception"><code>handle_exception</code></a> | <a href="#match"><code>match</code></a> | <a href="#current_exception_diagnostic_output"><code>current_exception_diagnostic_output</code></a></p>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -1605,10 +1637,13 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 <div class="ulist">
 <ul>
 <li>
-<p>In case a function detects a failure, it may use <code><a href="#throw_exception">throw_exception</a></code>, passing (in addition to the exception object) any number of <a href="#e-types">e-type</a> objects, to associate with the exception any information it has that is relevant to the failure. Alternatively it may use <code><a href="#preload">preload</a></code> to associate <a href="#e-types">e-type</a> objects with any exception thrown later on, including exceptions thrown by third-party code.</p>
+<p>In case a function detects a failure, it may throw instances of the <code>leaf::<a href="#eh">exception</a></code> class template, initializing it with (in addition to the exception object) any number of <a href="#e-types">e-type</a> objects, to associate with the exception any information it has that is relevant to the failure.</p>
 </li>
 <li>
-<p>In order for any e-type object passed to <code><a href="#throw_exception">throw_exception</a></code> to be stored rather than discarded, the function that catches the exception must contain an instance of the class template <code><a href="#expect">expect</a></code> that provides the necessary storage for its type.</p>
+<p>Alternatively it may use <code><a href="#preload">preload</a></code> to associate <a href="#e-types">e-type</a> objects with the exception object (of any type) thrown later on, including exceptions thrown by third-party code.</p>
+</li>
+<li>
+<p>In order for any e-type object passed to the <code>leaf::<a href="#eh">exception</a></code> constructor to be stored rather than discarded, the function that catches the exception must contain an instance of the class template <code><a href="#expect">expect</a></code> that provides the necessary storage for its type.</p>
 </li>
 <li>
 <p>Using <code><a href="#handle_exception">handle_exception</a></code>, available <a href="#e-types">e-type</a> objects associated with the exception being handled can be matched to what is required in order to deal with that exception.</p>
@@ -1733,9 +1768,16 @@ The output from <code>diagnostic_output</code> overloads is developer-friendly b
     ~expect() <span class="directive">noexcept</span>;
 
     <span class="directive">void</span> propagate() <span class="directive">noexcept</span>;
-
-    <span class="directive">friend</span> error_capture capture( expect &amp; exp, error <span class="directive">const</span> &amp; e );
   };
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+  error_capture capture( expect&lt;E...&gt; &amp; exp, error <span class="directive">const</span> &amp; e );
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+  &lt;&lt;unspecified-type&gt; match() <span class="directive">noexcept</span>;
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">F</span>&gt;
+  &lt;&lt;unspecified-type&gt; match( F &amp;&amp; f ) <span class="directive">noexcept</span>;
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span><span class="error">.</span>.. M&gt;
   <span class="predefined-type">bool</span> handle_error( expect&lt;E...&gt; &amp; exp, error <span class="directive">const</span> &amp; e, M &amp;&amp; ... m ) <span class="directive">noexcept</span>;
@@ -1749,14 +1791,11 @@ The output from <code>diagnostic_output</code> overloads is developer-friendly b
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
   <span class="directive">void</span> diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; <span class="directive">const</span> &amp; exp, error <span class="directive">const</span> &amp; e );
 
-  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">F</span>&gt;
-  &lt;&lt;unspecified-type&gt; match( F &amp;&amp; f ) <span class="directive">noexcept</span>;
-
-  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
-  &lt;&lt;unspecified-type&gt; match() <span class="directive">noexcept</span>;
-
 } }</code></pre>
 </div>
+</div>
+<div class="paragraph text-right">
+<p><a href="#expect::expect">Constructor</a> | <a href="#expect-dtor">Destructor</a> | <a href="#expect::propagate"><code>propagate</code></a> | <a href="#capture-expect"><code>capture</code></a> | <a href="#match"><code>match</code></a> | <a href="#handle_error-expect"><code>handle_error</code></a> | <a href="#peek-expect"><code>peek</code></a> | <a href="#diagnostic_output-expect"><code>diagnostic_output</code></a></p>
 </div>
 </div>
 </div>
@@ -2098,13 +2137,15 @@ The printing of each individual e-object is done by the rules described <a href=
     <span class="directive">friend</span> <span class="predefined-type">bool</span> <span class="directive">operator</span>!=( error <span class="directive">const</span> &amp; e1, error <span class="directive">const</span> &amp; e2 ) <span class="directive">noexcept</span>;
 
     <span class="directive">friend</span> std::ostream &amp; <span class="directive">operator</span>&lt;&lt;( std::ostream &amp; os, error <span class="directive">const</span> &amp; e )
-
   };
 
   error peek_next_error() <span class="directive">noexcept</span>;
 
 } }</code></pre>
 </div>
+</div>
+<div class="paragraph text-right">
+<p><a href="#error::error">Constructor</a> | <a href="#error::propagate"><code>propagate</code></a> | <a href="#operator_eq-error"><code>operator==</code></a> | <a href="#operator_neq-error"><code>operator!=</code></a> | <a href="#operator_shl-error"><code>operator&lt;&lt;</code></a> | <a href="#peek_next_error"><code>peek_next_error</code></a></p>
 </div>
 </div>
 </div>
@@ -2370,6 +2411,9 @@ The printing of each individual e-object is done by the rules described <a href=
 } }</code></pre>
 </div>
 </div>
+<div class="paragraph text-right">
+<p><a href="#error_capture::error_capture">Constructor</a> | <a href="#error_capture::operator_bool">Conversion to <code>bool</code></a> | <a href="#error_capture::unload"><code>unload</code></a> | <a href="#handle_error-error_capture"><code>handle_error</code></a> | <a href="#peek-error_capture"><code>peek</code></a> | <a href="#diagnostic_output-error_capture"><code>diagnostic_output</code></a></p>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -2423,7 +2467,7 @@ The printing of each individual e-object is done by the rules described <a href=
 </div>
 <hr>
 <div class="sect3">
-<h4 id="error_capture::error_captere">Constructor</h4>
+<h4 id="error_capture::error_capture">Constructor</h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
 <div class="content">
@@ -2664,11 +2708,10 @@ The printing of each individual e-object is done by the rules described <a href=
 
     <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
     leaf::error error( E &amp;&amp; ... e ) <span class="directive">noexcept</span>;
-
-    <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
-    <span class="directive">friend</span> result capture( expect&lt;E...&gt; &amp; exp, result <span class="directive">const</span> &amp; r );
-
  };
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">T</span>&gt;
+  result capture( expect&lt;E...&gt; &amp; exp, result&lt;T&gt; <span class="directive">const</span> &amp; r );
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">T</span>,<span class="keyword">class</span><span class="error">.</span>.. M&gt;
   <span class="predefined-type">bool</span> handle_error( expect&lt;E...&gt; &amp; exp, result&lt;T&gt; &amp; r, M &amp;&amp; ... m ) <span class="directive">noexcept</span>;
@@ -2686,6 +2729,9 @@ The printing of each individual e-object is done by the rules described <a href=
 <span class="preprocessor">#define</span> LEAF_AUTO(v,r) <span class="directive">auto</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> = r; <span class="keyword">if</span>( !_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> ) <span class="keyword">return</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>.error(); <span class="directive">auto</span> &amp; v = *_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>
 <span class="preprocessor">#define</span> LEAF_CHECK(r) {<span class="directive">auto</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> = r; <span class="keyword">if</span>( !_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> ) <span class="keyword">return</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>.error();}</code></pre>
 </div>
+</div>
+<div class="paragraph text-right">
+<p><a href="#result::result">Constructors</a> | <a href="#result::operator_bool">Conversion to <code>bool</code></a> | <a href="#result::value"><code>value</code>/<code>operator*</code></a> | <a href="#result::error"><code>error</code></a> | <a href="#capture-result"><code>capture</code></a> | <a href="#handle_error-result"><code>handle_error</code></a> | <a href="#peek-result"><code>peek</code></a> | <a href="#diagnostic_output-result"><code>diagnostic_output</code></a> | <a href="#bad_result"><code>bad_result</code></a> | <a href="#LEAF_AUTO"><code>LEAF_AUTO</code></a> | <a href="#LEAF_CHECK"><code>LEAF_CHECK</code></a></p>
 </div>
 </div>
 </div>
@@ -3033,11 +3079,19 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
-  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">Ex</span>,<span class="keyword">class</span><span class="error">.</span>.. E&gt;
-  &lt;&lt;unspecified-type&gt;&gt; make_exception( Ex &amp;&amp; ex, E &amp;&amp; ... e ) <span class="directive">noexcept</span>;
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">Ex</span>&gt;
+  <span class="keyword">class</span> <span class="class">exception</span>:
+    <span class="directive">public</span> Ex,
+    <span class="directive">public</span> error
+  {
+  <span class="directive">public</span>:
 
-  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">Ex</span>,<span class="keyword">class</span><span class="error">.</span>.. E&gt; [[noreturn]]
-  <span class="directive">void</span> throw_exception( Ex &amp;&amp; ex, E &amp;&amp; ... e );
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+    exception( E &amp;&amp; ... e ) <span class="directive">noexcept</span>;
+
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+    exception( Ex &amp;&amp; ex, E &amp;&amp; ... e ) <span class="directive">noexcept</span>;
+  };
 
   error get_error( std::exception <span class="directive">const</span> &amp; ex ) <span class="directive">noexcept</span>;
 
@@ -3055,6 +3109,13 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 <span class="preprocessor">#define</span> LEAF_THROW &lt;&lt;unspecified&gt;&gt;</code></pre>
 </div>
 </div>
+<div class="paragraph text-right">
+<p><a href="#exception::exception"><code>Constructors</code></a> | <a href="#get_error"><code>get_error</code></a> | <a href="#peek-exception"><code>peek</code></a> | <a href="#handle_exception"><code>handle_exception</code></a> | <a href="#diagnostic_output-exception"><code>diagnostic_output</code></a> | <a href="#LEAF_THROW"><code>LEAF_THROW</code></a></p>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/exception_capture.hpp&gt;</div>
 <div class="content">
@@ -3072,6 +3133,9 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 } }</pre>
 </div>
 </div>
+<div class="paragraph text-right">
+<p><a href="#capture_exception"><code>capture_exception</code></a> | <a href="#get"><code>get</code></a> | <a href="#current_exception_diagnostic_output"><code>current_exception_diagnostic_output</code></a></p>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -3079,53 +3143,19 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 </div>
 <hr>
 <div class="sect3">
-<h4 id="make_exception"><code>make_exception</code></h4>
+<h4 id="exception::exception"><code>Constructors</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
-  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">Ex</span>,<span class="keyword">class</span><span class="error">.</span>.. E&gt;
-  &lt;&lt;unspecified-type&gt;&gt; make_exception( Ex &amp;&amp; ex, E &amp;&amp; ... e ) <span class="directive">noexcept</span>;
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">Ex</span>&gt;
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+  exception&lt;Ex&gt;::exception( E &amp;&amp; ... e ) <span class="directive">noexcept</span>;
 
-} }</code></pre>
-</div>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Requirements: </dt>
-<dd>
-<p><code>Ex</code> must derive from <code>std::exception</code>.</p>
-</dd>
-<dt class="hdlist1">Returns: </dt>
-<dd>
-<p>An exception object of unspecified type which derives publicly from both <code>Ex</code> and <code>leaf::<a href="#error">error</a></code>, its <code>Ex</code> sub-object initialized by <code>std::forward&lt;Ex&gt;(ex)</code>, its <code>error</code> sub-object initialized by <code><a href="#error::error">error</a>(std::forward&lt;E&gt;(e&#8230;&#8203;))</code>.</p>
-</dd>
-</dl>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-If thrown, the returned exception object can be caught as <code>Ex &amp;</code> or as <code>leaf::<a href="#error">error</a></code>.
-</td>
-</tr>
-</table>
-</div>
-<hr>
-</div>
-<div class="sect3">
-<h4 id="throw_exception"><code>throw_exception</code></h4>
-<div class="listingblock">
-<div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
-<div class="content">
-<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
-
-  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">Ex</span>,<span class="keyword">class</span><span class="error">.</span>.. E&gt; [[noreturn]]
-  <span class="directive">void</span> throw_exception( Ex &amp;&amp; ex, E &amp;&amp; ... e );
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">Ex</span>&gt;
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+  exception&lt;Ex&gt;::exception( Ex &amp;&amp; ex, E &amp;&amp; ... e ) <span class="directive">noexcept</span>;
 
 } }</code></pre>
 </div>
@@ -3138,7 +3168,16 @@ If thrown, the returned exception object can be caught as <code>Ex &amp;</code> 
 </dd>
 <dt class="hdlist1">Effects: </dt>
 <dd>
-<p>As if: <code>throw <a href="#make_exception">make_exception</a>( std::forward&lt;Ex&gt;(ex), std::forward&lt;E&gt;(e)&#8230;&#8203; )</code>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>Ex</code> sub-object of <code>*this</code> is initialized by its default constructor or by <code>std::forward&lt;Ex&gt;(ex)</code> respectively.</p>
+</li>
+<li>
+<p>The <code>error</code> sub-object is initialized by <code><a href="#error::error">error</a>(std::forward&lt;E&gt;(e&#8230;&#8203;))</code>.</p>
+</li>
+</ul>
+</div>
 </dd>
 </dl>
 </div>
@@ -3149,7 +3188,7 @@ If thrown, the returned exception object can be caught as <code>Ex &amp;</code> 
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-The thrown exception object can be caught as <code>Ex &amp;</code> or as <code>leaf::<a href="#error">error</a></code>.
+If thrown, a <code>leaf::<a href="#eh">exception</a>&lt;Ex&gt;</code> can be caught as <code>Ex &amp;</code> or as <code>leaf::<a href="#error">error</a></code>.
 </td>
 </tr>
 </table>
@@ -3168,7 +3207,7 @@ The thrown exception object can be caught as <code>Ex &amp;</code> or as <code>l
 <dl>
 <dt class="hdlist1">Effects: </dt>
 <dd>
-<p><code>LEAF_THROW(ex,e&#8230;&#8203;)</code> is equivalent to <code><a href="#throw_exception">throw_exception</a>(ex,e&#8230;&#8203;)</code>, except the current source location is also passed to <code>throw_exception</code>, in a <code><a href="#common">e_source_location</a></code> object.</p>
+<p><code>LEAF_THROW&lt;Ex&gt;(e&#8230;&#8203;)</code> is equivalent to <code>throw leaf::<a href="#eh">exception</a>&lt;Ex&gt;(e&#8230;&#8203;)</code>, except the current source location is automatically passed to the <code>leaf::exception</code> constructor, in a <code><a href="#common">e_source_location</a></code> object.</p>
 </dd>
 </dl>
 </div>
@@ -3381,7 +3420,7 @@ In case the dynamic type of <code>ex</code> does not derive from <code>leaf::err
 <hr>
 </div>
 <div class="sect3">
-<h4 id="current_exception_diagnostic_output-exception"><code>current_exception_diagnostic_output</code></h4>
+<h4 id="current_exception_diagnostic_output"><code>current_exception_diagnostic_output</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/exception_capture.hpp&gt;</div>
 <div class="content">
@@ -3545,7 +3584,7 @@ The passed value is stored as a C string, so you should only pass string literal
 <p>This is a problem: the <code>catch</code> needs a file name, but at the point of the <code>throw</code> a file name is not available (only a <code>FILE</code> pointer is). In general, the error might be detected in a library which can not assume that a meaningful name is available for any <code>FILE</code> it reads, even if a program that uses the library could reasonably make the same assumption.</p>
 </div>
 <div class="paragraph">
-<p>Using LEAF, a file name may be associated with any exception after it has been thrown, while anything available at the point of the <code>throw</code> (e.g. <code>errno</code>) may be passed directly to <code><a href="#throw_exception">throw_exception</a></code>:</p>
+<p>Using LEAF, a file name may be associated with any exception after it has been thrown, while anything available at the point of the <code>throw</code> (e.g. <code>errno</code>) may be passed directly to the <code>leaf::<a href="#eh">exception</a></code> constructor:</p>
 </div>
 <div class="exampleblock">
 <div class="content">
@@ -3560,7 +3599,7 @@ The passed value is stored as a C string, so you should only pass string literal
   ....
   size_t nr=fread( buf,<span class="integer">1</span>,count,f );
   <span class="keyword">if</span>( ferror(f) )
-    leaf::throw_exception( file_read_error(), e_errno{errno} );
+    <span class="keyword">throw</span> leaf::exception&lt;file_read_error&gt;( e_errno{errno} );
   ....
 }
 
@@ -3575,9 +3614,12 @@ The passed value is stored as a C string, so you should only pass string literal
     ....
   }
   <span class="keyword">else</span>
-    leaf::throw_exception( file_open_error() );
+    <span class="keyword">throw</span> leaf::exception&lt;file_open_error&gt;();
 }</code></pre>
 </div>
+</div>
+<div class="paragraph text-right">
+<p><code><a href="#eh">exception</a></code> | <a href="#preload"><code>preload</code></a></p>
 </div>
 </div>
 </div>
@@ -3609,6 +3651,9 @@ The passed value is stored as a C string, so you should only pass string literal
 }</code></pre>
 </div>
 </div>
+<div class="paragraph text-right">
+<p><code><a href="#expect">expect</a></code> | <a href="#handle_exception"><code>handle_exception</code></a> | <a href="#match"><code>match</code></a></p>
+</div>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -3638,10 +3683,13 @@ This technique works exactly the same way when errors are reported using <code>l
   ....
   size_t nr=fread(buf,<span class="integer">1</span>,count,f);
   <span class="keyword">if</span>( ferror(f) )
-    leaf::throw_exception( file_read_error(), e_errno{errno} );
+    <span class="keyword">throw</span> leaf::exception&lt;file_read_error&gt;( e_errno{errno} );
   ....
 }</code></pre>
 </div>
+</div>
+<div class="paragraph text-right">
+<p><code><a href="#eh">exception</a></code></p>
 </div>
 </div>
 </div>
@@ -3656,18 +3704,21 @@ This technique works exactly the same way when errors are reported using <code>l
   ....
   size_t nr1=fread(buf1,<span class="integer">1</span>,count1,f);
   <span class="keyword">if</span>( ferror(f) )
-    leaf::throw_exception( file_read_error(), e_errno{errno} );
+    <span class="keyword">throw</span> leaf::exception&lt;file_read_error&gt;( e_errno{errno} );
 
   size_t nr2=fread(buf2,<span class="integer">1</span>,count2,f);
   <span class="keyword">if</span>( ferror(f) )
-    leaf::throw_exception( file_read_error(), e_errno{errno} );
+    <span class="keyword">throw</span> leaf::exception&lt;file_read_error&gt;( e_errno{errno} );
 
   size_t nr3=fread(buf3,<span class="integer">1</span>,count3,f);
   <span class="keyword">if</span>( ferror(f) )
-    leaf::throw_exception( file_read_error(), e_errno{errno} );
+    <span class="keyword">throw</span> leaf::exception&lt;file_read_error&gt;( e_errno{errno} );
   ....
 }</code></pre>
 </div>
+</div>
+<div class="paragraph text-right">
+<p><code><a href="#eh">exception</a></code></p>
 </div>
 </div>
 </div>
@@ -3691,18 +3742,21 @@ This technique works exactly the same way when errors are reported using <code>l
   ....
   size_t nr1=fread(buf1,<span class="integer">1</span>,count1,f);
   <span class="keyword">if</span>( ferror(f) )
-    leaf::throw_exception( file_read_error() );
+    <span class="keyword">throw</span> leaf::exception&lt;file_read_error&gt;();
 
   size_t nr2=fread(buf2,<span class="integer">1</span>,count2,f);
   <span class="keyword">if</span>( ferror(f) )
-    leaf::throw_exception( file_read_error() );
+    <span class="keyword">throw</span> leaf::exception&lt;file_read_error&gt;();
 
   size_t nr3=fread(buf3,<span class="integer">1</span>,count3,f);
   <span class="keyword">if</span>( ferror(f) )
-    leaf::throw_exception( file_read_error() );
+    <span class="keyword">throw</span> leaf::exception&lt;file_read_error&gt;();
   ....
 }</code></pre>
 </div>
+</div>
+<div class="paragraph text-right">
+<p><a href="#defer"><code>defer</code></a> | <code><a href="#eh">exception</a></code></p>
 </div>
 </div>
 </div>
@@ -3740,13 +3794,16 @@ This technique works exactly the same way when errors are reported using <code>l
 }</code></pre>
 </div>
 </div>
+<div class="paragraph text-right">
+<p><a href="#get_error"><code>get_error</code></a> | <code><a href="#error::propagate">error::propagate</a></code></p>
+</div>
 </div>
 </div>
 <div class="paragraph">
-<p>The reason we need to use <code><a href="#get_error">get_error</a></code> is that not all exceptions have a <code>leaf::<a href="#error">error</a></code> value associated with them. If the exception we&#8217;re augmenting was thrown using <code><a href="#throw_exception">throw_exception</a></code>, it includes a <code>leaf::error</code> sub-object, and in this case <code>get_error</code> will return that <code>leaf::error</code> value. Also, such exceptions can be intercepted by <code>catch( error e )</code> if needed.</p>
+<p>The reason we need to use <code><a href="#get_error">get_error</a></code> is that not all exception types derive from <code>leaf::<a href="#error">error</a></code>. If the caught exception has a <code>leaf::error</code> subobject, <code>get_error</code> will return that <code>leaf::error</code> value. Also, such exceptions can be intercepted by <code>catch( error e )</code> if needed.</p>
 </div>
 <div class="paragraph">
-<p>But if the caught exception was not thrown by <code>throw_exception</code> (and therefore doesn&#8217;t derive from <code>leaf::error</code>), <code>get_error</code> returns an unspecified <code>leaf::error</code> value, which is temporarily associated with any and all current exceptions, until successfully handled by <code><a href="#handle_exception">handle_exception</a></code>. While this association is imperfect, because it does not pertain to a specific exception object, it is the best that can be done in this case.</p>
+<p>But if the caught exception doesn&#8217;t  have a <code>leaf::error</code> subobject, <code>get_error</code> returns an unspecified <code>leaf::error</code> value, which is temporarily associated with any and all current exceptions, until successfully handled by <code><a href="#handle_exception">handle_exception</a></code>. While this association is imperfect (because it does not pertain to a specific exception object) it is the best that can be done in this case.</p>
 </div>
 <hr>
 </div>
@@ -3868,6 +3925,9 @@ This technique works exactly the same way when errors are reported using <code>l
 </tr>
 </table>
 </div>
+<div class="paragraph text-right">
+<p><a href="#peek_next_error"><code>peek_next_error</code></a> | <code><a href="#error::propagate">error::propagate</a></code></p>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -3910,6 +3970,9 @@ This technique works exactly the same way when errors are reported using <code>l
 <td>Success! Just return the int answer.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph text-right">
+<p><code><a href="#result">result</a></code> | <a href="#preload"><code>preload</code></a> | <code><a href="#error::error">error::error</a></code></p>
 </div>
 </div>
 </div>
@@ -3968,6 +4031,9 @@ This technique works exactly the same way when errors are reported using <code>l
 <td>Handle all other <code>lua_pcall</code> failures.</td>
 </tr>
 </table>
+</div>
+<div class="paragraph text-right">
+<p><code><a href="#expect">expect</a></code> | <code><a href="#result">result</a></code> | <a href="#handle_error-result"><code>handle_error</code></a> | <a href="#match"><code>match</code></a></p>
 </div>
 </div>
 </div>
@@ -4032,6 +4098,9 @@ This technique works exactly the same way when errors are reported using <code>l
 }</code></pre>
 </div>
 </div>
+<div class="paragraph text-right">
+<p><code><a href="#result">result</a></code> | <code><a href="#expect">expect</a></code> | <a href="#capture-result"><code>capture</code></a></p>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -4065,6 +4134,9 @@ leaf::expect&lt;E1,E2,E3&gt; exp;
   );
 }</code></pre>
 </div>
+</div>
+<div class="paragraph text-right">
+<p><code><a href="#expect">expect</a></code> | <code><a href="#result">result</a></code> | <a href="#handle_error-result"><code>handle_error</code></a> | <a href="#match"><code>match</code></a></p>
 </div>
 </div>
 </div>
@@ -4116,6 +4188,9 @@ Follow this link to see a complete example program: <a href="https://github.com/
 }</code></pre>
 </div>
 </div>
+<div class="paragraph text-right">
+<p><a href="#capture_exception"><code>capture_exception</code></a></p>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -4150,6 +4225,9 @@ leaf::expect&lt;E1,E2,E3&gt; exp;
   );
 }</code></pre>
 </div>
+</div>
+<div class="paragraph text-right">
+<p><code><a href="#expect">expect</a></code> |  <a href="#get"><code>get</code></a> | <a href="#handle_exception"><code>handle_exception</code></a> | <a href="#match"><code>match</code></a></p>
 </div>
 </div>
 </div>
@@ -4367,6 +4445,9 @@ The following reasoning is independent of what mechanics are used to transport e
 }</code></pre>
 </div>
 </div>
+<div class="paragraph text-right">
+<p><code><a href="#expect">expect</a></code> | <a href="#handle_exception"><code>handle_exception</code></a> | <a href="#match"><code>match</code></a></p>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -4421,6 +4502,9 @@ The following reasoning is independent of what mechanics are used to transport e
       <span class="keyword">return</span> r; <span class="comment">//Error not handled, forward to the caller.</span>
 }</code></pre>
 </div>
+</div>
+<div class="paragraph text-right">
+<p><code><a href="#expect">expect</a></code> | <code><a href="#result">result</a></code> | <a href="#peek-result"><code>peek</code></a> | <a href="#handle_error-result"><code>handle_error</code></a> | <a href="#match"><code>match</code></a></p>
 </div>
 </div>
 </div>
