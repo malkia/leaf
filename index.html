@@ -4296,7 +4296,7 @@ The following reasoning is independent of what mechanics are used to transport e
 <p>Stronger: authors of <em>error-initiating</em> functions may not even reason about what information about the error is required to deal with it, by a specific <em>error-handling</em> function in a specific program domain, except to pass any relevant information which is naturally available to them.</p>
 </div>
 <div class="paragraph">
-<p>If this is true about <em>error-initiating</em> functions, it is doubly true about <em>error-neutral</em> functions. Frequently, the error they receive is initiated by a function multiple levels removed from them in the call chain, a function which usually is&#8201;&#8212;&#8201;and should be treated as&#8201;&#8212;&#8201;an implementation detail. The <em>error-neutral</em> function should not be coupled with any error object types used by <em>error-initiating</em> functions, for the same reason it should not be coupled with their interface.</p>
+<p>The same reasoning applies to <em>error-neutral</em> functions, but in this case there is the additional problem that the errors they need to communicate, in general, are initiated by functions multiple levels removed from them in the call chain, functions which usually are&#8201;&#8212;&#8201;and should be treated as&#8201;&#8212;&#8201;implementation details. The <em>error-neutral</em> function should not be coupled with any error object type used by <em>error-initiating</em> functions, for the same reason it should not be coupled with any other aspect of their interface.</p>
 </div>
 <div class="paragraph">
 <p>Finally, <em>error-handling</em> functions, by definition, have the full context they need to deal with at least some, if not all, failures. In this scope it is an absolute necessity that the author knows exactly what information must be communicated by lower level functions in order to recover from each error condition. Specifically, none of this necessary information can be treated as implementation details; the coupling which is to be avoided by <em>error-neutral</em> functions is unavoidable and even desirable here.</p>
@@ -4345,15 +4345,15 @@ The following reasoning is independent of what mechanics are used to transport e
 </dl>
 </div>
 <div class="paragraph">
-<p>The <code>leaf::<a href="#expect">expect</a>&lt;E&#8230;&#8203;&gt;</code> class template implements this idea: it provides local storage for error objects of the <code>E&#8230;&#8203;</code> types. Users instantiate this template in <em>error-handling</em> functions, knowing which types of error information are needed. When an <code>expect</code> object is created, <code>thread_local</code> pointers of the <code>E&#8230;&#8203;</code> types are set to point to the corresponding storage within it. Later on, error-reporting functions wanting to communicate an error object of type <code>E</code> access the corresponding <code>thread_local</code> pointer to see if there is currently storage available for this type:</p>
+<p>The <code>leaf::<a href="#expect">expect</a>&lt;E&#8230;&#8203;&gt;</code> class template implements this idea: it provides local storage for error objects of the <code>E&#8230;&#8203;</code> types. Users instantiate this template in <em>error-handling</em> functions, knowing which types of error objects are needed. When an <code>expect</code> object is created, <code>thread_local</code> pointers of the <code>E&#8230;&#8203;</code> types are set to point to the corresponding storage within it. Later on, <em>error-initiating</em> or <em>error-neutral</em> functions wanting to communicate an error object of type <code>E</code> access the corresponding <code>thread_local</code> pointer to see if there is currently storage available for this type:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>If the pointer is not null, storage is available and the object is moved into that storage, exactly once&#8201;&#8212;&#8201;regardless of how many levels of function calls must unwind before an appropriate <em>error-handling</em> function is reached.</p>
+<p>If the pointer is not null, storage is available and the object is moved into that storage, exactly once&#8201;&#8212;&#8201;regardless of how many levels of function calls must unwind before an appropriate <em>error-handling</em> function is reached (that&#8217;s the function where the <code>expect</code> object resides).</p>
 </li>
 <li>
-<p>If the pointer is null, storage is not available and the error object is discarded, saving resources.</p>
+<p>If the pointer is null, storage is not available and the error object is discarded, since there is no use for it&#8201;&#8212;&#8201;saving resources.</p>
 </li>
 </ul>
 </div>
