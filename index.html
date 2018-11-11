@@ -607,6 +607,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#tutorial-eh">Using Exception Handling</a></li>
 </ul>
 </li>
+<li><a href="#synopsis">Synopsis</a></li>
 <li><a href="#reference">Reference</a>
 <ul class="sectlevel2">
 <li><a href="#e-types">e-types</a></li>
@@ -632,8 +633,12 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#peek_next_error"><code>peek_next_error</code></a></li>
 </ul>
 </li>
+<li><a href="#_automatic_propagation">Automatic Propagation</a>
+<ul class="sectlevel3">
 <li><a href="#preload"><code>preload</code></a></li>
 <li><a href="#defer"><code>defer</code></a></li>
+</ul>
+</li>
 <li><a href="#error_capture">Class <code>error_capture</code></a>
 <ul class="sectlevel3">
 <li><a href="#error_capture::error_capture">Constructor</a></li>
@@ -659,7 +664,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#LEAF_CHECK"><code>LEAF_CHECK</code></a></li>
 </ul>
 </li>
-<li><a href="#eh">Exception Handling Interface</a>
+<li><a href="#exception">Class template <code>exception</code></a>
 <ul class="sectlevel3">
 <li><a href="#exception::exception"><code>Constructors</code></a></li>
 <li><a href="#LEAF_THROW"><code>LEAF_THROW</code></a></li>
@@ -727,7 +732,7 @@ table.CodeRay td.code>pre{padding:0}
 </ul>
 </div>
 <div class="paragraph text-right">
-<p><a href="https://github.com/zajo/leaf">GitHub</a> | <a href="#tutorial">Tutorial</a> | <a href="#techniques">Programming Techniques</a> | <a href="#reference">Reference</a> | <a href="#rationale">Design Rationale</a></p>
+<p><a href="https://github.com/zajo/leaf">GitHub</a> | <a href="#introduction">Introduction</a> | <a href="#tutorial">Tutorial</a> | <a href="#techniques">Programming Techniques</a> | <a href="#synopsis">Synopsis</a> | <a href="#reference">Reference</a> | <a href="#rationale">Design Rationale</a></p>
 </div>
 </div>
 </div>
@@ -978,7 +983,7 @@ table.CodeRay td.code>pre{padding:0}
 </table>
 </div>
 <div class="paragraph text-right">
-<p><code><a href="#eh">exception</a></code></p>
+<p><a href="#exception">Class template <code>exception</code></a></p>
 </div>
 </div>
 </div>
@@ -1453,7 +1458,7 @@ To avoid ambiguities in the implicit type conversion done when catching a base t
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>If <code>ferror</code> indicates an error, we throw <code>input_file_read_error</code> and, because there is a relevant <code>errno</code> code, we pass that to the <code><a href="#eh">exception</a></code> constructor <em>also</em> (LEAF defines <code>struct e_errno { int value; }</code>).</td>
+<td>If <code>ferror</code> indicates an error, we throw <code>input_file_read_error</code> and, because there is a relevant <code>errno</code> code, we pass that to the <code><a href="#exception::exception">exception</a></code> constructor <em>also</em> (LEAF defines <code>struct e_errno { int value; }</code>).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -1462,7 +1467,7 @@ To avoid ambiguities in the implicit type conversion done when catching a base t
 </table>
 </div>
 <div class="paragraph text-right">
-<p><code><a href="#eh">exception</a></code></p>
+<p><a href="#exception">Class template <code>exception</code></a></p>
 </div>
 </div>
 </div>
@@ -1473,7 +1478,7 @@ To avoid ambiguities in the implicit type conversion done when catching a base t
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The <code>e_error_code</code> and <code>e_errno</code> structs are examples of types that may be passed to the <code>leaf::<a href="#eh">exception</a></code> (and to the <code>leaf::<a href="#error">error</a></code> constructor). The requirement for such types is that they define an accessible data member <code>value</code> and <code>noexcept</code> move constructor. These types allow us to assign different error-related semantics to different values of otherwise identical static types.<br>
+The <code>e_error_code</code> and <code>e_errno</code> structs are examples of types that may be passed to the <code>leaf::<a href="#exception::exception">exception</a></code> (and to the <code>leaf::<a href="#error">error</a></code>) constructor. The requirement for such types is that they define an accessible data member <code>value</code> and <code>noexcept</code> move constructor. These types allow us to assign different error-related semantics to different values of otherwise identical static types.<br>
 <br>
 For example, we could define <code>struct e_input_name { std::string value; }</code> and <code>struct e_output_name { std::string value; }</code> and LEAF will treat them as separate entities even though their <code>.value</code> members are of the same type <code>std::string</code>.<br>
 <br>
@@ -1512,7 +1517,7 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code><a href="#preload">preload</a></code> takes any number of <a href="#e-types">e-type</a> objects and prepares them to become associated (automatically, at the time the returned object expires) with the first exception thrown thereafter. The effect is that from this point on, a file name will be associated with any exception escaping <code>print_file</code>, in addition to everything else passed earlier to the <code>leaf::<a href="#eh">exception</a></code> constructor explicitly (<code>e_file_name</code> is defined as <code>struct e_file_name { std::string value; }</code>).</td>
+<td><code><a href="#preload">preload</a></code> takes any number of <a href="#e-types">e-type</a> objects and prepares them to become associated (automatically, at the time the returned object expires) with the first exception thrown thereafter. The effect is that from this point on, a file name will be associated with any exception escaping <code>print_file</code>, in addition to everything else passed earlier to the <code>leaf::<a href="#exception::exception">exception</a></code> constructor explicitly (<code>e_file_name</code> is defined as <code>struct e_file_name { std::string value; }</code>).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -1636,13 +1641,13 @@ In this text we refer to such types as <a href="#e-types">e-types</a>, because b
 <div class="ulist">
 <ul>
 <li>
-<p>In case a function detects a failure, it may throw instances of the <code>leaf::<a href="#eh">exception</a></code> class template, initializing it with (in addition to the exception object) any number of <a href="#e-types">e-type</a> objects, to associate with the exception any information it has that is relevant to the failure.</p>
+<p>In case a function detects a failure, it may throw instances of the <code>leaf::<a href="#exception">exception</a></code> class template, initializing it with (in addition to the exception object) any number of <a href="#e-types">e-type</a> objects, to associate with the exception any information it has that is relevant to the failure.</p>
 </li>
 <li>
 <p>Alternatively it may use <code><a href="#preload">preload</a></code> to associate <a href="#e-types">e-type</a> objects with the exception object (of any type) thrown later on, including exceptions thrown by third-party code.</p>
 </li>
 <li>
-<p>In order for any e-type object passed to the <code>leaf::<a href="#eh">exception</a></code> constructor to be stored rather than discarded, the function that catches the exception must contain an instance of the class template <code><a href="#expect">expect</a></code> that provides the necessary storage for its type.</p>
+<p>In order for any e-type object passed to the <code>leaf::<a href="#exception::exception">exception</a></code> constructor to be stored rather than discarded, the function that catches the exception must contain an instance of the class template <code><a href="#expect">expect</a></code> that provides the necessary storage for its type.</p>
 </li>
 <li>
 <p>Using <code><a href="#handle_exception">handle_exception</a></code>, available <a href="#e-types">e-type</a> objects associated with the exception being handled can be matched to what is required in order to deal with that exception.</p>
@@ -1660,6 +1665,260 @@ The complete program from this tutorial is available <a href="https://github.com
 </td>
 </tr>
 </table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="synopsis">Synopsis</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Class template <code>expect</code></strong></p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/expect.hpp&gt;</div>
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+  <span class="keyword">class</span> <span class="class">expect</span>
+  {
+  <span class="directive">public</span>:
+
+    expect() <span class="directive">noexcept</span>;
+    ~expect() <span class="directive">noexcept</span>;
+
+    <span class="directive">void</span> propagate() <span class="directive">noexcept</span>;
+  };
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+  error_capture capture( expect&lt;E...&gt; &amp; exp, error <span class="directive">const</span> &amp; e );
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+  &lt;&lt;unspecified-type&gt; match() <span class="directive">noexcept</span>;
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">F</span>&gt;
+  &lt;&lt;unspecified-type&gt; match( F &amp;&amp; f ) <span class="directive">noexcept</span>;
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span><span class="error">.</span>.. M&gt;
+  <span class="predefined-type">bool</span> handle_error( expect&lt;E...&gt; &amp; exp, error <span class="directive">const</span> &amp; e, M &amp;&amp; ... m ) <span class="directive">noexcept</span>;
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">P</span>,<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+  <span class="directive">decltype</span>(P::value) <span class="directive">const</span> * peek( expect&lt;E...&gt; <span class="directive">const</span> &amp; exp, error <span class="directive">const</span> &amp; e ) <span class="directive">noexcept</span>;
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+  <span class="directive">void</span> diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; <span class="directive">const</span> &amp; exp );
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+  <span class="directive">void</span> diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; <span class="directive">const</span> &amp; exp, error <span class="directive">const</span> &amp; e );
+
+} }</code></pre>
+</div>
+</div>
+<div class="paragraph text-right">
+<p><a href="#expect">Class Template <code>expect</code></a> | <a href="#expect::expect">Constructor</a> | <a href="#expect-dtor">Destructor</a> | <a href="#expect::propagate"><code>propagate</code></a> | <a href="#capture-expect"><code>capture</code></a> | <a href="#match"><code>match</code></a> | <a href="#handle_error-expect"><code>handle_error</code></a> | <a href="#peek-expect"><code>peek</code></a> | <a href="#diagnostic_output-expect"><code>diagnostic_output</code></a></p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Class <code>error</code></strong></p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+
+  <span class="keyword">class</span> <span class="class">error</span>
+  {
+  <span class="directive">public</span>:
+
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+    <span class="directive">explicit</span> error( E &amp;&amp; ... e ) <span class="directive">noexcept</span>:
+
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+    error propagate( E &amp;&amp; ... e ) <span class="directive">const</span> <span class="directive">noexcept</span>;
+
+    <span class="directive">friend</span> <span class="predefined-type">bool</span> <span class="directive">operator</span>==( error <span class="directive">const</span> &amp; e1, error <span class="directive">const</span> &amp; e2 ) <span class="directive">noexcept</span>;
+    <span class="directive">friend</span> <span class="predefined-type">bool</span> <span class="directive">operator</span>!=( error <span class="directive">const</span> &amp; e1, error <span class="directive">const</span> &amp; e2 ) <span class="directive">noexcept</span>;
+
+    <span class="directive">friend</span> std::ostream &amp; <span class="directive">operator</span>&lt;&lt;( std::ostream &amp; os, error <span class="directive">const</span> &amp; e )
+  };
+
+  error peek_next_error() <span class="directive">noexcept</span>;
+
+} }</code></pre>
+</div>
+</div>
+<div class="paragraph text-right">
+<p><a href="#error">Class <code>error</code></a> | <a href="#error::error">Constructor</a> | <a href="#error::propagate"><code>propagate</code></a> | <a href="#operator_eq-error"><code>operator==</code></a> | <a href="#operator_neq-error"><code>operator!=</code></a> | <a href="#operator_shl-error"><code>operator&lt;&lt;</code></a> | <a href="#peek_next_error"><code>peek_next_error</code></a></p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Automatic Propagation</strong></p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+  &lt;&lt;unspecified-type&gt;&gt; preload( E &amp;&amp; ... e ) <span class="directive">noexcept</span>;
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. F&gt;
+  &lt;&lt;unspecified-type&gt;&gt; defer( F &amp;&amp; ... f ) <span class="directive">noexcept</span>;
+
+} }</code></pre>
+</div>
+</div>
+<div class="paragraph text-right">
+<p><a href="#preload"><code>preload</code></a> | <a href="#defer"><code>defer</code></a></p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Class <code>error_capture</code></strong></p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/error_capture.hpp&gt;</div>
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+
+  <span class="keyword">class</span> <span class="class">error_capture</span>
+  {
+  <span class="directive">public</span>:
+
+    error_capture() <span class="directive">noexcept</span>;
+
+    <span class="directive">explicit</span> <span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> <span class="directive">noexcept</span>;
+
+    error unload() <span class="directive">noexcept</span>;
+  };
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. M&gt;
+  <span class="predefined-type">bool</span> handle_error( error_capture <span class="directive">const</span> &amp; ec, M &amp;&amp; ... m ) <span class="directive">noexcept</span>;
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">P</span>&gt;
+  <span class="directive">decltype</span>(P::value) <span class="directive">const</span> * peek( error_capture <span class="directive">const</span> &amp; ec ) <span class="directive">noexcept</span>;
+
+  <span class="directive">void</span> diagnostic_output( std::ostream &amp; os, error_capture <span class="directive">const</span> &amp; ec );
+
+} }</code></pre>
+</div>
+</div>
+<div class="paragraph text-right">
+<p><a href="#error_capture">Class <code>error_capture</code></a> | <a href="#error_capture::error_capture">Constructor</a> | <a href="#error_capture::operator_bool">Conversion to <code>bool</code></a> | <a href="#error_capture::unload"><code>unload</code></a> | <a href="#handle_error-error_capture"><code>handle_error</code></a> | <a href="#peek-error_capture"><code>peek</code></a> | <a href="#diagnostic_output-error_capture"><code>diagnostic_output</code></a></p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Class template <code>result</code></strong></p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">T</span>&gt;
+  result
+  {
+  <span class="directive">public</span>:
+
+    result() <span class="directive">noexcept</span>;
+    result( T <span class="directive">const</span> &amp; v );
+    result( T &amp;&amp; v ) <span class="directive">noexcept</span>;
+    result( leaf::error <span class="directive">const</span> &amp; e ) <span class="directive">noexcept</span>;
+    result( leaf::error_capture <span class="directive">const</span> &amp; ec ) <span class="directive">noexcept</span>;
+
+    <span class="directive">explicit</span> <span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> <span class="directive">noexcept</span>;
+
+    T <span class="directive">const</span> &amp; value() <span class="directive">const</span>;
+    T &amp; value();
+    T <span class="directive">const</span> &amp; <span class="directive">operator</span>*() <span class="directive">const</span>;
+    T &amp; <span class="directive">operator</span>*();
+
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+    leaf::error error( E &amp;&amp; ... e ) <span class="directive">noexcept</span>;
+ };
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">T</span>&gt;
+  result capture( expect&lt;E...&gt; &amp; exp, result&lt;T&gt; <span class="directive">const</span> &amp; r );
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">T</span>,<span class="keyword">class</span><span class="error">.</span>.. M&gt;
+  <span class="predefined-type">bool</span> handle_error( expect&lt;E...&gt; &amp; exp, result&lt;T&gt; &amp; r, M &amp;&amp; ... m ) <span class="directive">noexcept</span>;
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">P</span>,<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">T</span>&gt;
+  <span class="directive">decltype</span>(P::value) <span class="directive">const</span> * peek( expect&lt;E...&gt; <span class="directive">const</span> &amp;, result&lt;T&gt; <span class="directive">const</span> &amp; ) <span class="directive">noexcept</span>;
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">T</span>&gt;
+  <span class="directive">friend</span> <span class="directive">void</span> diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; <span class="directive">const</span> &amp; exp, result&lt;T&gt; <span class="directive">const</span> &amp; r );
+
+  <span class="keyword">struct</span> bad_result: std::exception { };
+
+} }
+
+<span class="preprocessor">#define</span> LEAF_AUTO(v,r) <span class="directive">auto</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> = r; <span class="keyword">if</span>( !_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> ) <span class="keyword">return</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>.error(); <span class="directive">auto</span> &amp; v = *_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>
+<span class="preprocessor">#define</span> LEAF_CHECK(r) {<span class="directive">auto</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> = r; <span class="keyword">if</span>( !_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> ) <span class="keyword">return</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>.error();}</code></pre>
+</div>
+</div>
+<div class="paragraph text-right">
+<p><a href="#result">Class template <code>result</code></a> | <a href="#result::result">Constructors</a> | <a href="#result::operator_bool">Conversion to <code>bool</code></a> | <a href="#result::value"><code>value</code>/<code>operator*</code></a> | <a href="#result::error"><code>error</code></a> | <a href="#capture-result"><code>capture</code></a> | <a href="#handle_error-result"><code>handle_error</code></a> | <a href="#peek-result"><code>peek</code></a> | <a href="#diagnostic_output-result"><code>diagnostic_output</code></a> | <a href="#bad_result"><code>bad_result</code></a> | <a href="#LEAF_AUTO"><code>LEAF_AUTO</code></a> | <a href="#LEAF_CHECK"><code>LEAF_CHECK</code></a></p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Class template <code>exception</code></strong></p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/exception.hpp&gt;</div>
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">Ex</span>&gt;
+  <span class="keyword">class</span> <span class="class">exception</span>:
+    <span class="directive">public</span> Ex,
+    <span class="directive">public</span> error
+  {
+  <span class="directive">public</span>:
+
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+    exception( E &amp;&amp; ... e ) <span class="directive">noexcept</span>;
+
+    <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+    exception( Ex &amp;&amp; ex, E &amp;&amp; ... e ) <span class="directive">noexcept</span>;
+  };
+
+  error get_error( std::exception <span class="directive">const</span> &amp; ex ) <span class="directive">noexcept</span>;
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span> <span class="class">P</span>,<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+  <span class="directive">decltype</span>(P::value) <span class="directive">const</span> * peek( expect&lt;E...&gt; <span class="directive">const</span> &amp; exp, std::exception <span class="directive">const</span> &amp; ex ) <span class="directive">noexcept</span>;
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. M,<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+  <span class="directive">void</span> handle_exception( expect&lt;E...&gt; &amp; exp, std::exception <span class="directive">const</span> &amp; ex, M &amp;&amp; ... m );
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+  <span class="directive">void</span> diagnostic_output( std::ostream &amp; os, expect&lt;E...&gt; <span class="directive">const</span> &amp; exp, std::exception <span class="directive">const</span> &amp; ex );
+
+} }
+
+<span class="preprocessor">#define</span> LEAF_THROW &lt;&lt;unspecified&gt;&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph text-right">
+<p><a href="#exception">Class template <code>exception</code></a> | <a href="#exception::exception"><code>Constructors</code></a> | <a href="#get_error"><code>get_error</code></a> | <a href="#peek-exception"><code>peek</code></a> | <a href="#handle_exception"><code>handle_exception</code></a> | <a href="#diagnostic_output-exception"><code>diagnostic_output</code></a> | <a href="#LEAF_THROW"><code>LEAF_THROW</code></a></p>
+</div>
 </div>
 </div>
 </div>
@@ -2310,7 +2569,34 @@ The printing of each individual e-object is done by the rules described <a href=
 </div>
 </div>
 <div class="sect2">
-<h3 id="preload"><code>preload</code></h3>
+<h3 id="_automatic_propagation">Automatic Propagation</h3>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
+  &lt;&lt;unspecified-type&gt;&gt; preload( E &amp;&amp; ... e ) <span class="directive">noexcept</span>;
+
+  <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. F&gt;
+  &lt;&lt;unspecified-type&gt;&gt; defer( F &amp;&amp; ... f ) <span class="directive">noexcept</span>;
+
+} }</code></pre>
+</div>
+</div>
+<div class="paragraph text-right">
+<p><a href="#preload"><code>preload</code></a> | <a href="#defer"><code>defer</code></a></p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>These two functions are used to automatically associate <a href="#e-types">e-objects</a> with failures that propagate through the scope where they are invoked.</p>
+</div>
+<hr>
+<div class="sect3">
+<h4 id="preload"><code>preload</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
 <div class="content">
@@ -2342,8 +2628,8 @@ The printing of each individual e-object is done by the rules described <a href=
 </div>
 <hr>
 </div>
-<div class="sect2">
-<h3 id="defer"><code>defer</code></h3>
+<div class="sect3">
+<h4 id="defer"><code>defer</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/error.hpp&gt;</div>
 <div class="content">
@@ -2378,6 +2664,7 @@ The printing of each individual e-object is done by the rules described <a href=
 </dl>
 </div>
 <hr>
+</div>
 </div>
 <div class="sect2">
 <h3 id="error_capture">Class <code>error_capture</code></h3>
@@ -3070,7 +3357,7 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 </div>
 </div>
 <div class="sect2">
-<h3 id="eh">Exception Handling Interface</h3>
+<h3 id="exception">Class template <code>exception</code></h3>
 <div class="exampleblock">
 <div class="content">
 <div class="listingblock">
@@ -3187,7 +3474,7 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-If thrown, a <code>leaf::<a href="#eh">exception</a>&lt;Ex&gt;</code> can be caught as <code>Ex &amp;</code> or as <code>leaf::<a href="#error">error</a></code>.
+If thrown, a <code>leaf::<a href="#exception">exception</a>&lt;Ex&gt;</code> can be caught as <code>Ex &amp;</code> or as <code>leaf::<a href="#error">error</a></code>.
 </td>
 </tr>
 </table>
@@ -3206,7 +3493,7 @@ If thrown, a <code>leaf::<a href="#eh">exception</a>&lt;Ex&gt;</code> can be cau
 <dl>
 <dt class="hdlist1">Effects: </dt>
 <dd>
-<p><code>LEAF_THROW&lt;Ex&gt;(e&#8230;&#8203;)</code> is equivalent to <code>throw leaf::<a href="#eh">exception</a>&lt;Ex&gt;(e&#8230;&#8203;)</code>, except the current source location is automatically passed to the <code>leaf::exception</code> constructor, in a <code><a href="#common">e_source_location</a></code> object.</p>
+<p><code>LEAF_THROW&lt;Ex&gt;(e&#8230;&#8203;)</code> is equivalent to <code>throw leaf::<a href="#exception::exception">exception</a>&lt;Ex&gt;(e&#8230;&#8203;)</code>, except the current source location is automatically passed to the <code>leaf::exception</code> constructor, in a <code><a href="#common">e_source_location</a></code> object.</p>
 </dd>
 </dl>
 </div>
@@ -3583,7 +3870,7 @@ The passed value is stored as a C string, so you should only pass string literal
 <p>This is a problem: the <code>catch</code> needs a file name, but at the point of the <code>throw</code> a file name is not available (only a <code>FILE</code> pointer is). In general, the error might be detected in a library which can not assume that a meaningful name is available for any <code>FILE</code> it reads, even if a program that uses the library could reasonably make the same assumption.</p>
 </div>
 <div class="paragraph">
-<p>Using LEAF, a file name may be associated with any exception after it has been thrown, while anything available at the point of the <code>throw</code> (e.g. <code>errno</code>) may be passed directly to the <code>leaf::<a href="#eh">exception</a></code> constructor:</p>
+<p>Using LEAF, a file name may be associated with any exception after it has been thrown, while anything available at the point of the <code>throw</code> (e.g. <code>errno</code>) may be passed directly to the <code>leaf::<a href="#exception::exception">exception</a></code> constructor:</p>
 </div>
 <div class="exampleblock">
 <div class="content">
@@ -3618,7 +3905,7 @@ The passed value is stored as a C string, so you should only pass string literal
 </div>
 </div>
 <div class="paragraph text-right">
-<p><code><a href="#eh">exception</a></code> | <a href="#preload"><code>preload</code></a></p>
+<p><a href="#exception">Class template <code>exception</code></a> | <a href="#preload"><code>preload</code></a></p>
 </div>
 </div>
 </div>
@@ -3688,7 +3975,7 @@ This technique works exactly the same way when errors are reported using <code>l
 </div>
 </div>
 <div class="paragraph text-right">
-<p><code><a href="#eh">exception</a></code></p>
+<p><a href="#exception">Class template <code>exception</code></a></p>
 </div>
 </div>
 </div>
@@ -3717,7 +4004,7 @@ This technique works exactly the same way when errors are reported using <code>l
 </div>
 </div>
 <div class="paragraph text-right">
-<p><code><a href="#eh">exception</a></code></p>
+<p><a href="#exception">Class template <code>exception</code></a></p>
 </div>
 </div>
 </div>
@@ -3755,7 +4042,7 @@ This technique works exactly the same way when errors are reported using <code>l
 </div>
 </div>
 <div class="paragraph text-right">
-<p><a href="#defer"><code>defer</code></a> | <code><a href="#eh">exception</a></code></p>
+<p><a href="#defer"><code>defer</code></a> | <a href="#exception">Class template <code>exception</code></a></p>
 </div>
 </div>
 </div>
