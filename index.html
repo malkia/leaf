@@ -660,6 +660,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#peek-result"><code>peek</code></a></li>
 <li><a href="#diagnostic_output-result"><code>diagnostic_output</code></a></li>
 <li><a href="#bad_result"><code>bad_result</code></a></li>
+<li><a href="#LEAF_ERROR"><code>LEAF_ERROR</code></a></li>
 <li><a href="#LEAF_AUTO"><code>LEAF_AUTO</code></a></li>
 <li><a href="#LEAF_CHECK"><code>LEAF_CHECK</code></a></li>
 </ul>
@@ -1697,10 +1698,10 @@ The complete program from this tutorial is available <a href="https://github.com
   error_capture capture( expect&lt;E...&gt; &amp; exp, error <span class="directive">const</span> &amp; e );
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
-  &lt;&lt;unspecified-type&gt; match() <span class="directive">noexcept</span>;
+  <span class="directive">constexpr</span> &lt;&lt;unspecified-type&gt; match() <span class="directive">noexcept</span>;
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">F</span>&gt;
-  &lt;&lt;unspecified-type&gt; match( F &amp;&amp; f ) <span class="directive">noexcept</span>;
+  <span class="directive">constexpr</span> &lt;&lt;unspecified-type&gt; match( F &amp;&amp; f ) <span class="directive">noexcept</span>;
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span><span class="error">.</span>.. M&gt;
   <span class="predefined-type">bool</span> handle_error( expect&lt;E...&gt; &amp; exp, error <span class="directive">const</span> &amp; e, M &amp;&amp; ... m ) <span class="directive">noexcept</span>;
@@ -1834,13 +1835,13 @@ The complete program from this tutorial is available <a href="https://github.com
   {
   <span class="directive">public</span>:
 
-    result() <span class="directive">noexcept</span>;
-    result( T <span class="directive">const</span> &amp; v );
-    result( T &amp;&amp; v ) <span class="directive">noexcept</span>;
+    <span class="directive">constexpr</span> result() <span class="directive">noexcept</span>;
+    <span class="directive">constexpr</span> result( T <span class="directive">const</span> &amp; v );
+    <span class="directive">constexpr</span> result( T &amp;&amp; v ) <span class="directive">noexcept</span>;
     result( leaf::error <span class="directive">const</span> &amp; e ) <span class="directive">noexcept</span>;
     result( leaf::error_capture <span class="directive">const</span> &amp; ec ) <span class="directive">noexcept</span>;
 
-    <span class="directive">explicit</span> <span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> <span class="directive">noexcept</span>;
+    <span class="directive">constexpr</span> <span class="directive">explicit</span> <span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> <span class="directive">noexcept</span>;
 
     T <span class="directive">const</span> &amp; value() <span class="directive">const</span>;
     T &amp; value();
@@ -1867,12 +1868,13 @@ The complete program from this tutorial is available <a href="https://github.com
 
 } }
 
+<span class="preprocessor">#define</span> LEAF_ERROR &lt;&lt;unspecified&gt;&gt;
 <span class="preprocessor">#define</span> LEAF_AUTO(v,r) <span class="directive">auto</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> = r; <span class="keyword">if</span>( !_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> ) <span class="keyword">return</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>.error(); <span class="directive">auto</span> &amp; v = *_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>
 <span class="preprocessor">#define</span> LEAF_CHECK(r) {<span class="directive">auto</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> = r; <span class="keyword">if</span>( !_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> ) <span class="keyword">return</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>.error();}</code></pre>
 </div>
 </div>
 <div class="paragraph text-right">
-<p><a href="#result">Class Template <code>result</code></a> | <a href="#result::result">Constructors</a> | <a href="#result::operator_bool">Conversion to <code>bool</code></a> | <a href="#result::value"><code>value</code>/<code>operator*</code></a> | <a href="#result::error"><code>error</code></a> | <a href="#capture-result"><code>capture</code></a> | <a href="#handle_error-result"><code>handle_error</code></a> | <a href="#peek-result"><code>peek</code></a> | <a href="#diagnostic_output-result"><code>diagnostic_output</code></a> | <a href="#bad_result"><code>bad_result</code></a> | <a href="#LEAF_AUTO"><code>LEAF_AUTO</code></a> | <a href="#LEAF_CHECK"><code>LEAF_CHECK</code></a></p>
+<p><a href="#result">Class Template <code>result</code></a> | <a href="#result::result">Constructors</a> | <a href="#result::operator_bool">Conversion to <code>bool</code></a> | <a href="#result::value"><code>value</code>/<code>operator*</code></a> | <a href="#result::error"><code>error</code></a> | <a href="#capture-result"><code>capture</code></a> | <a href="#handle_error-result"><code>handle_error</code></a> | <a href="#peek-result"><code>peek</code></a> | <a href="#diagnostic_output-result"><code>diagnostic_output</code></a> | <a href="#bad_result"><code>bad_result</code></a> | <a href="#LEAF_ERROR"><code>LEAF_ERROR</code></a> | <a href="#LEAF_AUTO"><code>LEAF_AUTO</code></a> | <a href="#LEAF_CHECK"><code>LEAF_CHECK</code></a></p>
 </div>
 </div>
 </div>
@@ -2032,10 +2034,10 @@ The output from <code>diagnostic_output</code> overloads is developer-friendly b
   error_capture capture( expect&lt;E...&gt; &amp; exp, error <span class="directive">const</span> &amp; e );
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E&gt;
-  &lt;&lt;unspecified-type&gt; match() <span class="directive">noexcept</span>;
+  <span class="directive">constexpr</span> &lt;&lt;unspecified-type&gt; match() <span class="directive">noexcept</span>;
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span> <span class="class">F</span>&gt;
-  &lt;&lt;unspecified-type&gt; match( F &amp;&amp; f ) <span class="directive">noexcept</span>;
+  <span class="directive">constexpr</span> &lt;&lt;unspecified-type&gt; match( F &amp;&amp; f ) <span class="directive">noexcept</span>;
 
   <span class="keyword">template</span> &lt;<span class="keyword">class</span><span class="error">.</span>.. E,<span class="keyword">class</span><span class="error">.</span>.. M&gt;
   <span class="predefined-type">bool</span> handle_error( expect&lt;E...&gt; &amp; exp, error <span class="directive">const</span> &amp; e, M &amp;&amp; ... m ) <span class="directive">noexcept</span>;
@@ -2979,13 +2981,13 @@ The printing of each individual e-object is done by the rules described <a href=
   {
   <span class="directive">public</span>:
 
-    result() <span class="directive">noexcept</span>;
-    result( T <span class="directive">const</span> &amp; v );
-    result( T &amp;&amp; v ) <span class="directive">noexcept</span>;
+    <span class="directive">constexpr</span> result() <span class="directive">noexcept</span>;
+    <span class="directive">constexpr</span> result( T <span class="directive">const</span> &amp; v );
+    <span class="directive">constexpr</span> result( T &amp;&amp; v ) <span class="directive">noexcept</span>;
     result( leaf::error <span class="directive">const</span> &amp; e ) <span class="directive">noexcept</span>;
     result( leaf::error_capture <span class="directive">const</span> &amp; ec ) <span class="directive">noexcept</span>;
 
-    <span class="directive">explicit</span> <span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> <span class="directive">noexcept</span>;
+    <span class="directive">constexpr</span> <span class="directive">explicit</span> <span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> <span class="directive">noexcept</span>;
 
     T <span class="directive">const</span> &amp; value() <span class="directive">const</span>;
     T &amp; value();
@@ -3012,12 +3014,13 @@ The printing of each individual e-object is done by the rules described <a href=
 
 } }
 
+<span class="preprocessor">#define</span> LEAF_ERROR &lt;&lt;unspecified&gt;&gt;
 <span class="preprocessor">#define</span> LEAF_AUTO(v,r) <span class="directive">auto</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> = r; <span class="keyword">if</span>( !_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> ) <span class="keyword">return</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>.error(); <span class="directive">auto</span> &amp; v = *_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>
 <span class="preprocessor">#define</span> LEAF_CHECK(r) {<span class="directive">auto</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> = r; <span class="keyword">if</span>( !_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> ) <span class="keyword">return</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>.error();}</code></pre>
 </div>
 </div>
 <div class="paragraph text-right">
-<p><a href="#result::result">Constructors</a> | <a href="#result::operator_bool">Conversion to <code>bool</code></a> | <a href="#result::value"><code>value</code>/<code>operator*</code></a> | <a href="#result::error"><code>error</code></a> | <a href="#capture-result"><code>capture</code></a> | <a href="#handle_error-result"><code>handle_error</code></a> | <a href="#peek-result"><code>peek</code></a> | <a href="#diagnostic_output-result"><code>diagnostic_output</code></a> | <a href="#bad_result"><code>bad_result</code></a> | <a href="#LEAF_AUTO"><code>LEAF_AUTO</code></a> | <a href="#LEAF_CHECK"><code>LEAF_CHECK</code></a></p>
+<p><a href="#result::result">Constructors</a> | <a href="#result::operator_bool">Conversion to <code>bool</code></a> | <a href="#result::value"><code>value</code>/<code>operator*</code></a> | <a href="#result::error"><code>error</code></a> | <a href="#capture-result"><code>capture</code></a> | <a href="#handle_error-result"><code>handle_error</code></a> | <a href="#peek-result"><code>peek</code></a> | <a href="#diagnostic_output-result"><code>diagnostic_output</code></a> | <a href="#bad_result"><code>bad_result</code></a> | <a href="#LEAF_ERROR"><code>LEAF_ERROR</code></a> | <a href="#LEAF_AUTO"><code>LEAF_AUTO</code></a> | <a href="#LEAF_CHECK"><code>LEAF_CHECK</code></a></p>
 </div>
 </div>
 </div>
@@ -3029,9 +3032,9 @@ The printing of each individual e-object is done by the rules described <a href=
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
-  result::result() <span class="directive">noexcept</span>;
-  result::result( T <span class="directive">const</span> &amp; v );
-  result::result( T &amp;&amp; v ) <span class="directive">noexcept</span>;
+  <span class="directive">constexpr</span> result::result() <span class="directive">noexcept</span>;
+  <span class="directive">constexpr</span> result::result( T <span class="directive">const</span> &amp; v );
+  <span class="directive">constexpr</span> result::result( T &amp;&amp; v ) <span class="directive">noexcept</span>;
   result::result( leaf::error <span class="directive">const</span> &amp; e ) <span class="directive">noexcept</span>;
   result::result( leaf::error_capture <span class="directive">const</span> &amp; ec ) <span class="directive">noexcept</span>;
 
@@ -3078,7 +3081,7 @@ A <code>result</code> that is in value state converts to <code>true</code> in bo
 <div class="content">
 <pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="keyword">namespace</span> boost { <span class="keyword">namespace</span> leaf {
 
-  result::<span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> <span class="directive">noexcept</span>;
+  <span class="directive">constexpr</span> result::<span class="directive">operator</span> <span class="predefined-type">bool</span>() <span class="directive">const</span> <span class="directive">noexcept</span>;
 
 } }</code></pre>
 </div>
@@ -3336,6 +3339,36 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 <hr>
 </div>
 <div class="sect3">
+<h4 id="LEAF_ERROR"><code>LEAF_ERROR</code></h4>
+<div class="listingblock">
+<div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
+<div class="content">
+<pre class="CodeRay highlight nowrap"><code data-lang="c++"><span class="preprocessor">#define</span> LEAF_ERROR &lt;&lt;unspecified&gt;&gt;</code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Effects: </dt>
+<dd>
+<p><code>LEAF_ERROR(e&#8230;&#8203;)</code> is equivalent to <code>leaf::<a href="#error::error">error</a>(e&#8230;&#8203;)</code>, except the current source location is automatically passed to the <code>leaf::error</code> constructor, in a <code><a href="#common">e_source_location</a></code> object.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<code>LEAF_ERROR</code> is designed for use in <code>return</code> expressions, to automatically communicate the location of the error being reported (but see <a href="#expect">Class Template <code>expect</code></a>).
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+<div class="sect3">
 <h4 id="LEAF_AUTO"><code>LEAF_AUTO</code></h4>
 <div class="listingblock">
 <div class="title">#include &lt;boost/leaf/result.hpp&gt;</div>
@@ -3408,7 +3441,7 @@ For an example, see <a href="#technique_transport-result">Transporting Errors be
 <pre class="nowrap">namespace boost { namespace leaf {
 
   template &lt;class... E,class F&gt;
-  &lt;&lt;unspecified-type&gt;&gt; capture_exception( F &amp;&amp; f ) noexcept;
+  constexpr &lt;&lt;unspecified-type&gt;&gt; capture_exception( F &amp;&amp; f ) noexcept;
 
   template &lt;class Future&gt;
   decltype(std::declval&lt;Future&gt;().get()) get( Future &amp;&amp; f );
@@ -3761,7 +3794,7 @@ In case the dynamic type of <code>ex</code> does not derive from <code>leaf::err
       <span class="predefined-type">char</span> <span class="directive">const</span> * <span class="directive">const</span> file;
       <span class="predefined-type">int</span> <span class="directive">const</span> line;
       <span class="predefined-type">char</span> <span class="directive">const</span> * <span class="directive">const</span> function;
-      loc( <span class="predefined-type">char</span> <span class="directive">const</span> * file, <span class="predefined-type">int</span> line, <span class="predefined-type">char</span> <span class="directive">const</span> * function ) <span class="directive">noexcept</span>;
+      <span class="directive">constexpr</span> loc( <span class="predefined-type">char</span> <span class="directive">const</span> * file, <span class="predefined-type">int</span> line, <span class="predefined-type">char</span> <span class="directive">const</span> * function ) <span class="directive">noexcept</span>;
     };
     loc value;
 
