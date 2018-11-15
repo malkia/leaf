@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.7.1">
+<meta name="generator" content="Asciidoctor 1.5.8">
 <meta name="author" content="Low-latency Error Augmentation Framework for C++11">
 <title>LEAF</title>
 <style>
@@ -709,14 +709,14 @@ table.CodeRay td.code>pre{padding:0}
 <h2 id="_abstract">Abstract</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>LEAF is a C++11 error handling library. Features:</p>
+<p>LEAF is a C&#43;&#43;11 error handling library. Features:</p>
 </div>
 <div class="exampleblock">
 <div class="content">
 <div class="ulist">
 <ul>
 <li>
-<p>Header-only, no dependencies.</p>
+<p>Header-only, C++11, no dependencies.</p>
 </li>
 <li>
 <p>No dynamic memory allocations.<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
@@ -1873,7 +1873,7 @@ The complete program from this tutorial is available <a href="https://github.com
 
 <span class="preprocessor">#define</span> LEAF_ERROR &lt;&lt;unspecified&gt;&gt;
 <span class="preprocessor">#define</span> LEAF_AUTO(v,r) <span class="directive">auto</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> = r; <span class="keyword">if</span>( !_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> ) <span class="keyword">return</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>.error(); <span class="directive">auto</span> &amp; v = *_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>
-<span class="preprocessor">#define</span> LEAF_CHECK(r) {<span class="directive">auto</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> = r; <span class="keyword">if</span>( !_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> ) <span class="keyword">return</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>.error();}</code></pre>
+<span class="preprocessor">#define</span> LEAF_CHECK(r) {<span class="directive">auto</span> _r = r; <span class="keyword">if</span>( !_r ) <span class="keyword">return</span> _r.error();}</code></pre>
 </div>
 </div>
 <div class="paragraph text-right">
@@ -3019,7 +3019,7 @@ The printing of each individual e-object is done by the rules described <a href=
 
 <span class="preprocessor">#define</span> LEAF_ERROR &lt;&lt;unspecified&gt;&gt;
 <span class="preprocessor">#define</span> LEAF_AUTO(v,r) <span class="directive">auto</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> = r; <span class="keyword">if</span>( !_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> ) <span class="keyword">return</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>.error(); <span class="directive">auto</span> &amp; v = *_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>
-<span class="preprocessor">#define</span> LEAF_CHECK(r) {<span class="directive">auto</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> = r; <span class="keyword">if</span>( !_r_<span class="preprocessor">#</span><span class="preprocessor">#v</span> ) <span class="keyword">return</span> _r_<span class="preprocessor">#</span><span class="preprocessor">#v</span>.error();}</code></pre>
+<span class="preprocessor">#define</span> LEAF_CHECK(r) {<span class="directive">auto</span> _r = r; <span class="keyword">if</span>( !_r ) <span class="keyword">return</span> _r.error();}</code></pre>
 </div>
 </div>
 <div class="paragraph text-right">
@@ -4132,13 +4132,13 @@ This technique works exactly the same way when errors are reported using <code>l
 <div class="sect2">
 <h3 id="technique_preload_in_c_callbacks">Using <code>peek_next_error</code> in C-callbacks</h3>
 <div class="paragraph">
-<p>Communicating information pertaining to a failure detected in a C callback is tricky, because C callbacks are limited to a specific static signature, which may not use C++ types.</p>
+<p>Communicating information pertaining to a failure detected in a C callback is tricky, because C callbacks are limited to a specific static signature, which may not use C&#43;&#43; types.</p>
 </div>
 <div class="paragraph">
-<p>LEAF makes this easy. As an example, we&#8217;ll write a program that uses Lua and reports a failure from a C++ function registered as a C callback, called from a Lua program. The failure will be propagated from C++, through the Lua interpreter (written in C), back to the C++ function which called it.</p>
+<p>LEAF makes this easy. As an example, we&#8217;ll write a program that uses Lua and reports a failure from a C&#43;&#43; function registered as a C callback, called from a Lua program. The failure will be propagated from C&#43;&#43;, through the Lua interpreter (written in C), back to the C&#43;&#43; function which called it.</p>
 </div>
 <div class="paragraph">
-<p>C/C++ functions designed to be called from a Lua program must use the following signature:</p>
+<p>C/C&#43;&#43; functions designed to be called from a Lua program must use the following signature:</p>
 </div>
 <div class="exampleblock">
 <div class="content">
@@ -4182,7 +4182,7 @@ This technique works exactly the same way when errors are reported using <code>l
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Register the <code>do_work</code> C++ function as a C callback, under the global name <code>do_work</code>. With this, calls from Lua programs to <code>do_work</code> will land in the <code>do_work</code> C++ function.</td>
+<td>Register the <code>do_work</code> C&#43;&#43; function as a C callback, under the global name <code>do_work</code>. With this, calls from Lua programs to <code>do_work</code> will land in the <code>do_work</code> C&#43;&#43; function.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -4370,7 +4370,7 @@ This technique works exactly the same way when errors are reported using <code>l
 <p>Follow this link to see the complete program: <a href="https://github.com/zajo/leaf/blob/master/example/lua_callback_result.cpp?ts=3">lua_callback_result.cpp</a>.</p>
 </div>
 <div class="paragraph">
-<p>Remarkably, the Lua interpreter is C++ exception-safe, even though it is written in C. Here is the same program, this time using a C++ exception to report failures from <code>do_work</code>: <a href="https://github.com/zajo/leaf/blob/master/example/lua_callback_eh.cpp?ts=3">lua_callback_eh.cpp</a>.</p>
+<p>Remarkably, the Lua interpreter is C&#43;&#43; exception-safe, even though it is written in C. Here is the same program, this time using a C&#43;&#43; exception to report failures from <code>do_work</code>: <a href="https://github.com/zajo/leaf/blob/master/example/lua_callback_eh.cpp?ts=3">lua_callback_eh.cpp</a>.</p>
 </div>
 </td>
 </tr>
@@ -4688,7 +4688,7 @@ The following reasoning is independent of what mechanics are used to transport e
 <p>Lastly, in <em>error-handling</em> functions it makes sense to be able to not only recognize individual error conditions, but match specific error-handling code with the complete set of error objects that is required in each case.</p>
 </div>
 <div class="paragraph">
-<p>In terms of C++ exception handling, it would be nice to be able to say something like:</p>
+<p>In terms of C&#43;&#43; exception handling, it would be nice to be able to say something like:</p>
 </div>
 <div class="exampleblock">
 <div class="content">
@@ -4886,7 +4886,7 @@ Please post questions and feedback on the Boost Developers Mailing List (LEAF is
 <h2 id="portability">Portability</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>LEAF requires a C++11 compiler.</p>
+<p>LEAF requires a C&#43;&#43;11 compiler.</p>
 </div>
 <div class="paragraph">
 <p>See unit test matrix at <a href="https://travis-ci.org/zajo/leaf">Travis-CI</a>. It has also been tested with Microsoft Visual Studio 2015 and 2017 (please install the latest patches from Microsoft).</p>
