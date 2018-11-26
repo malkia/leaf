@@ -20,3 +20,23 @@ new_http_archive(
     ],
 )
 
+
+##
+
+
+# Change master to the git tag you want.
+http_archive(
+    name = "com_grail_bazel_toolchain",
+    strip_prefix = "bazel-toolchain-master",
+    urls = ["https://github.com/grailbio/bazel-toolchain/archive/master.tar.gz"],
+)
+
+load("@com_grail_bazel_toolchain//toolchain:configure.bzl", "llvm_toolchain")
+
+# bazel build --crosstool_top=@llvm_toolchain//:toolchain ...
+
+llvm_toolchain(
+    name = "llvm_toolchain",
+    llvm_version = "6.0.0",
+)
+

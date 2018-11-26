@@ -1,4 +1,4 @@
-TEST_FILES = glob( ["*.cpp"] )
+TEST_FILES = glob(["*.cpp"])
 
 [cc_test(
     name = test_file[:-len(".cpp")],
