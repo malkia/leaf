@@ -19,7 +19,14 @@ extern "C" {
 
 namespace leaf = boost::leaf;
 
-struct e_do_work_error { int value; };
+enum do_work_error_code
+{
+	ec1=1,
+	ec2
+};
+namespace boost { namespace leaf {
+	template<> struct is_error_type<do_work_error_code>: std::true_type { };
+} }
 
 struct e_lua_pcall_error { int value; };
 struct e_lua_error_message { std::string value; };
@@ -41,9 +48,9 @@ int do_work( lua_State * L ) noexcept
 	}
 	else
 	{
-		//Associate an e_do_work_error object with the *next* leaf::error object we will
+		//Associate an do_work_error_code object with the *next* leaf::error object we will
 		//definitely return from the call_lua function...
-		leaf::peek_next_error().propagate( e_do_work_error{-42} );
+		leaf::next_error_value().propagate(ec1);
 
 		//...once control reaches it, after we tell the Lua interpreter to abort the program.
 		return luaL_error(L,"do_work_error");
@@ -85,7 +92,7 @@ leaf::result<int> call_lua( lua_State * L )
 	if( int err=lua_pcall(L,0,1,0) )
 	{
 		//Something went wrong with the call, so we'll return a leaf::error.
-		//If this is a do_work failure, the e_do_work_error object prepared in
+		//If this is a do_work failure, the do_work_error_code object prepared in
 		//do_work will become associated with this leaf::error value. If not,
 		//we will still need to communicate that the lua_pcall failed with an
 		//error code and an error message.
@@ -106,7 +113,7 @@ int main() noexcept
 {
 	std::shared_ptr<lua_State> L=init_lua_state();
 
-	leaf::expect<e_do_work_error,e_lua_pcall_error,e_lua_error_message> exp;
+	leaf::expect<do_work_error_code,e_lua_pcall_error,e_lua_error_message> exp;
 
 	for( int i=0; i!=10; ++i )
 		if( leaf::result<int> r = call_lua(&*L) )
@@ -116,16 +123,16 @@ int main() noexcept
 			bool matched = handle_error( exp, r,
 
 				//Handle e_do_work failures:
-				leaf::match<e_do_work_error>( [ ]( int v )
+				[ ]( do_work_error_code e )
 				{
-					std::cout << "Got e_do_work_error, value = " << v <<  "!\n";
-				} ),
+					std::cout << "Got do_work_error_code = " << e <<  "!\n";
+				},
 
 				//Handle all other lua_pcall failures:
-				leaf::match<e_lua_pcall_error,e_lua_error_message>( [ ]( int err, std::string const & msg )
+				[ ]( e_lua_pcall_error const & err, e_lua_error_message const & msg )
 				{
-					std::cout << "Got e_lua_pcall_error, Lua error code = " << err << ", " << msg << "\n";
-				} )
+					std::cout << "Got e_lua_pcall_error, Lua error code = " << err.value << ", " << msg.value << "\n";
+				}
 			);
 			assert(matched);
 		}

@@ -73,7 +73,7 @@ int main()
 			non_printable_info_printable_payload,
 			non_printable_info_non_printable_payload,
 			leaf::e_errno,
-			leaf::e_source_location
+			leaf::meta::e_source_location
 			> exp;
 		try
 		{
@@ -96,7 +96,7 @@ int main()
 			BOOST_TEST(s.find("*** printable_info_printable_payload printed printable_payload ***")!=s.npos);
 			BOOST_TEST(s.find(") in function")!=s.npos);
 			std::cout << s;
-			handle_exception( exp, e, leaf::match<>() );
+			handle_exception( exp, e, [ ]{ } );
 		}
 	}
 	return boost::report_errors();

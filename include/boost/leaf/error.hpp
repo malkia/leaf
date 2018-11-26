@@ -8,48 +8,83 @@
 #define UUID_BA049396D0D411E8B45DF7D4A759E189
 
 #include <boost/leaf/detail/optional.hpp>
+#include <boost/leaf/detail/print.hpp>
 #include <atomic>
 #include <cstdio>
 #include <climits>
 #include <ostream>
+#include <type_traits>
+#include <system_error>
 
-#define LEAF_ERROR ::boost::leaf::peek_next_error().propagate(::boost::leaf::e_source_location{::boost::leaf::e_source_location::loc(__FILE__,__LINE__,__FUNCTION__)}),::boost::leaf::error
+#define LEAF_ERROR ::boost::leaf::next_error_value().propagate(::boost::leaf::meta::e_source_location{__FILE__,__LINE__,__FUNCTION__}),::boost::leaf::error
+
+namespace boost { namespace system { class error_code; } }
 
 namespace boost { namespace leaf {
 
-	struct e_source_location
+	namespace meta
 	{
-		struct loc
+		struct e_source_location
 		{
 			char const * const file;
 			int const line;
 			char const * const function;
 
-			constexpr loc( char const * file, int line, char const * function ) noexcept:
-				file(file),
-				line(line),
-				function(function)
+			friend std::ostream & operator<<( std::ostream & os, e_source_location const & x )
 			{
+				return os << "At " << x.file << '(' << x.line << ") in function " << x.function << std::endl;
 			}
 		};
 
-		loc value;
-
-		friend std::ostream & operator<<( std::ostream & os, e_source_location const & x )
+		struct e_unexpected
 		{
-			return os << "At " << x.value.file << '(' << x.value.line << ") in function " << x.value.function << std::endl;
-		}
+			char const * (*first_type)();
+			int count;
+
+			friend std::ostream & operator<<( std::ostream & os, e_unexpected const & x )
+			{
+				assert(x.first_type!=0);
+				assert(x.count>0);
+				return os << "Detected  " << x.count << " attempt(s) to communicate unexpected error objects, first is of type " << x.first_type() << std::endl;
+			}
+		};
+	}
+
+	namespace leaf_detail
+	{
+		template <class T, class E = void>
+		struct has_data_member_value
+		{
+			static constexpr bool value=false;
+		};
+
+		template <class T>
+		struct has_data_member_value<T, decltype(std::declval<T const &>().value, void())>
+		{
+			static constexpr bool value=std::is_member_object_pointer<decltype(&T::value)>::value;
+		};
+	}
+
+	template <class T>
+	struct is_error_type
+	{
+		static constexpr bool value = leaf_detail::has_data_member_value<T>::value;
 	};
+
+	template <> struct is_error_type<system::error_code>: std::true_type { };
+	template <> struct is_error_type<std::error_code>: std::true_type { };
+	template <> struct is_error_type<meta::e_unexpected>: std::true_type { };
+	template <> struct is_error_type<meta::e_source_location>: std::true_type { };
 
 	////////////////////////////////////////
 
 	class error;
 
-	error peek_next_error() noexcept;
+	error next_error_value() noexcept;
 
 	class error
 	{
-		friend error leaf::peek_next_error() noexcept;
+		friend error leaf::next_error_value() noexcept;
 
 		unsigned id_;
 
@@ -131,7 +166,7 @@ namespace boost { namespace leaf {
 			return os;
 		}
 
-		static error peek_next_error() noexcept
+		static error next_error_value() noexcept
 		{
 			return error(id_factory::tl_instance().peek());
 		}
@@ -140,7 +175,7 @@ namespace boost { namespace leaf {
 		error propagate( E && ... ) const noexcept;
 	};
 
-	inline error peek_next_error() noexcept
+	inline error next_error_value() noexcept
 	{
 		return error(error::id_factory::tl_instance().peek());
 	}
@@ -165,8 +200,8 @@ namespace boost { namespace leaf {
 			slot & operator=( slot const & ) = delete;
 			typedef optional<error_info<E>> base;
 			slot<E> * prev_;
+			static_assert(is_error_type<E>::value,"All types passed to leaf::expect must be error types");
 		public:
-			typedef decltype(E::value) value_type;
 			slot() noexcept;
 			~slot() noexcept;
 			using base::put;
@@ -205,9 +240,21 @@ namespace boost { namespace leaf {
 		E * put_slot( E && v, error const & e ) noexcept
 		{
 			if( leaf_detail::slot<E> * p = leaf_detail::tl_slot_ptr<E>() )
-				return &p->put(leaf_detail::error_info<E>{std::forward<E>(v),e}).v;
-			else
-				return 0;
+				return &p->put( leaf_detail::error_info<E>{std::forward<E>(v),e} ).v;
+			else if( leaf_detail::slot<meta::e_unexpected> * p = leaf_detail::tl_slot_ptr<meta::e_unexpected>() )
+			{
+				if( p->has_value() )
+				{
+					auto & v = p->value();
+					if( v.e==e )
+					{
+						++v.v.count;
+						return 0;
+					}
+				}
+				(void) p->put( leaf_detail::error_info<meta::e_unexpected>{meta::e_unexpected{&type<E>,1},e} );
+			}
+			return 0;
 		}
 	} //leaf_detail
 
@@ -216,34 +263,6 @@ namespace boost { namespace leaf {
 	{
 		{ using _ = void const * [ ]; (void) _ { 0, leaf_detail::put_slot(std::forward<E>(e),*this)... }; }
 		return *this;
-	}
-
-	////////////////////////////////////////
-
-	namespace leaf_detail
-	{
-		template <class F, class... E>
-		struct match_fn
-		{
-			F f;
-		};
-
-		template <class... E>
-		struct match_no_fn
-		{
-		};
-	} //leaf_detail
-
-	template <class... E, class F>
-	constexpr leaf_detail::match_fn<F,E...> match( F && f ) noexcept
-	{
-		return leaf_detail::match_fn<F,E...> { std::move(f) };
-	}
-
-	template <class... E>
-	constexpr leaf_detail::match_no_fn<E...> match() noexcept
-	{
-		return leaf_detail::match_no_fn<E...> { };
 	}
 
 } }

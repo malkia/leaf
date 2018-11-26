@@ -11,6 +11,12 @@
 namespace leaf = boost::leaf;
 
 template <int A>
+struct unexpected
+{
+	int value;
+};
+
+template <int A>
 struct info
 {
 	int value;
@@ -18,7 +24,7 @@ struct info
 
 leaf::error f1()
 {
-	return LEAF_ERROR( info<1>{1} );
+	return LEAF_ERROR( info<1>{1}, unexpected<1>{1}, unexpected<2>{2} );
 }
 
 leaf::error f2()
@@ -35,30 +41,34 @@ leaf::error f3()
 
 leaf::error f4()
 {
-	leaf::expect<leaf::e_source_location,info<1>,info<2>,info<3>,info<4>> exp;
+	leaf::expect<leaf::meta::e_source_location,leaf::meta::e_unexpected,info<1>,info<2>,info<3>,info<4>> exp;
 	{
 		leaf::error e = f3();
-		BOOST_TEST( handle_error( exp, e,
-			leaf::match<info<1>,info<2>,info<3>,info<4>>(),
-			leaf::match<info<1>,info<2>,info<4>>() ) );
+		bool handled = handle_error( exp, e,
+			[ ]( info<1>, info<2>, info<3>, info<4> ){ },
+			[ ]( info<1>, info<2>, info<4> ) { } );
+		BOOST_TEST(handled);
 	}
 	leaf::error e = f3();
 	int c1=0, c2=0;
-	BOOST_TEST( handle_error( exp, e,
-		leaf::match<info<1>,info<2>,info<3>,info<4>>( [&c1]( int, int, int, int )
+	bool handled = handle_error( exp, e,
+		[&c1]( info<1>,info<2>,info<3>,info<4> )
 		{
 			++c1;
-		} ),
-		leaf::match<leaf::e_source_location,info<1>,info<2>,info<4>>( [&c2]( leaf::e_source_location::loc const & loc,int i1, int i2, int i4 )
+		},
+		[&c2]( leaf::meta::e_source_location const & loc, leaf::meta::e_unexpected const & unx, info<1> const & i1, info<2> const & i2, info<4> const & i4 )
 		{
-			BOOST_TEST(loc.line==21);
+			BOOST_TEST(loc.line==27);
 			BOOST_TEST(strcmp(loc.file,__FILE__)==0);
 			BOOST_TEST(strstr(loc.function,"f1")!=0);
-			BOOST_TEST(i1==1);
-			BOOST_TEST(i2==2);
-			BOOST_TEST(i4==4);
+			BOOST_TEST(unx.count==2);
+			BOOST_TEST(unx.first_type==&leaf::type<unexpected<1>>);
+			BOOST_TEST(i1.value==1);
+			BOOST_TEST(i2.value==2);
+			BOOST_TEST(i4.value==4);
 			++c2;
-		} ) ) );
+		} );
+	BOOST_TEST(handled);
 	BOOST_TEST(c1==0);
 	BOOST_TEST(c2==1);
 	return leaf::error();
